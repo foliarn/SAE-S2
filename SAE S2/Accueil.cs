@@ -8,6 +8,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static SAE_S2.Utils;
 
 namespace SAE_S2
 {
@@ -42,21 +43,13 @@ namespace SAE_S2
 
             }
 
-            CentrerPanel();
-        }
-
-        private void CentrerPanel()
-        {
-            int y = (this.ClientSize.Height - pnlRecherche.Height) / 2;
-
-            pnlRecherche.Location = new Point(50, y);
-
+            Utils.CentrerControle(pnlRecherche, false, true);
         }
         public Accueil()
         {
             InitializeComponent();
 
-            CentrerPanel();
+            Utils.CentrerControle(pnlRecherche, false, true);
             // Pour centrer les éléments dans le panel de recherche
             lblTitre.Left = (pnlRecherche.ClientSize.Width - lblTitre.Width) / 2;
             btnTrouver.Left = (pnlRecherche.ClientSize.Width - btnTrouver.Width) / 2;
@@ -121,12 +114,13 @@ namespace SAE_S2
 
         private void btnLigne_Click(object sender, EventArgs e)
         {
+
+            // Ouvre le formulaire ConsulterLigne
+            ConsulterLigne consulterLigne = new ConsulterLigne(this);
+            consulterLigne.Show();
+
+            // Ferme le formulaire actuel
             this.Hide();
-
-            /*            ChoixLigne choixLigne = new ChoixLigne();
-                        choixLigne.ShowDialog();*/
-
-
         }
 
         private void button1_Click(object sender, EventArgs e)

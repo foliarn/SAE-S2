@@ -12,14 +12,10 @@ namespace SAE_S2
 {
     public partial class Login : Form
     {
-        private void CentrerPanel()
-        {
-            pnlLogin.Location = new Point((this.ClientSize.Width - pnlLogin.Width) / 2, (this.ClientSize.Height - pnlLogin.Height) / 2);
-        }
 
         private void Login_Load(object sender, EventArgs e)
         {
-            CentrerPanel();
+            Utils.CentrerControle(pnlLogin);
         }
 
         private void txtMdp_TextChanged(object sender, EventArgs e)

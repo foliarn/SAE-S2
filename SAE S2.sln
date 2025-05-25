@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35728.132 d17.12
+VisualStudioVersion = 17.12.35728.132
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAE S2", "SAE S2\SAE S2.csproj", "{343D2BAB-141A-41B9-8F21-F7883943F38F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface", "SAE S2\Interface.csproj", "{343D2BAB-141A-41B9-8F21-F7883943F38F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiblioSysteme", "BiblioSysteme\BiblioSysteme.csproj", "{6EDBF05C-3786-4583-A07E-8DD9B4FF513E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiblioBDD", "BiblioBDD\BiblioBDD.csproj", "{44E31106-B9F5-4B42-81AB-C944F30CE780}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +19,19 @@ Global
 		{343D2BAB-141A-41B9-8F21-F7883943F38F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{343D2BAB-141A-41B9-8F21-F7883943F38F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{343D2BAB-141A-41B9-8F21-F7883943F38F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EDBF05C-3786-4583-A07E-8DD9B4FF513E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EDBF05C-3786-4583-A07E-8DD9B4FF513E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EDBF05C-3786-4583-A07E-8DD9B4FF513E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EDBF05C-3786-4583-A07E-8DD9B4FF513E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44E31106-B9F5-4B42-81AB-C944F30CE780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44E31106-B9F5-4B42-81AB-C944F30CE780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44E31106-B9F5-4B42-81AB-C944F30CE780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44E31106-B9F5-4B42-81AB-C944F30CE780}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A1A86E2-9769-4A00-805E-882CB1136B14}
 	EndGlobalSection
 EndGlobal

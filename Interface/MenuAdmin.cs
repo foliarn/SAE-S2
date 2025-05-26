@@ -213,7 +213,7 @@ namespace SAE_S2
 
         private void btnRetirerArret_Click(object sender, EventArgs e)
         {
-
+            ModifBDD.RetirerArret(cmbLigneRetraitArret.SelectedIndex); // Pas sûr de l'index, à vérifier (index de la liste ou index de la ComboBox ?)
         }
 
         private void nudChoixPlace_ValueChanged(object sender, EventArgs e)

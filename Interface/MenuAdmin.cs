@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAE_S2.Classes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -37,6 +38,7 @@ namespace SAE_S2
         {
             pnlMenuCreation.Visible = false;
             pnlMenuModif.Visible = false;
+            pnlLigneAjoutArret.Visible = false;
             lblTitre.Text = "Création d'une ligne";
 
             // Afficher le formulaire de création de ligne

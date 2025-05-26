@@ -150,6 +150,37 @@ namespace BiblioSysteme
         }
 
         /// <summary>
+        /// Retourne tous les horaires de passage à cet arrêt, combinés depuis toutes les lignes associées.
+        /// </summary>
+        /// <returns>Liste ordonnée des horaires</returns>
+        public List<TimeSpan> GetHorairesPassage()
+        {
+            try
+            {
+                var horaires = new List<TimeSpan>();
+
+                if (Lignes == null || Lignes.Count == 0)
+                    return horaires; // Aucune ligne => pas d'horaire
+
+                foreach (var ligne in Lignes)
+                {
+                    var horairesLigne = ligne.GetHorairesDepart();
+                    horaires.AddRange(horairesLigne);
+                }
+
+                // Supprimer les doublons et trier
+                horaires = horaires.Distinct().OrderBy(t => t).ToList();
+
+                return horaires;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur lors de la récupération des horaires : {ex.Message}");
+                return new List<TimeSpan>();
+            }
+        }
+
+        /// <summary>
         /// Valide les données de l'arrêt
         /// </summary>
         /// <returns>True si valide, False sinon</returns>
@@ -183,5 +214,7 @@ namespace BiblioSysteme
                 return "Arrêt invalide";
             }
         }
+
+
     }
 }

@@ -1241,6 +1241,7 @@
             picCreerArretBonus.TabIndex = 19;
             picCreerArretBonus.TabStop = false;
             picCreerArretBonus.Click += pnlCreerArret_Click;
+            picCreerArretBonus.Cursor = Cursors.Hand;
             // 
             // lblCreerArretBonus
             // 
@@ -1252,6 +1253,7 @@
             lblCreerArretBonus.TabIndex = 18;
             lblCreerArretBonus.Text = "Créer un arrêt";
             lblCreerArretBonus.Click += pnlCreerArret_Click;
+            lblCreerArretBonus.Cursor = Cursors.Hand;
             // 
             // panel13
             // 

@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Data;
 
-namespace SAE_S2
+namespace SAE_S2.Classes
 {
     internal class Utils
     {

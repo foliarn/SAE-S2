@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAE_S2.Classes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,7 +9,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static SAE_S2.Utils;
+using static SAE_S2.Classes.Utils;
 
 namespace SAE_S2
 {

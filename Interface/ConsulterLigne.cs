@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BiblioSysteme;
+using BiblioBDD;
+using SAE_S2.Classes;
 
 namespace SAE_S2
 {
@@ -23,6 +26,19 @@ namespace SAE_S2
         {
             this.Dispose();
             formAccueil.Show();
+        }
+
+        private void ConsulterLigne_Load(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void btnValiderChoix_Click(object sender, EventArgs e)
+        {
+            BDD.OuvrirConnexion();
+            int idLigne = 1; //TODO : Récupérer l'ID de la ligne sélectionnée dans cmbChoixLigne
+            Affichage.AfficherLigneComplete(idLigne, dgvLigne);
         }
     }
 }

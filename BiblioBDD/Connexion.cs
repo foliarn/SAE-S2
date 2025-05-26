@@ -4,7 +4,7 @@ namespace BiblioBDD
 {
     public class BDD
     {
-        private static MySqlConnection conn;
+        public static MySql.Data.MySqlClient.MySqlConnection conn;
 
         public static bool OuvrirConnexion()
         {

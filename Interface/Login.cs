@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAE_S2.Classes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;

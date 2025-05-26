@@ -16,6 +16,7 @@ namespace BiblioSysteme
         public TimeSpan PremierDepart { get; set; }
         public TimeSpan DernierDepart { get; set; }
         public int IntervalleMinutes { get; set; }
+        public List<TimeSpan> TempsEntreArrets { get; set; }
 
         // Liste des arrêts de cette ligne dans l'ordre (relation Many-to-Many)
         public List<Arret> Arrets { get; set; }
@@ -24,6 +25,7 @@ namespace BiblioSysteme
         public Ligne()
         {
             Arrets = new List<Arret>();
+            TempsEntreArrets = new List<TimeSpan>();
         }
 
         public Ligne(int idLigne, string nomLigne, string description = "")
@@ -287,6 +289,84 @@ namespace BiblioSysteme
                 Console.WriteLine($"Erreur lors de la génération des horaires : {ex.Message}");
                 return new List<TimeSpan>();
             }
+        }
+
+        /// <summary>
+        /// Génère automatiquement des temps de trajet entre chaque arrêt,
+        /// avec un temps fixe (ex: 5 minutes) entre chaque paire d'arrêts.
+        /// </summary>
+        /// <param name="tempsParTroncon">Temps en minutes entre chaque arrêt</param>
+        public void GenererTempsEntreArrets(int tempsParTroncon = 5)
+        {
+            if (tempsParTroncon <= 0)
+                throw new ArgumentException("Le temps par tronçon doit être positif", nameof(tempsParTroncon));
+
+            if (Arrets == null || Arrets.Count < 2)
+                throw new InvalidOperationException("Impossible de générer les temps sans au moins 2 arrêts");
+
+            TempsEntreArrets = new List<TimeSpan>();
+
+            for (int i = 1; i < Arrets.Count; i++)
+            {
+                TempsEntreArrets.Add(TimeSpan.FromMinutes(tempsParTroncon));
+            }
+        }
+
+
+        /// <summary>
+        /// Calcule les horaires de passage à un arrêt spécifique de la ligne, en tenant compte du temps de trajet cumulé depuis le départ initial.
+        /// </summary>
+        /// <param name="arret">L'arrêt pour lequel on souhaite obtenir les horaires.</param>
+        /// <returns>Une liste de TimeSpan représentant les horaires de passage à cet arrêt, ou une liste vide en cas d'erreur.</returns>
+        /// <exception cref="ArgumentException">Si l'arrêt n'appartient pas à cette ligne.</exception>
+        private List<TimeSpan> CalculerHorairesPourArret(Arret arret)
+        {
+            int index = Arrets.IndexOf(arret);
+            if (index == -1)
+                throw new ArgumentException("Cet arrêt n'appartient pas à cette ligne");
+
+            // Calcule le décalage cumulé depuis le départ initial
+            TimeSpan decalage = TimeSpan.Zero;
+
+            for (int i = 0; i < index; i++)
+            {
+                decalage += TempsEntreArrets[i];
+            }
+
+            // Génère les horaires de base de la ligne
+            var horairesBase = GetHorairesDepart();
+
+            // Applique le décalage aux horaires pour cet arrêt
+            return horairesBase.Select(h => h.Add(decalage)).ToList();
+        }
+
+
+        // Cache pour les horaires par arrêt afin d'éviter les recalculs ou de tout stocker
+        private Dictionary<Arret, List<TimeSpan>> _horairesCache;
+
+        /// <summary>
+        /// Obtient la liste des horaires de passage pour un arrêt spécifique de cette ligne, 
+        /// en tenant compte du temps de trajet cumulé depuis le départ initial.
+        /// </summary>
+        /// <param name="arret">L'arrêt pour lequel récupérer les horaires.</param>
+        /// <returns>Une liste de TimeSpan représentant les horaires de passage à cet arrêt.</returns>
+        /// <exception cref="ArgumentException">Lancée si l'arrêt n'appartient pas à cette ligne.</exception>
+        public List<TimeSpan> GetHorairesPourArret(Arret arret)
+        {
+            // Initialisation du cache si nécessaire
+            _horairesCache ??= new Dictionary<Arret, List<TimeSpan>>();
+
+            // Si déjà calculé, on retourne le résultat mis en cache
+            if (_horairesCache.TryGetValue(arret, out var horaires))
+            {
+                return horaires;
+            }
+
+            // Sinon, on calcule et on met en cache
+            horaires = CalculerHorairesPourArret(arret);
+            _horairesCache[arret] = horaires;
+
+            return horaires;
         }
 
         /// <summary>

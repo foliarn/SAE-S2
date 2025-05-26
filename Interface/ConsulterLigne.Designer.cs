@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             pnlTitre = new Panel();
             lblTitre = new Label();
             pnlChoixLigne = new Panel();
@@ -37,15 +38,19 @@
             panel3 = new Panel();
             lblChoixLigneHead = new Label();
             btnMenu = new Button();
+            class1BindingSource = new BindingSource(components);
+            dgvLigne = new DataGridView();
             pnlTitre.SuspendLayout();
             pnlChoixLigne.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)class1BindingSource).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvLigne).BeginInit();
             SuspendLayout();
             // 
             // pnlTitre
             // 
             pnlTitre.BackColor = Color.White;
             pnlTitre.Controls.Add(lblTitre);
-            pnlTitre.Location = new Point(409, 28);
+            pnlTitre.Location = new Point(1215, 168);
             pnlTitre.Name = "pnlTitre";
             pnlTitre.Size = new Size(508, 100);
             pnlTitre.TabIndex = 1;
@@ -70,11 +75,10 @@
             pnlChoixLigne.Controls.Add(lblChoixLigne);
             pnlChoixLigne.Controls.Add(panel3);
             pnlChoixLigne.Controls.Add(lblChoixLigneHead);
-            pnlChoixLigne.Location = new Point(512, 265);
+            pnlChoixLigne.Location = new Point(12, 12);
             pnlChoixLigne.Name = "pnlChoixLigne";
             pnlChoixLigne.Size = new Size(240, 150);
             pnlChoixLigne.TabIndex = 16;
-            pnlChoixLigne.Visible = false;
             // 
             // btnValiderChoix
             // 
@@ -85,6 +89,7 @@
             btnValiderChoix.TabIndex = 15;
             btnValiderChoix.Text = "Valider";
             btnValiderChoix.UseVisualStyleBackColor = true;
+            btnValiderChoix.Click += btnValiderChoix_Click;
             // 
             // cmbChoixLigne
             // 
@@ -138,20 +143,39 @@
             btnMenu.UseVisualStyleBackColor = true;
             btnMenu.Click += btnMenu_Click;
             // 
+            // dgvLigne
+            // 
+            dgvLigne.AllowUserToAddRows = false;
+            dgvLigne.AllowUserToDeleteRows = false;
+            dgvLigne.AllowUserToResizeColumns = false;
+            dgvLigne.AllowUserToResizeRows = false;
+            dgvLigne.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dgvLigne.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvLigne.Location = new Point(258, 31);
+            dgvLigne.Name = "dgvLigne";
+            dgvLigne.ReadOnly = true;
+            dgvLigne.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvLigne.Size = new Size(820, 542);
+            dgvLigne.TabIndex = 18;
+            // 
             // ConsulterLigne
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 681);
+            Controls.Add(dgvLigne);
             Controls.Add(btnMenu);
             Controls.Add(pnlChoixLigne);
             Controls.Add(pnlTitre);
             Name = "ConsulterLigne";
             Text = "Corolis";
+            Load += ConsulterLigne_Load;
             pnlTitre.ResumeLayout(false);
             pnlTitre.PerformLayout();
             pnlChoixLigne.ResumeLayout(false);
             pnlChoixLigne.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)class1BindingSource).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvLigne).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -167,5 +191,7 @@
         private Panel panel3;
         private Label lblChoixLigneHead;
         private Button btnMenu;
+        private BindingSource class1BindingSource;
+        private DataGridView dgvLigne;
     }
 }

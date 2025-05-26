@@ -1,4 +1,6 @@
-﻿using SAE_S2.Classes;
+﻿using BiblioBDD;
+using BiblioSysteme;
+using SAE_S2.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,6 +51,9 @@ namespace SAE_S2
         public Accueil()
         {
             InitializeComponent();
+            BDD.OuvrirConnexion(); // Ouvre la connexion à la base de données
+            ChargerDonnees.tousLesArrets = ChargerDonnees.ChargerTousLesArrets(); // Charge tous les arrêts depuis la base de données
+            ChargerDonnees.toutesLesLignes = ChargerDonnees.ChargerToutesLesLignes(); // Charge toutes les lignes depuis la base de données
 
             Utils.CentrerControle(pnlRecherche, false, true);
             // Pour centrer les éléments dans le panel de recherche

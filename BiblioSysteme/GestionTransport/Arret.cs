@@ -34,11 +34,6 @@ namespace BiblioSysteme
                 throw new ArgumentException("Le nom de l'arrêt ne peut pas être vide", nameof(nomArret));
             }
 
-            if (nomArret.Length > 30)
-            {
-                throw new ArgumentException("Le nom de l'arrêt ne peut pas dépasser 30 caractères", nameof(nomArret));
-            }
-
             IdArret = idArret;
             NomArret = nomArret.Trim();
             Lignes = new List<Ligne>();
@@ -73,17 +68,17 @@ namespace BiblioSysteme
             }
             catch (ArgumentNullException ex)
             {
-                Console.WriteLine($"Erreur - Paramètre null : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur - Paramètre null : {ex.Message}");
                 return false;
             }
             catch (InvalidOperationException ex)
             {
-                Console.WriteLine($"Erreur - Opération invalide : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur - Opération invalide : {ex.Message}");
                 return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur inattendue lors de l'ajout de la ligne : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur inattendue lors de l'ajout de la ligne : {ex.Message}");
                 return false;
             }
         }
@@ -112,17 +107,17 @@ namespace BiblioSysteme
             }
             catch (ArgumentNullException ex)
             {
-                Console.WriteLine($"Erreur - Paramètre null : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur - Paramètre null : {ex.Message}");
                 return false;
             }
             catch (InvalidOperationException ex)
             {
-                Console.WriteLine($"Erreur - Opération invalide : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur - Opération invalide : {ex.Message}");
                 return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur inattendue lors de la suppression de la ligne : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur inattendue lors de la suppression de la ligne : {ex.Message}");
                 return false;
             }
         }
@@ -144,7 +139,7 @@ namespace BiblioSysteme
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la récupération des noms de lignes : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des noms de lignes : {ex.Message}");
                 return new List<string>();
             }
         }
@@ -175,7 +170,7 @@ namespace BiblioSysteme
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la récupération des horaires : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des horaires : {ex.Message}");
                 return new List<TimeSpan>();
             }
         }
@@ -195,7 +190,7 @@ namespace BiblioSysteme
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la validation : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la validation : {ex.Message}");
                 return false;
             }
         }

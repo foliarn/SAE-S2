@@ -22,7 +22,7 @@ namespace BiblioBDD
             }
             catch (MySqlException ex)
             {
-                Console.WriteLine($"Erreur de connexion à la base de données : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur de connexion à la base de données : {ex.Message}");
                 return false;
             }
         }
@@ -41,7 +41,7 @@ namespace BiblioBDD
             }
             catch (MySqlException ex)
             {
-                Console.WriteLine($"Erreur lors de la fermeture de la connexion : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la fermeture de la connexion : {ex.Message}");
                 return false;
             }
         }

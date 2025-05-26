@@ -12,7 +12,7 @@ namespace BiblioBDD
     public static class RecupDonnees
     {
         /// <summary>
-        /// Récupère toutes les lignes de transport
+        /// Récupère toutes les lignes de la base de données
         /// </summary>
         /// <returns>Liste des lignes ou null en cas d'erreur</returns>
         public static List<Ligne> GetToutesLesLignes()
@@ -21,7 +21,7 @@ namespace BiblioBDD
             {
                 if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
                 {
-                    Console.WriteLine("Connexion à la base de données fermée");
+                    System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
                     return null;
                 }
 
@@ -59,7 +59,7 @@ namespace BiblioBDD
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la récupération des lignes : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des lignes : {ex.Message}");
                 return null;
             }
         }
@@ -75,7 +75,7 @@ namespace BiblioBDD
             {
                 if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
                 {
-                    Console.WriteLine("Connexion à la base de données fermée");
+                    System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
                     return null;
                 }
 
@@ -117,7 +117,7 @@ namespace BiblioBDD
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la récupération de la ligne : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération de la ligne : {ex.Message}");
                 return null;
             }
         }
@@ -132,8 +132,8 @@ namespace BiblioBDD
             {
                 if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
                 {
-                    Console.WriteLine("Connexion à la base de données fermée");
-                    return null;
+                    System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
+                    return new List<Arret>();
                 }
 
                 var arrets = new List<Arret>();
@@ -156,8 +156,8 @@ namespace BiblioBDD
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la récupération des arrêts : {ex.Message}");
-                return null;
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des arrêts : {ex.Message}");
+                return new List<Arret>();
             }
         }
 
@@ -172,7 +172,7 @@ namespace BiblioBDD
             {
                 if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
                 {
-                    Console.WriteLine("Connexion à la base de données fermée");
+                    System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
                     return null;
                 }
 
@@ -205,7 +205,7 @@ namespace BiblioBDD
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la récupération des arrêts de la ligne : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des arrêts de la ligne : {ex.Message}");
                 return null;
             }
         }
@@ -241,7 +241,7 @@ namespace BiblioBDD
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la récupération de la ligne complète : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération de la ligne complète : {ex.Message}");
                 return null;
             }
         }
@@ -276,7 +276,7 @@ namespace BiblioBDD
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la récupération des lignes complètes : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des lignes complètes : {ex.Message}");
                 return null;
             }
         }

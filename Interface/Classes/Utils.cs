@@ -51,25 +51,12 @@ namespace SAE_S2.Classes
             control.Location = newLocation;
         }
 
-        /// <summary>
-        /// Génère le tableau de la ligne de bus (arrêt-horaire).
-        /// <summary>
-        /// 
-        
-        public static void genererTableauLigne(List<string> arrets, List<string> horaires, DataGridView dataGridView)
+        public static void RemplirComboBox<Type>(ComboBox comboBox, List<Type> liste, string displayMember, string valueMember)
         {
-            // Créer une nouvelle DataTable
-            DataTable table = new DataTable("Ligne");
-            // Ajouter les colonnes
-            table.Columns.Add("Arrêt", typeof(string));
-            table.Columns.Add("Horaire", typeof(string));
-            // Ajouter les lignes (compte le nombre d'arrêts)
-            for (int i = 0; i < arrets.Count; i++)
-            {
-                table.Rows.Add(arrets[i], horaires[i]);
-            }
-            // Lier la DataTable au DataGridView
-            dataGridView.DataSource = table;
+            if (comboBox == null || liste == null) return;
+            comboBox.DataSource = liste;
+            comboBox.DisplayMember = displayMember;
+            comboBox.ValueMember = valueMember;
         }
     }
 }

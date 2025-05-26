@@ -64,7 +64,7 @@
             btnMenu = new Button();
             pnlModifChoix = new Panel();
             btnValiderChoix = new Button();
-            cmbChoixArret = new ComboBox();
+            cmbChoix = new ComboBox();
             lblModif = new Label();
             panel3 = new Panel();
             lblModifHead = new Label();
@@ -113,17 +113,19 @@
             numericUpDown1 = new NumericUpDown();
             lblChangerIntervalle = new Label();
             panel10 = new Panel();
-            button1 = new Button();
+            btnValiderChoixHoraire = new Button();
             lblChangerDepart = new Label();
             panel11 = new Panel();
             lblModifHoraire = new Label();
             pnlRetirerArret = new Panel();
-            button2 = new Button();
+            btnRetirerArret = new Button();
             cmbLigneRetraitArret = new ComboBox();
             lblLigneRetraitArret = new Label();
             panel12 = new Panel();
             lblLigneRetraitArretHead = new Label();
             pnlLigneAjoutArret = new Panel();
+            nudChoixPlace = new NumericUpDown();
+            lblChoixPlace = new Label();
             picCreerArretBonus = new PictureBox();
             lblCreerArretBonus = new Label();
             panel13 = new Panel();
@@ -185,6 +187,7 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             pnlRetirerArret.SuspendLayout();
             pnlLigneAjoutArret.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudChoixPlace).BeginInit();
             ((System.ComponentModel.ISupportInitialize)picCreerArretBonus).BeginInit();
             pnlModifLigneChoisie.SuspendLayout();
             pnlMenuRetraitArret.SuspendLayout();
@@ -563,7 +566,7 @@
             pnlModifChoix.BackColor = Color.White;
             pnlModifChoix.BorderStyle = BorderStyle.FixedSingle;
             pnlModifChoix.Controls.Add(btnValiderChoix);
-            pnlModifChoix.Controls.Add(cmbChoixArret);
+            pnlModifChoix.Controls.Add(cmbChoix);
             pnlModifChoix.Controls.Add(lblModif);
             pnlModifChoix.Controls.Add(panel3);
             pnlModifChoix.Controls.Add(lblModifHead);
@@ -584,16 +587,16 @@
             btnValiderChoix.UseVisualStyleBackColor = true;
             btnValiderChoix.Click += btnValiderChoix_Click;
             // 
-            // cmbChoixArret
+            // cmbChoix
             // 
-            cmbChoixArret.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cmbChoixArret.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cmbChoixArret.FormattingEnabled = true;
-            cmbChoixArret.Items.AddRange(new object[] { "A1", "A2", "A3", "A4", "A5", "test" });
-            cmbChoixArret.Location = new Point(20, 62);
-            cmbChoixArret.Name = "cmbChoixArret";
-            cmbChoixArret.Size = new Size(200, 23);
-            cmbChoixArret.TabIndex = 15;
+            cmbChoix.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbChoix.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbChoix.FormattingEnabled = true;
+            cmbChoix.Items.AddRange(new object[] { "A1", "A2", "A3", "A4", "A5", "test" });
+            cmbChoix.Location = new Point(20, 62);
+            cmbChoix.Name = "cmbChoix";
+            cmbChoix.Size = new Size(200, 23);
+            cmbChoix.TabIndex = 15;
             // 
             // lblModif
             // 
@@ -972,7 +975,7 @@
             pnlArretModifLigne.Controls.Add(lblArretModifLigneAdd);
             pnlArretModifLigne.Controls.Add(panel8);
             pnlArretModifLigne.Controls.Add(lblArretModifLigneHead);
-            pnlArretModifLigne.Location = new Point(691, 659);
+            pnlArretModifLigne.Location = new Point(691, 655);
             pnlArretModifLigne.Name = "pnlArretModifLigne";
             pnlArretModifLigne.Size = new Size(240, 200);
             pnlArretModifLigne.TabIndex = 16;
@@ -1064,7 +1067,7 @@
             pnlModifHoraire.Controls.Add(numericUpDown1);
             pnlModifHoraire.Controls.Add(lblChangerIntervalle);
             pnlModifHoraire.Controls.Add(panel10);
-            pnlModifHoraire.Controls.Add(button1);
+            pnlModifHoraire.Controls.Add(btnValiderChoixHoraire);
             pnlModifHoraire.Controls.Add(lblChangerDepart);
             pnlModifHoraire.Controls.Add(panel11);
             pnlModifHoraire.Controls.Add(lblModifHoraire);
@@ -1109,15 +1112,15 @@
             panel10.Size = new Size(200, 1);
             panel10.TabIndex = 13;
             // 
-            // button1
+            // btnValiderChoixHoraire
             // 
-            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            button1.Location = new Point(65, 161);
-            button1.Name = "button1";
-            button1.Size = new Size(110, 25);
-            button1.TabIndex = 15;
-            button1.Text = "Valider";
-            button1.UseVisualStyleBackColor = true;
+            btnValiderChoixHoraire.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnValiderChoixHoraire.Location = new Point(65, 161);
+            btnValiderChoixHoraire.Name = "btnValiderChoixHoraire";
+            btnValiderChoixHoraire.Size = new Size(110, 25);
+            btnValiderChoixHoraire.TabIndex = 15;
+            btnValiderChoixHoraire.Text = "Valider";
+            btnValiderChoixHoraire.UseVisualStyleBackColor = true;
             // 
             // lblChangerDepart
             // 
@@ -1152,26 +1155,27 @@
             // 
             pnlRetirerArret.BackColor = Color.White;
             pnlRetirerArret.BorderStyle = BorderStyle.FixedSingle;
-            pnlRetirerArret.Controls.Add(button2);
+            pnlRetirerArret.Controls.Add(btnRetirerArret);
             pnlRetirerArret.Controls.Add(cmbLigneRetraitArret);
             pnlRetirerArret.Controls.Add(lblLigneRetraitArret);
             pnlRetirerArret.Controls.Add(panel12);
             pnlRetirerArret.Controls.Add(lblLigneRetraitArretHead);
-            pnlRetirerArret.Location = new Point(691, 651);
+            pnlRetirerArret.Location = new Point(691, 326);
             pnlRetirerArret.Name = "pnlRetirerArret";
             pnlRetirerArret.Size = new Size(240, 150);
             pnlRetirerArret.TabIndex = 16;
             pnlRetirerArret.Visible = false;
             // 
-            // button2
+            // btnRetirerArret
             // 
-            button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            button2.Location = new Point(65, 110);
-            button2.Name = "button2";
-            button2.Size = new Size(110, 25);
-            button2.TabIndex = 15;
-            button2.Text = "Valider";
-            button2.UseVisualStyleBackColor = true;
+            btnRetirerArret.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnRetirerArret.Location = new Point(65, 110);
+            btnRetirerArret.Name = "btnRetirerArret";
+            btnRetirerArret.Size = new Size(110, 25);
+            btnRetirerArret.TabIndex = 15;
+            btnRetirerArret.Text = "Valider";
+            btnRetirerArret.UseVisualStyleBackColor = true;
+            btnRetirerArret.Click += btnRetirerArret_Click;
             // 
             // cmbLigneRetraitArret
             // 
@@ -1217,6 +1221,8 @@
             // 
             pnlLigneAjoutArret.BackColor = Color.White;
             pnlLigneAjoutArret.BorderStyle = BorderStyle.FixedSingle;
+            pnlLigneAjoutArret.Controls.Add(nudChoixPlace);
+            pnlLigneAjoutArret.Controls.Add(lblChoixPlace);
             pnlLigneAjoutArret.Controls.Add(picCreerArretBonus);
             pnlLigneAjoutArret.Controls.Add(lblCreerArretBonus);
             pnlLigneAjoutArret.Controls.Add(panel13);
@@ -1225,35 +1231,54 @@
             pnlLigneAjoutArret.Controls.Add(cmbLigneAjoutArret);
             pnlLigneAjoutArret.Controls.Add(lblLigneAjoutArret);
             pnlLigneAjoutArret.Controls.Add(lblLigneAjoutArretHead);
-            pnlLigneAjoutArret.Location = new Point(691, 463);
+            pnlLigneAjoutArret.Location = new Point(691, 168);
             pnlLigneAjoutArret.Name = "pnlLigneAjoutArret";
-            pnlLigneAjoutArret.Size = new Size(240, 200);
+            pnlLigneAjoutArret.Size = new Size(240, 254);
             pnlLigneAjoutArret.TabIndex = 17;
             pnlLigneAjoutArret.Visible = false;
             // 
+            // nudChoixPlace
+            // 
+            nudChoixPlace.Location = new Point(21, 118);
+            nudChoixPlace.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudChoixPlace.Name = "nudChoixPlace";
+            nudChoixPlace.Size = new Size(48, 23);
+            nudChoixPlace.TabIndex = 21;
+            nudChoixPlace.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            nudChoixPlace.ValueChanged += nudChoixPlace_ValueChanged;
+            // 
+            // lblChoixPlace
+            // 
+            lblChoixPlace.AutoSize = true;
+            lblChoixPlace.Location = new Point(20, 95);
+            lblChoixPlace.Name = "lblChoixPlace";
+            lblChoixPlace.Size = new Size(211, 15);
+            lblChoixPlace.TabIndex = 20;
+            lblChoixPlace.Text = "Choisir son emplacement dans la ligne";
+            // 
             // picCreerArretBonus
             // 
+            picCreerArretBonus.Cursor = Cursors.Hand;
             picCreerArretBonus.Image = Properties.Resources.icon_plus;
-            picCreerArretBonus.Location = new Point(62, 161);
+            picCreerArretBonus.Location = new Point(62, 219);
             picCreerArretBonus.Name = "picCreerArretBonus";
             picCreerArretBonus.Size = new Size(20, 20);
             picCreerArretBonus.SizeMode = PictureBoxSizeMode.StretchImage;
             picCreerArretBonus.TabIndex = 19;
             picCreerArretBonus.TabStop = false;
             picCreerArretBonus.Click += pnlCreerArret_Click;
-            picCreerArretBonus.Cursor = Cursors.Hand;
             // 
             // lblCreerArretBonus
             // 
             lblCreerArretBonus.AutoSize = true;
+            lblCreerArretBonus.Cursor = Cursors.Hand;
             lblCreerArretBonus.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblCreerArretBonus.Location = new Point(85, 161);
+            lblCreerArretBonus.Location = new Point(85, 219);
             lblCreerArretBonus.Name = "lblCreerArretBonus";
             lblCreerArretBonus.Size = new Size(93, 17);
             lblCreerArretBonus.TabIndex = 18;
             lblCreerArretBonus.Text = "Créer un arrêt";
             lblCreerArretBonus.Click += pnlCreerArret_Click;
-            lblCreerArretBonus.Cursor = Cursors.Hand;
             // 
             // panel13
             // 
@@ -1266,7 +1291,7 @@
             // panel9
             // 
             panel9.BackColor = Color.DimGray;
-            panel9.Location = new Point(20, 142);
+            panel9.Location = new Point(21, 202);
             panel9.Name = "panel9";
             panel9.Size = new Size(200, 1);
             panel9.TabIndex = 16;
@@ -1274,12 +1299,13 @@
             // btnValiderAjoutArret
             // 
             btnValiderAjoutArret.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            btnValiderAjoutArret.Location = new Point(65, 100);
+            btnValiderAjoutArret.Location = new Point(65, 160);
             btnValiderAjoutArret.Name = "btnValiderAjoutArret";
             btnValiderAjoutArret.Size = new Size(110, 25);
             btnValiderAjoutArret.TabIndex = 15;
             btnValiderAjoutArret.Text = "Valider";
             btnValiderAjoutArret.UseVisualStyleBackColor = true;
+            btnValiderAjoutArret.Click += btnValiderAjoutArret_Click;
             // 
             // cmbLigneAjoutArret
             // 
@@ -1675,6 +1701,7 @@
             pnlRetirerArret.PerformLayout();
             pnlLigneAjoutArret.ResumeLayout(false);
             pnlLigneAjoutArret.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudChoixPlace).EndInit();
             ((System.ComponentModel.ISupportInitialize)picCreerArretBonus).EndInit();
             pnlModifLigneChoisie.ResumeLayout(false);
             pnlModifLigneChoisie.PerformLayout();
@@ -1737,7 +1764,7 @@
         private Panel panel3;
         private Label lblModifHead;
         private Button btnValiderChoix;
-        private ComboBox cmbChoixArret;
+        private ComboBox cmbChoix;
         private Panel pnlModifArretChoisi;
         private Panel panel4;
         private Panel pnlChangerNom;
@@ -1782,13 +1809,13 @@
         private NumericUpDown numericUpDown1;
         private Label lblChangerIntervalle;
         private Panel panel10;
-        private Button button1;
+        private Button btnValiderChoixHoraire;
         private Label lblChangerDepart;
         private Panel panel11;
         private Label lblModifHoraire;
         private DateTimePicker dtpHoraireDepart;
         private Panel pnlRetirerArret;
-        private Button button2;
+        private Button btnRetirerArret;
         private ComboBox cmbLigneRetraitArret;
         private Label lblLigneRetraitArret;
         private Panel panel12;
@@ -1828,5 +1855,7 @@
         private PictureBox picIconEdit6;
         private Label lblMenuAjoutArretHead;
         private Label lblMenuAjoutArret;
+        private NumericUpDown nudChoixPlace;
+        private Label lblChoixPlace;
     }
 }

@@ -1,4 +1,6 @@
 ﻿using SAE_S2.Classes;
+using BiblioSysteme;
+using BiblioBDD;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,10 +16,11 @@ namespace SAE_S2
     public partial class MenuAdmin : Form
     {
         private bool isLigne; // true si on modifie une ligne, false si on modifie un arrêt
+        private int idChoixMain; // Id de l'arrêt ou de la ligne choisie pour modification
+        private int idChoixAjtOuSupp; // Id de l'arrêt ou de la ligne choisie pour ajout ou suppression d'un arrêt ou d'une ligne
 
         public MenuAdmin()
         {
-
             InitializeComponent();
             // Centrer les panels dans le formulaire
             Utils.CentrerControle(pnlCreation);
@@ -32,6 +35,14 @@ namespace SAE_S2
             Utils.CentrerControle(pnlModifHoraire, false, true);
             Utils.CentrerControle(pnlMenuCreation, false, true);
             Utils.CentrerControle(pnlMenuModif, false, true);
+
+
+
+            // Remplir les ComboBox avec les arrêts
+            Utils.RemplirComboBox(cmbLigneAjoutArret, ChargerDonnees.tousLesArrets, "NomArret", "IdArret");
+            Utils.RemplirComboBox(cmbLigneRetraitArret, ChargerDonnees.tousLesArrets, "NomArret", "IdArret");
+            Utils.RemplirComboBox(cmbArretModifLigneChoixAdd, ChargerDonnees.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : Ajouter un élément "Aucun" pour éviter les erreurs si aucune ligne n'est sélectionnée
+            Utils.RemplirComboBox(cmbArretModifLigneChoixSuppr, ChargerDonnees.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : idem
 
         }
         private void pnlCreerLigne_Click(object sender, EventArgs e)
@@ -56,6 +67,8 @@ namespace SAE_S2
 
             pnlCreation.Visible = true;
             lblSaisirNomHead.Text = "Saisir le nom du nouvel arrêt";
+
+            Utils.RemplirComboBox(cmbChoix, ChargerDonnees.tousLesArrets, "NomArret", "IdArret");
         }
 
         private void pnlModifLigne_Click(object sender, EventArgs e)
@@ -63,20 +76,27 @@ namespace SAE_S2
             isLigne = true; // On modifie une ligne
             pnlMenuCreation.Visible = false;
             pnlMenuModif.Visible = false;
-            lblTitre.Text = "Modification d'une ligne";
+            pnlModifChoix.Visible = true;
 
+            lblTitre.Text = "Modification d'une ligne";
             lblModifHead.Text = "Choisir une ligne";
             lblModif.Text = "Choisissez une ligne à modifier :";
-            pnlModifChoix.Visible = true;
+
+            Utils.RemplirComboBox(cmbChoix, ChargerDonnees.toutesLesLignes, "NomLigne", "IdLigne");
+
         }
 
         private void pnlModifArret_Click(object sender, EventArgs e)
         {
             pnlMenuCreation.Visible = false;
             pnlMenuModif.Visible = false;
-            lblTitre.Text = "Modification d'un arrêt";
-
             pnlModifChoix.Visible = true;
+
+            lblTitre.Text = "Modification d'un arrêt";
+            lblModifHead.Text = "Choisir un arrêt";
+            lblModif.Text = "Choisissez un arrêt à modifier :";
+            
+            Utils.RemplirComboBox(cmbChoix, ChargerDonnees.tousLesArrets, "NomArret", "IdArret");
         }
 
 
@@ -89,12 +109,15 @@ namespace SAE_S2
         private void btnValiderChoix_Click(object sender, EventArgs e)
         {
             pnlModifChoix.Visible = false;
+            idChoixMain = cmbChoix.SelectedIndex;
             if (isLigne)
             {
+                //todo : Afficher le nom de la ligne choisie
                 pnlModifLigneChoisie.Visible = true;
             }
             else
             {
+                // todo : Afficher le nom de l'arrêt choisi
                 pnlModifArretChoisi.Visible = true;
             }
         }
@@ -180,6 +203,22 @@ namespace SAE_S2
             pnlArretChangeNom.Visible = false;
             pnlRetirerArret.Visible = false;
 
+
+        }
+        //AjtArret
+        private void btnValiderAjoutArret_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnRetirerArret_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void nudChoixPlace_ValueChanged(object sender, EventArgs e)
+        {
+            //Maximum = count + 1
 
         }
     }

@@ -59,22 +59,22 @@
             btnArretCreationValider = new Button();
             txtSaisirNom = new TextBox();
             lblSaisirNom = new Label();
-            panel1 = new Panel();
+            pnlSep10 = new Panel();
             lblSaisirNomHead = new Label();
             btnMenu = new Button();
             pnlModifChoix = new Panel();
             btnValiderChoix = new Button();
             cmbChoix = new ComboBox();
             lblModif = new Label();
-            panel3 = new Panel();
+            pnlSep3 = new Panel();
             lblModifHead = new Label();
             pnlModifArretChoisi = new Panel();
-            panel7 = new Panel();
+            pnlSep12 = new Panel();
             pnlSupprArret = new Panel();
             picIconEdit2 = new PictureBox();
             lblSupprArretHead = new Label();
             lblSupprArret = new Label();
-            panel4 = new Panel();
+            pnlSep11 = new Panel();
             pnlChangerNom = new Panel();
             picIconEdit4 = new PictureBox();
             lblChangerNomHead = new Label();
@@ -91,7 +91,7 @@
             btnValidSuppr = new Button();
             txtSupprConfirmer = new TextBox();
             lblSupprConfirmer = new Label();
-            panel5 = new Panel();
+            pnlSep7 = new Panel();
             lblTitreSupprVerif = new Label();
             pnlArretChangeNom = new Panel();
             btnChangeNomValider = new Button();
@@ -102,17 +102,19 @@
             pnlArretModifLigne = new Panel();
             cmbArretModifLigneChoixSuppr = new ComboBox();
             lblArretModifLigneSuppr = new Label();
-            panel2 = new Panel();
+            pnlSep13 = new Panel();
             btnArretModifLigneValider = new Button();
             cmbArretModifLigneChoixAdd = new ComboBox();
             lblArretModifLigneAdd = new Label();
-            panel8 = new Panel();
+            pnlSep8 = new Panel();
             lblArretModifLigneHead = new Label();
             pnlModifHoraire = new Panel();
+            chkNePasChanger = new CheckBox();
+            lblZero = new Label();
             dtpHoraireDepart = new DateTimePicker();
-            numericUpDown1 = new NumericUpDown();
+            nudIntervalle = new NumericUpDown();
             lblChangerIntervalle = new Label();
-            panel10 = new Panel();
+            pnlSep9 = new Panel();
             btnValiderChoixHoraire = new Button();
             lblChangerDepart = new Label();
             panel11 = new Panel();
@@ -121,15 +123,15 @@
             btnRetirerArret = new Button();
             cmbLigneRetraitArret = new ComboBox();
             lblLigneRetraitArret = new Label();
-            panel12 = new Panel();
+            pnlSep6 = new Panel();
             lblLigneRetraitArretHead = new Label();
             pnlLigneAjoutArret = new Panel();
             nudChoixPlace = new NumericUpDown();
             lblChoixPlace = new Label();
             picCreerArretBonus = new PictureBox();
             lblCreerArretBonus = new Label();
-            panel13 = new Panel();
-            panel9 = new Panel();
+            pnlSep4 = new Panel();
+            pnlSep5 = new Panel();
             btnValiderAjoutArret = new Button();
             cmbLigneAjoutArret = new ComboBox();
             lblLigneAjoutArret = new Label();
@@ -143,12 +145,12 @@
             picIconEdit6 = new PictureBox();
             lblMenuAjoutArretHead = new Label();
             lblMenuAjoutArret = new Label();
-            panel15 = new Panel();
+            pnlSep1 = new Panel();
             pnlMenuSupprLigne = new Panel();
             picIconEdit9 = new PictureBox();
             lblLigneSupprHead = new Label();
             lblLigneSuppr = new Label();
-            panel17 = new Panel();
+            pnlSep2 = new Panel();
             pnlMenuLigneChangeNom = new Panel();
             picIconEdit8 = new PictureBox();
             lblLigneChangeNomHead = new Label();
@@ -160,6 +162,7 @@
             lblMenuModifHoraire = new Label();
             lblTitreModifLigneChoisie = new Label();
             lblSSTitreModifLigneChoisie = new Label();
+            btnDeconnecter = new Button();
             pnlTitre.SuspendLayout();
             pnlMenuCreation.SuspendLayout();
             pnlCreerArret.SuspendLayout();
@@ -184,7 +187,7 @@
             pnlArretChangeNom.SuspendLayout();
             pnlArretModifLigne.SuspendLayout();
             pnlModifHoraire.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudIntervalle).BeginInit();
             pnlRetirerArret.SuspendLayout();
             pnlLigneAjoutArret.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudChoixPlace).BeginInit();
@@ -495,9 +498,9 @@
             pnlCreation.Controls.Add(btnArretCreationValider);
             pnlCreation.Controls.Add(txtSaisirNom);
             pnlCreation.Controls.Add(lblSaisirNom);
-            pnlCreation.Controls.Add(panel1);
+            pnlCreation.Controls.Add(pnlSep10);
             pnlCreation.Controls.Add(lblSaisirNomHead);
-            pnlCreation.Location = new Point(691, 174);
+            pnlCreation.Location = new Point(88, 51);
             pnlCreation.Name = "pnlCreation";
             pnlCreation.Size = new Size(240, 150);
             pnlCreation.TabIndex = 13;
@@ -512,6 +515,7 @@
             btnArretCreationValider.TabIndex = 14;
             btnArretCreationValider.Text = "Valider";
             btnArretCreationValider.UseVisualStyleBackColor = true;
+            btnArretCreationValider.Click += btnArretCreationValider_Click;
             // 
             // txtSaisirNom
             // 
@@ -529,13 +533,13 @@
             lblSaisirNom.TabIndex = 12;
             lblSaisirNom.Text = "Saisir le nom";
             // 
-            // panel1
+            // pnlSep10
             // 
-            panel1.BackColor = Color.DimGray;
-            panel1.Location = new Point(21, 27);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(165, 1);
-            panel1.TabIndex = 12;
+            pnlSep10.BackColor = Color.DimGray;
+            pnlSep10.Location = new Point(21, 27);
+            pnlSep10.Name = "pnlSep10";
+            pnlSep10.Size = new Size(165, 1);
+            pnlSep10.TabIndex = 12;
             // 
             // lblSaisirNomHead
             // 
@@ -568,9 +572,9 @@
             pnlModifChoix.Controls.Add(btnValiderChoix);
             pnlModifChoix.Controls.Add(cmbChoix);
             pnlModifChoix.Controls.Add(lblModif);
-            pnlModifChoix.Controls.Add(panel3);
+            pnlModifChoix.Controls.Add(pnlSep3);
             pnlModifChoix.Controls.Add(lblModifHead);
-            pnlModifChoix.Location = new Point(691, 18);
+            pnlModifChoix.Location = new Point(691, 162);
             pnlModifChoix.Name = "pnlModifChoix";
             pnlModifChoix.Size = new Size(240, 150);
             pnlModifChoix.TabIndex = 15;
@@ -607,13 +611,13 @@
             lblModif.TabIndex = 12;
             lblModif.Text = "Choisir l'arrêt à modifier";
             // 
-            // panel3
+            // pnlSep3
             // 
-            panel3.BackColor = Color.DimGray;
-            panel3.Location = new Point(21, 27);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(165, 1);
-            panel3.TabIndex = 12;
+            pnlSep3.BackColor = Color.DimGray;
+            pnlSep3.Location = new Point(21, 27);
+            pnlSep3.Name = "pnlSep3";
+            pnlSep3.Size = new Size(165, 1);
+            pnlSep3.TabIndex = 12;
             // 
             // lblModifHead
             // 
@@ -631,9 +635,9 @@
             // 
             pnlModifArretChoisi.BackColor = Color.White;
             pnlModifArretChoisi.BorderStyle = BorderStyle.FixedSingle;
-            pnlModifArretChoisi.Controls.Add(panel7);
+            pnlModifArretChoisi.Controls.Add(pnlSep12);
             pnlModifArretChoisi.Controls.Add(pnlSupprArret);
-            pnlModifArretChoisi.Controls.Add(panel4);
+            pnlModifArretChoisi.Controls.Add(pnlSep11);
             pnlModifArretChoisi.Controls.Add(pnlChangerNom);
             pnlModifArretChoisi.Controls.Add(pnlModifAppartenance);
             pnlModifArretChoisi.Controls.Add(lblTitreModifArretChoisi);
@@ -644,13 +648,13 @@
             pnlModifArretChoisi.TabIndex = 16;
             pnlModifArretChoisi.Visible = false;
             // 
-            // panel7
+            // pnlSep12
             // 
-            panel7.BackColor = Color.DimGray;
-            panel7.Location = new Point(29, 162);
-            panel7.Name = "panel7";
-            panel7.Size = new Size(235, 1);
-            panel7.TabIndex = 12;
+            pnlSep12.BackColor = Color.DimGray;
+            pnlSep12.Location = new Point(29, 162);
+            pnlSep12.Name = "pnlSep12";
+            pnlSep12.Size = new Size(235, 1);
+            pnlSep12.TabIndex = 12;
             // 
             // pnlSupprArret
             // 
@@ -698,13 +702,13 @@
             lblSupprArret.Text = "Retirer cet arrêt de la BDD";
             lblSupprArret.Click += pnlSupprArret_Click;
             // 
-            // panel4
+            // pnlSep11
             // 
-            panel4.BackColor = Color.DimGray;
-            panel4.Location = new Point(29, 49);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(235, 1);
-            panel4.TabIndex = 11;
+            pnlSep11.BackColor = Color.DimGray;
+            pnlSep11.Location = new Point(29, 49);
+            pnlSep11.Name = "pnlSep11";
+            pnlSep11.Size = new Size(235, 1);
+            pnlSep11.TabIndex = 11;
             // 
             // pnlChangerNom
             // 
@@ -836,7 +840,7 @@
             pnlSupprVerif.Controls.Add(btnValidSuppr);
             pnlSupprVerif.Controls.Add(txtSupprConfirmer);
             pnlSupprVerif.Controls.Add(lblSupprConfirmer);
-            pnlSupprVerif.Controls.Add(panel5);
+            pnlSupprVerif.Controls.Add(pnlSep7);
             pnlSupprVerif.Controls.Add(lblTitreSupprVerif);
             pnlSupprVerif.Location = new Point(691, 7);
             pnlSupprVerif.Name = "pnlSupprVerif";
@@ -865,6 +869,7 @@
             btnValidSuppr.TabIndex = 14;
             btnValidSuppr.Text = "Valider";
             btnValidSuppr.UseVisualStyleBackColor = true;
+            btnValidSuppr.Click += btnValidSuppr_Click;
             // 
             // txtSupprConfirmer
             // 
@@ -882,13 +887,13 @@
             lblSupprConfirmer.TabIndex = 12;
             lblSupprConfirmer.Text = "Écrire \"CONFIRMER\"";
             // 
-            // panel5
+            // pnlSep7
             // 
-            panel5.BackColor = Color.DimGray;
-            panel5.Location = new Point(21, 52);
-            panel5.Name = "panel5";
-            panel5.Size = new Size(165, 1);
-            panel5.TabIndex = 12;
+            pnlSep7.BackColor = Color.DimGray;
+            pnlSep7.Location = new Point(21, 52);
+            pnlSep7.Name = "pnlSep7";
+            pnlSep7.Size = new Size(165, 1);
+            pnlSep7.TabIndex = 12;
             // 
             // lblTitreSupprVerif
             // 
@@ -911,7 +916,7 @@
             pnlArretChangeNom.Controls.Add(lblChangeNom);
             pnlArretChangeNom.Controls.Add(panel6);
             pnlArretChangeNom.Controls.Add(lblChangeNomHead);
-            pnlArretChangeNom.Location = new Point(691, 499);
+            pnlArretChangeNom.Location = new Point(691, 592);
             pnlArretChangeNom.Name = "pnlArretChangeNom";
             pnlArretChangeNom.Size = new Size(240, 150);
             pnlArretChangeNom.TabIndex = 15;
@@ -926,6 +931,7 @@
             btnChangeNomValider.TabIndex = 14;
             btnChangeNomValider.Text = "Valider";
             btnChangeNomValider.UseVisualStyleBackColor = true;
+            btnChangeNomValider.Click += btnChangeNomValider_Click;
             // 
             // txtChangeNom
             // 
@@ -969,11 +975,11 @@
             pnlArretModifLigne.BorderStyle = BorderStyle.FixedSingle;
             pnlArretModifLigne.Controls.Add(cmbArretModifLigneChoixSuppr);
             pnlArretModifLigne.Controls.Add(lblArretModifLigneSuppr);
-            pnlArretModifLigne.Controls.Add(panel2);
+            pnlArretModifLigne.Controls.Add(pnlSep13);
             pnlArretModifLigne.Controls.Add(btnArretModifLigneValider);
             pnlArretModifLigne.Controls.Add(cmbArretModifLigneChoixAdd);
             pnlArretModifLigne.Controls.Add(lblArretModifLigneAdd);
-            pnlArretModifLigne.Controls.Add(panel8);
+            pnlArretModifLigne.Controls.Add(pnlSep8);
             pnlArretModifLigne.Controls.Add(lblArretModifLigneHead);
             pnlArretModifLigne.Location = new Point(691, 655);
             pnlArretModifLigne.Name = "pnlArretModifLigne";
@@ -1001,13 +1007,13 @@
             lblArretModifLigneSuppr.TabIndex = 16;
             lblArretModifLigneSuppr.Text = "Choisir à quelle ligne retirer cet arrêt";
             // 
-            // panel2
+            // pnlSep13
             // 
-            panel2.BackColor = Color.DimGray;
-            panel2.Location = new Point(21, 99);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(165, 1);
-            panel2.TabIndex = 13;
+            pnlSep13.BackColor = Color.DimGray;
+            pnlSep13.Location = new Point(21, 99);
+            pnlSep13.Name = "pnlSep13";
+            pnlSep13.Size = new Size(165, 1);
+            pnlSep13.TabIndex = 13;
             // 
             // btnArretModifLigneValider
             // 
@@ -1039,13 +1045,13 @@
             lblArretModifLigneAdd.TabIndex = 12;
             lblArretModifLigneAdd.Text = "Choisir à quelle ligne ajouter cet arrêt";
             // 
-            // panel8
+            // pnlSep8
             // 
-            panel8.BackColor = Color.DimGray;
-            panel8.Location = new Point(21, 27);
-            panel8.Name = "panel8";
-            panel8.Size = new Size(165, 1);
-            panel8.TabIndex = 12;
+            pnlSep8.BackColor = Color.DimGray;
+            pnlSep8.Location = new Point(21, 27);
+            pnlSep8.Name = "pnlSep8";
+            pnlSep8.Size = new Size(165, 1);
+            pnlSep8.TabIndex = 12;
             // 
             // lblArretModifLigneHead
             // 
@@ -1063,37 +1069,63 @@
             // 
             pnlModifHoraire.BackColor = Color.White;
             pnlModifHoraire.BorderStyle = BorderStyle.FixedSingle;
+            pnlModifHoraire.Controls.Add(chkNePasChanger);
+            pnlModifHoraire.Controls.Add(lblZero);
             pnlModifHoraire.Controls.Add(dtpHoraireDepart);
-            pnlModifHoraire.Controls.Add(numericUpDown1);
+            pnlModifHoraire.Controls.Add(nudIntervalle);
             pnlModifHoraire.Controls.Add(lblChangerIntervalle);
-            pnlModifHoraire.Controls.Add(panel10);
+            pnlModifHoraire.Controls.Add(pnlSep9);
             pnlModifHoraire.Controls.Add(btnValiderChoixHoraire);
             pnlModifHoraire.Controls.Add(lblChangerDepart);
             pnlModifHoraire.Controls.Add(panel11);
             pnlModifHoraire.Controls.Add(lblModifHoraire);
-            pnlModifHoraire.Location = new Point(691, 381);
+            pnlModifHoraire.Location = new Point(691, 590);
             pnlModifHoraire.Name = "pnlModifHoraire";
             pnlModifHoraire.Size = new Size(240, 200);
             pnlModifHoraire.TabIndex = 18;
             pnlModifHoraire.Visible = false;
             // 
+            // chkNePasChanger
+            // 
+            chkNePasChanger.AutoSize = true;
+            chkNePasChanger.Location = new Point(85, 65);
+            chkNePasChanger.Name = "chkNePasChanger";
+            chkNePasChanger.Size = new Size(154, 19);
+            chkNePasChanger.TabIndex = 20;
+            chkNePasChanger.Text = "Ne pas changer l'horaire";
+            chkNePasChanger.UseVisualStyleBackColor = true;
+            chkNePasChanger.CheckedChanged += chkNePasChanger_CheckedChanged;
+            // 
+            // lblZero
+            // 
+            lblZero.AutoSize = true;
+            lblZero.ForeColor = SystemColors.ControlDark;
+            lblZero.Location = new Point(70, 131);
+            lblZero.Name = "lblZero";
+            lblZero.Size = new Size(144, 15);
+            lblZero.TabIndex = 19;
+            lblZero.Text = "- 0 pour ne pas le changer";
+            // 
             // dtpHoraireDepart
             // 
+            dtpHoraireDepart.CalendarTitleBackColor = SystemColors.ControlText;
+            dtpHoraireDepart.CalendarTitleForeColor = SystemColors.ButtonHighlight;
             dtpHoraireDepart.CustomFormat = "HH:mm";
             dtpHoraireDepart.Format = DateTimePickerFormat.Custom;
-            dtpHoraireDepart.Location = new Point(21, 57);
+            dtpHoraireDepart.Location = new Point(21, 62);
             dtpHoraireDepart.Name = "dtpHoraireDepart";
-            dtpHoraireDepart.Size = new Size(48, 23);
+            dtpHoraireDepart.ShowUpDown = true;
+            dtpHoraireDepart.Size = new Size(59, 23);
             dtpHoraireDepart.TabIndex = 18;
             dtpHoraireDepart.Value = new DateTime(2025, 5, 21, 18, 26, 0, 0);
             // 
-            // numericUpDown1
+            // nudIntervalle
             // 
-            numericUpDown1.Increment = new decimal(new int[] { 5, 0, 0, 0 });
-            numericUpDown1.Location = new Point(21, 128);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(48, 23);
-            numericUpDown1.TabIndex = 17;
+            nudIntervalle.Increment = new decimal(new int[] { 5, 0, 0, 0 });
+            nudIntervalle.Location = new Point(21, 128);
+            nudIntervalle.Name = "nudIntervalle";
+            nudIntervalle.Size = new Size(48, 23);
+            nudIntervalle.TabIndex = 17;
             // 
             // lblChangerIntervalle
             // 
@@ -1104,13 +1136,13 @@
             lblChangerIntervalle.TabIndex = 16;
             lblChangerIntervalle.Text = "Choisir le nouvel intervalle de départ";
             // 
-            // panel10
+            // pnlSep9
             // 
-            panel10.BackColor = Color.DimGray;
-            panel10.Location = new Point(20, 100);
-            panel10.Name = "panel10";
-            panel10.Size = new Size(200, 1);
-            panel10.TabIndex = 13;
+            pnlSep9.BackColor = Color.DimGray;
+            pnlSep9.Location = new Point(20, 100);
+            pnlSep9.Name = "pnlSep9";
+            pnlSep9.Size = new Size(200, 1);
+            pnlSep9.TabIndex = 13;
             // 
             // btnValiderChoixHoraire
             // 
@@ -1121,6 +1153,7 @@
             btnValiderChoixHoraire.TabIndex = 15;
             btnValiderChoixHoraire.Text = "Valider";
             btnValiderChoixHoraire.UseVisualStyleBackColor = true;
+            btnValiderChoixHoraire.Click += btnValiderChoixHoraire_Click;
             // 
             // lblChangerDepart
             // 
@@ -1158,9 +1191,9 @@
             pnlRetirerArret.Controls.Add(btnRetirerArret);
             pnlRetirerArret.Controls.Add(cmbLigneRetraitArret);
             pnlRetirerArret.Controls.Add(lblLigneRetraitArret);
-            pnlRetirerArret.Controls.Add(panel12);
+            pnlRetirerArret.Controls.Add(pnlSep6);
             pnlRetirerArret.Controls.Add(lblLigneRetraitArretHead);
-            pnlRetirerArret.Location = new Point(691, 326);
+            pnlRetirerArret.Location = new Point(691, 436);
             pnlRetirerArret.Name = "pnlRetirerArret";
             pnlRetirerArret.Size = new Size(240, 150);
             pnlRetirerArret.TabIndex = 16;
@@ -1197,13 +1230,13 @@
             lblLigneRetraitArret.TabIndex = 12;
             lblLigneRetraitArret.Text = "Choisir l'arrêt à retirer";
             // 
-            // panel12
+            // pnlSep6
             // 
-            panel12.BackColor = Color.DimGray;
-            panel12.Location = new Point(21, 27);
-            panel12.Name = "panel12";
-            panel12.Size = new Size(165, 1);
-            panel12.TabIndex = 12;
+            pnlSep6.BackColor = Color.DimGray;
+            pnlSep6.Location = new Point(21, 27);
+            pnlSep6.Name = "pnlSep6";
+            pnlSep6.Size = new Size(165, 1);
+            pnlSep6.TabIndex = 12;
             // 
             // lblLigneRetraitArretHead
             // 
@@ -1225,8 +1258,8 @@
             pnlLigneAjoutArret.Controls.Add(lblChoixPlace);
             pnlLigneAjoutArret.Controls.Add(picCreerArretBonus);
             pnlLigneAjoutArret.Controls.Add(lblCreerArretBonus);
-            pnlLigneAjoutArret.Controls.Add(panel13);
-            pnlLigneAjoutArret.Controls.Add(panel9);
+            pnlLigneAjoutArret.Controls.Add(pnlSep4);
+            pnlLigneAjoutArret.Controls.Add(pnlSep5);
             pnlLigneAjoutArret.Controls.Add(btnValiderAjoutArret);
             pnlLigneAjoutArret.Controls.Add(cmbLigneAjoutArret);
             pnlLigneAjoutArret.Controls.Add(lblLigneAjoutArret);
@@ -1280,21 +1313,21 @@
             lblCreerArretBonus.Text = "Créer un arrêt";
             lblCreerArretBonus.Click += pnlCreerArret_Click;
             // 
-            // panel13
+            // pnlSep4
             // 
-            panel13.BackColor = Color.DimGray;
-            panel13.Location = new Point(21, 31);
-            panel13.Name = "panel13";
-            panel13.Size = new Size(200, 1);
-            panel13.TabIndex = 17;
+            pnlSep4.BackColor = Color.DimGray;
+            pnlSep4.Location = new Point(21, 31);
+            pnlSep4.Name = "pnlSep4";
+            pnlSep4.Size = new Size(200, 1);
+            pnlSep4.TabIndex = 17;
             // 
-            // panel9
+            // pnlSep5
             // 
-            panel9.BackColor = Color.DimGray;
-            panel9.Location = new Point(21, 202);
-            panel9.Name = "panel9";
-            panel9.Size = new Size(200, 1);
-            panel9.TabIndex = 16;
+            pnlSep5.BackColor = Color.DimGray;
+            pnlSep5.Location = new Point(21, 202);
+            pnlSep5.Name = "pnlSep5";
+            pnlSep5.Size = new Size(200, 1);
+            pnlSep5.TabIndex = 16;
             // 
             // btnValiderAjoutArret
             // 
@@ -1345,14 +1378,14 @@
             pnlModifLigneChoisie.BorderStyle = BorderStyle.FixedSingle;
             pnlModifLigneChoisie.Controls.Add(pnlMenuRetraitArret);
             pnlModifLigneChoisie.Controls.Add(pnlMenuAjoutArret);
-            pnlModifLigneChoisie.Controls.Add(panel15);
+            pnlModifLigneChoisie.Controls.Add(pnlSep1);
             pnlModifLigneChoisie.Controls.Add(pnlMenuSupprLigne);
-            pnlModifLigneChoisie.Controls.Add(panel17);
+            pnlModifLigneChoisie.Controls.Add(pnlSep2);
             pnlModifLigneChoisie.Controls.Add(pnlMenuLigneChangeNom);
             pnlModifLigneChoisie.Controls.Add(pnlMenuModifHoraire);
             pnlModifLigneChoisie.Controls.Add(lblTitreModifLigneChoisie);
             pnlModifLigneChoisie.Controls.Add(lblSSTitreModifLigneChoisie);
-            pnlModifLigneChoisie.Location = new Point(252, 469);
+            pnlModifLigneChoisie.Location = new Point(251, 467);
             pnlModifLigneChoisie.Name = "pnlModifLigneChoisie";
             pnlModifLigneChoisie.Size = new Size(302, 448);
             pnlModifLigneChoisie.TabIndex = 17;
@@ -1450,13 +1483,13 @@
             lblMenuAjoutArret.Text = "Ajout d'un arrêt dans la ligne";
             lblMenuAjoutArret.Click += pnlMenuAjoutArret_Click;
             // 
-            // panel15
+            // pnlSep1
             // 
-            panel15.BackColor = Color.DimGray;
-            panel15.Location = new Point(33, 290);
-            panel15.Name = "panel15";
-            panel15.Size = new Size(235, 1);
-            panel15.TabIndex = 12;
+            pnlSep1.BackColor = Color.DimGray;
+            pnlSep1.Location = new Point(33, 290);
+            pnlSep1.Name = "pnlSep1";
+            pnlSep1.Size = new Size(235, 1);
+            pnlSep1.TabIndex = 12;
             // 
             // pnlMenuSupprLigne
             // 
@@ -1489,9 +1522,9 @@
             lblLigneSupprHead.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblLigneSupprHead.Location = new Point(27, 9);
             lblLigneSupprHead.Name = "lblLigneSupprHead";
-            lblLigneSupprHead.Size = new Size(126, 17);
+            lblLigneSupprHead.Size = new Size(118, 17);
             lblLigneSupprHead.TabIndex = 7;
-            lblLigneSupprHead.Text = "Supprimer cet arrêt";
+            lblLigneSupprHead.Text = "Supprimer la ligne";
             lblLigneSupprHead.Click += pnlMenuSupprLigne_Click;
             // 
             // lblLigneSuppr
@@ -1499,18 +1532,18 @@
             lblLigneSuppr.AutoSize = true;
             lblLigneSuppr.Location = new Point(27, 33);
             lblLigneSuppr.Name = "lblLigneSuppr";
-            lblLigneSuppr.Size = new Size(141, 15);
+            lblLigneSuppr.Size = new Size(153, 15);
             lblLigneSuppr.TabIndex = 8;
-            lblLigneSuppr.Text = "Retirer cet arrêt de la BDD";
+            lblLigneSuppr.Text = "Retirer cette ligne de la BDD";
             lblLigneSuppr.Click += pnlMenuSupprLigne_Click;
             // 
-            // panel17
+            // pnlSep2
             // 
-            panel17.BackColor = Color.DimGray;
-            panel17.Location = new Point(29, 49);
-            panel17.Name = "panel17";
-            panel17.Size = new Size(235, 1);
-            panel17.TabIndex = 11;
+            pnlSep2.BackColor = Color.DimGray;
+            pnlSep2.Location = new Point(29, 49);
+            pnlSep2.Name = "pnlSep2";
+            pnlSep2.Size = new Size(235, 1);
+            pnlSep2.TabIndex = 11;
             // 
             // pnlMenuLigneChangeNom
             // 
@@ -1553,9 +1586,9 @@
             lblLigneChangeNom.AutoSize = true;
             lblLigneChangeNom.Location = new Point(27, 33);
             lblLigneChangeNom.Name = "lblLigneChangeNom";
-            lblLigneChangeNom.Size = new Size(171, 15);
+            lblLigneChangeNom.Size = new Size(166, 15);
             lblLigneChangeNom.TabIndex = 8;
-            lblLigneChangeNom.Text = "Modifie le nom de l'arrêt choisi";
+            lblLigneChangeNom.Text = "Modifier le nom de cette ligne";
             lblLigneChangeNom.Click += pnlMenuLigneChangeNom_Click;
             // 
             // pnlMenuModifHoraire
@@ -1634,11 +1667,24 @@
             lblSSTitreModifLigneChoisie.TabIndex = 0;
             lblSSTitreModifLigneChoisie.Text = "Menu de modification";
             // 
+            // btnDeconnecter
+            // 
+            btnDeconnecter.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnDeconnecter.AutoSize = true;
+            btnDeconnecter.Location = new Point(1145, 644);
+            btnDeconnecter.Name = "btnDeconnecter";
+            btnDeconnecter.Size = new Size(107, 25);
+            btnDeconnecter.TabIndex = 19;
+            btnDeconnecter.Text = "Se déconnecter";
+            btnDeconnecter.UseVisualStyleBackColor = true;
+            btnDeconnecter.Click += btnDeconnecter_Click;
+            // 
             // MenuAdmin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 681);
+            Controls.Add(btnDeconnecter);
             Controls.Add(pnlModifLigneChoisie);
             Controls.Add(pnlModifChoix);
             Controls.Add(pnlLigneAjoutArret);
@@ -1696,7 +1742,7 @@
             pnlArretModifLigne.PerformLayout();
             pnlModifHoraire.ResumeLayout(false);
             pnlModifHoraire.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudIntervalle).EndInit();
             pnlRetirerArret.ResumeLayout(false);
             pnlRetirerArret.PerformLayout();
             pnlLigneAjoutArret.ResumeLayout(false);
@@ -1755,18 +1801,18 @@
         private Panel pnlCreation;
         private Label lblSaisirNomHead;
         private Label lblSaisirNom;
-        private Panel panel1;
+        private Panel pnlSep10;
         private Button btnArretCreationValider;
         private TextBox txtSaisirNom;
         private Button btnMenu;
         private Panel pnlModifChoix;
         private Label lblModif;
-        private Panel panel3;
+        private Panel pnlSep3;
         private Label lblModifHead;
         private Button btnValiderChoix;
         private ComboBox cmbChoix;
         private Panel pnlModifArretChoisi;
-        private Panel panel4;
+        private Panel pnlSep11;
         private Panel pnlChangerNom;
         private PictureBox picIconEdit4;
         private Label lblChangerNomHead;
@@ -1777,7 +1823,7 @@
         private Label lblModifAppartenance1;
         private Label lblTitreModifArretChoisi;
         private Label lblSSTitreModifArretChoisi;
-        private Panel panel7;
+        private Panel pnlSep12;
         private Panel pnlSupprArret;
         private PictureBox picIconEdit2;
         private Label lblSupprArretHead;
@@ -1788,7 +1834,7 @@
         private Button btnValidSuppr;
         private TextBox txtSupprConfirmer;
         private Label lblSupprConfirmer;
-        private Panel panel5;
+        private Panel pnlSep7;
         private Label lblTitreSupprVerif;
         private Panel pnlArretChangeNom;
         private Button btnChangeNomValider;
@@ -1800,15 +1846,15 @@
         private Button btnArretModifLigneValider;
         private ComboBox cmbArretModifLigneChoixAdd;
         private Label lblArretModifLigneAdd;
-        private Panel panel8;
+        private Panel pnlSep8;
         private Label lblArretModifLigneHead;
-        private Panel panel2;
+        private Panel pnlSep13;
         private ComboBox cmbArretModifLigneChoixSuppr;
         private Label lblArretModifLigneSuppr;
         private Panel pnlModifHoraire;
-        private NumericUpDown numericUpDown1;
+        private NumericUpDown nudIntervalle;
         private Label lblChangerIntervalle;
-        private Panel panel10;
+        private Panel pnlSep9;
         private Button btnValiderChoixHoraire;
         private Label lblChangerDepart;
         private Panel panel11;
@@ -1818,24 +1864,24 @@
         private Button btnRetirerArret;
         private ComboBox cmbLigneRetraitArret;
         private Label lblLigneRetraitArret;
-        private Panel panel12;
+        private Panel pnlSep6;
         private Label lblLigneRetraitArretHead;
         private Panel pnlLigneAjoutArret;
         private Button btnValiderAjoutArret;
         private ComboBox cmbLigneAjoutArret;
         private Label lblLigneAjoutArret;
         private Label lblLigneAjoutArretHead;
-        private Panel panel13;
-        private Panel panel9;
+        private Panel pnlSep4;
+        private Panel pnlSep5;
         private PictureBox picCreerArretBonus;
         private Label lblCreerArretBonus;
         private Panel pnlModifLigneChoisie;
-        private Panel panel15;
+        private Panel pnlSep1;
         private Panel pnlMenuSupprLigne;
         private PictureBox picIconEdit9;
         private Label lblLigneSupprHead;
         private Label lblLigneSuppr;
-        private Panel panel17;
+        private Panel pnlSep2;
         private Panel pnlMenuLigneChangeNom;
         private PictureBox picIconEdit8;
         private Label lblLigneChangeNomHead;
@@ -1857,5 +1903,8 @@
         private Label lblMenuAjoutArret;
         private NumericUpDown nudChoixPlace;
         private Label lblChoixPlace;
+        private Label lblZero;
+        private CheckBox chkNePasChanger;
+        private Button btnDeconnecter;
     }
 }

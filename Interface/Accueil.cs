@@ -115,8 +115,20 @@ namespace SAE_S2
             this.Hide();
 
             // Créer et afficher le formulaire de login
-            Login login = new Login();
-            login.ShowDialog();
+            if (Login.estConnecte == true)
+            {
+                // Si l'utilisateur est déjà connecté, on ouvre le menu admin
+                MenuAdmin menuAdmin = new MenuAdmin();
+                menuAdmin.ShowDialog();
+                this.Show(); // On revient à l'accueil après la fermeture du menu admin
+                return;
+            }
+            else
+            {
+                Login login = new Login();
+                login.ShowDialog();
+            }
+                
 
             // Une fois le formulaire de login fermé, on revient à l'accueil
             this.Show();

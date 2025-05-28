@@ -13,7 +13,9 @@ namespace SAE_S2
 {
     public partial class Login : Form
     {
-
+        public static bool estConnecte = false; // Indique si l'utilisateur est connecté ou non (admin)
+        string username = "admin";
+        string password = "admin";
         private void Login_Load(object sender, EventArgs e)
         {
             Utils.CentrerControle(pnlLogin);
@@ -41,7 +43,7 @@ namespace SAE_S2
                 txtMdp.UseSystemPasswordChar = true;
             }
         }
-        
+
         private void lblUsername_Click(object sender, EventArgs e)
         {
             txtUsername.Focus();
@@ -51,7 +53,7 @@ namespace SAE_S2
         {
             txtMdp.Focus();
         }
-        
+
         private void btnMenu_Click(object sender, EventArgs e)
         {
             this.Dispose();
@@ -60,6 +62,21 @@ namespace SAE_S2
         public Login()
         {
             InitializeComponent();
+        }
+
+        private void btnConnexion_Click(object sender, EventArgs e)
+        {
+            if (txtUsername.Text == username && txtMdp.Text == password)
+            {
+                estConnecte = true;
+                MessageBox.Show("Connexion réussie !", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.DialogResult = DialogResult.OK; // Indique que la connexion a réussi
+                this.Close(); // Ferme la fenêtre de connexion
+            }
+            else
+            {
+                MessageBox.Show("Identifiant ou mot de passe incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

@@ -20,6 +20,7 @@ namespace SAE_S2
         {
             InitializeComponent();
             formAccueil = accueil;
+            Utils.RemplirComboBox(cmbChoixLigne, ChargerDonnees.toutesLesLignes, "NomLigne", "IdLigne");
         }
 
         private void btnMenu_Click(object sender, EventArgs e)
@@ -37,7 +38,7 @@ namespace SAE_S2
         private void btnValiderChoix_Click(object sender, EventArgs e)
         {
             BDD.OuvrirConnexion();
-            int idLigne = 1; //TODO : Récupérer l'ID de la ligne sélectionnée dans cmbChoixLigne
+            int idLigne = (int)cmbChoixLigne.SelectedValue;
             Affichage.AfficherLigneComplete(idLigne, dgvLigne);
         }
     }

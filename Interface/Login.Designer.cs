@@ -75,6 +75,7 @@
             btnConnexion.TabIndex = 4;
             btnConnexion.Text = "Se connecter";
             btnConnexion.UseVisualStyleBackColor = true;
+            btnConnexion.Click += btnConnexion_Click;
             // 
             // txtMdp
             // 

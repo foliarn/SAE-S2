@@ -1,12 +1,11 @@
-﻿using BiblioSysteme;
-using BiblioBDD;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BiblioBDD;
 
-namespace SAE_S2.Classes
+namespace BiblioSysteme
 {
     public static class ChargerDonnees
     {
@@ -83,10 +82,6 @@ namespace SAE_S2.Classes
 
             return arretsFiltres;
         }
-
-        /// <summary>
-        /// Charge tous les arrêts sau
-        /// </summary>
 
         // Méthodes pour actualiser chaque type de données
         public static void ActualiserLignes()

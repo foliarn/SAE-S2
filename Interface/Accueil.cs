@@ -128,7 +128,7 @@ namespace SAE_S2
                 Login login = new Login();
                 login.ShowDialog();
             }
-                
+
 
             // Une fois le formulaire de login fermé, on revient à l'accueil
             this.Show();
@@ -149,6 +149,14 @@ namespace SAE_S2
         {
             MenuAdmin menuAdmin = new MenuAdmin();
             menuAdmin.ShowDialog();
+        }
+
+        private void btnTrouver_Click(object sender, EventArgs e)
+        {
+            PageItineraire pageItineraire = new PageItineraire(this);
+            pageItineraire.Show();
+
+            this.Hide();
         }
     }
 }

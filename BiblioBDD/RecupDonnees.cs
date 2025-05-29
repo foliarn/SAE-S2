@@ -11,10 +11,32 @@ namespace BiblioBDD
 {
     public static class RecupDonnees
     {
+        // Déclaration des requêtes multi-lignes afin d'améliorer la lisibilité
+        private static string requeteGetToutesLesLignes = @"
+                    SELECT l.id_ligne, l.nom_ligne, l.description, 
+                        h.premier_depart, h.dernier_depart, h.intervalle_minutes
+                    FROM Lignes l
+                    LEFT JOIN Horaires_Lignes h ON l.id_ligne = h.id_ligne";
+
+        private static string requeteGetArretsParLigne = @"
+                    SELECT a.id_arret, a.nom_arret, la.Ordre
+                    FROM Arrets a
+                    INNER JOIN Lignes_Arrets la ON a.id_arret = la.id_arret
+                    WHERE la.id_ligne = @idLigne
+                    ORDER BY la.Ordre";
+
+        private static string requeteGetLigneParId = @"
+                    SELECT l.id_ligne, l.nom_ligne, l.description, 
+                           h.premier_depart, h.dernier_depart, h.intervalle_minutes
+                    FROM Lignes l
+                    LEFT JOIN Horaires_Lignes h ON l.id_ligne = h.id_ligne
+                    WHERE l.id_ligne = @idLigne";
+
+
         /// <summary>
         /// Récupère toutes les lignes de la base de données
         /// </summary>
-        /// <returns>Liste des lignes ou null en cas d'erreur</returns>
+        /// <returns>Liste des lignes ou liste vide en cas d'erreur</returns>
         public static List<Ligne> GetToutesLesLignes()
         {
             try
@@ -22,17 +44,13 @@ namespace BiblioBDD
                 if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
                 {
                     System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
-                    return null;
+                    return [];
                 }
 
                 var lignes = new List<Ligne>();
-                string requete = @"
-                    SELECT l.id_ligne, l.nom_ligne, l.description, 
-                        h.premier_depart, h.dernier_depart, h.intervalle_minutes
-                    FROM Lignes l
-                    LEFT JOIN Horaires_Lignes h ON l.id_ligne = h.id_ligne";
 
-                using (var cmd = new MySqlCommand(requete, BDD.conn))
+
+                using (var cmd = new MySqlCommand(requeteGetToutesLesLignes, BDD.conn))
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -60,7 +78,7 @@ namespace BiblioBDD
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des lignes : {ex.Message}");
-                return null;
+                return [];
             }
         }
 
@@ -76,17 +94,10 @@ namespace BiblioBDD
                 if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
                 {
                     System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
-                    return null;
+                    return new Ligne();
                 }
 
-                string requete = @"
-                    SELECT l.id_ligne, l.nom_ligne, l.description, 
-                           h.premier_depart, h.dernier_depart, h.intervalle_minutes
-                    FROM Lignes l
-                    LEFT JOIN Horaires_Lignes h ON l.id_ligne = h.id_ligne
-                    WHERE l.id_ligne = @idLigne";
-
-                using (var cmd = new MySqlCommand(requete, BDD.conn))
+                using (var cmd = new MySqlCommand(requeteGetLigneParId, BDD.conn))
                 {
                     cmd.Parameters.AddWithValue("@idLigne", idLigne);
 
@@ -113,19 +124,19 @@ namespace BiblioBDD
                     }
                 }
 
-                return null;
+                return new Ligne();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération de la ligne : {ex.Message}");
-                return null;
+                return new Ligne();
             }
         }
 
         /// <summary>
         /// Récupère tous les arrêts
         /// </summary>
-        /// <returns>Liste des arrêts ou null en cas d'erreur</returns>
+        /// <returns>Liste des arrêts ou liste vide en cas d'erreur</returns>
         public static List<Arret> GetTousLesArrets()
         {
             try
@@ -133,7 +144,7 @@ namespace BiblioBDD
                 if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
                 {
                     System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
-                    return new List<Arret>();
+                    return [];
                 }
 
                 var arrets = new List<Arret>();
@@ -157,7 +168,7 @@ namespace BiblioBDD
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des arrêts : {ex.Message}");
-                return new List<Arret>();
+                return [];
             }
         }
 
@@ -165,7 +176,7 @@ namespace BiblioBDD
         /// Récupère les arrêts d'une ligne dans l'ordre
         /// </summary>
         /// <param name="idLigne">ID de la ligne</param>
-        /// <returns>Liste des arrêts ordonnés ou null en cas d'erreur</returns>
+        /// <returns>Liste des arrêts ordonnés ou liste vide en cas d'erreur</returns>
         public static List<Arret> GetArretsParLigne(int idLigne)
         {
             try
@@ -173,18 +184,12 @@ namespace BiblioBDD
                 if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
                 {
                     System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
-                    return null;
+                    return [];
                 }
 
                 var arrets = new List<Arret>();
-                string requete = @"
-                    SELECT a.id_arret, a.nom_arret, la.Ordre
-                    FROM Arrets a
-                    INNER JOIN Lignes_Arrets la ON a.id_arret = la.id_arret
-                    WHERE la.id_ligne = @idLigne
-                    ORDER BY la.Ordre";
 
-                using (var cmd = new MySqlCommand(requete, BDD.conn))
+                using (var cmd = new MySqlCommand(requeteGetArretsParLigne, BDD.conn))
                 {
                     cmd.Parameters.AddWithValue("@idLigne", idLigne);
 
@@ -206,7 +211,7 @@ namespace BiblioBDD
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des arrêts de la ligne : {ex.Message}");
-                return null;
+                return [];
             }
         }
 
@@ -214,7 +219,7 @@ namespace BiblioBDD
         /// Récupère une ligne complète avec tous ses arrêts et horaires
         /// </summary>
         /// <param name="idLigne">ID de la ligne</param>
-        /// <returns>Ligne complète ou null en cas d'erreur</returns>
+        /// <returns>Ligne complète ou ligne vide en cas d'erreur</returns>
         public static Ligne GetLigneComplete(int idLigne)
         {
             try
@@ -223,7 +228,7 @@ namespace BiblioBDD
                 var ligne = GetLigneParId(idLigne);
                 if (ligne == null)
                 {
-                    return null;
+                    return new Ligne();
                 }
 
                 // Récupérer les arrêts de cette ligne
@@ -242,14 +247,14 @@ namespace BiblioBDD
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération de la ligne complète : {ex.Message}");
-                return null;
+                return new Ligne();
             }
         }
 
         /// <summary>
         /// Récupère toutes les lignes avec leurs arrêts
         /// </summary>
-        /// <returns>Liste des lignes complètes ou null en cas d'erreur</returns>
+        /// <returns>Liste des lignes complètes ou liste vide en cas d'erreur</returns>
         public static List<Ligne> GetToutesLesLignesCompletes()
         {
             try
@@ -257,7 +262,7 @@ namespace BiblioBDD
                 var lignes = GetToutesLesLignes();
                 if (lignes == null)
                 {
-                    return null;
+                    return [];
                 }
 
                 foreach (var ligne in lignes)
@@ -277,7 +282,7 @@ namespace BiblioBDD
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des lignes complètes : {ex.Message}");
-                return null;
+                return [];
             }
         }
     }

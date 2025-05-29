@@ -1,8 +1,7 @@
-﻿// BiblioSysteme/Arret.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BiblioSysteme.GestionTransport;
+using BiblioSysteme;
 
 namespace BiblioSysteme
 {
@@ -66,6 +65,7 @@ namespace BiblioSysteme
                 Lignes.Add(ligne);
                 return true;
             }
+
             catch (ArgumentNullException ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur - Paramètre null : {ex.Message}");

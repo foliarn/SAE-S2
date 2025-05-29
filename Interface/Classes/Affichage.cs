@@ -11,7 +11,7 @@ namespace SAE_S2.Classes
 {
     public static class Affichage
     {
-        public class ArretHoraireViewModel
+        public class ArretHoraire // ??
         {
             public string NomArret { get; set; }
             public string Horaires { get; set; } // Format texte pour affichage
@@ -29,7 +29,7 @@ namespace SAE_S2.Classes
                 return;
             }
 
-            var liste = new List<ArretHoraireViewModel>();
+            var liste = new List<ArretHoraire>();
 
             foreach (var arret in ligne.Arrets)
             {
@@ -37,7 +37,7 @@ namespace SAE_S2.Classes
                 var horaires = ligne.GetHorairesPourArret(arret);
                 string horairesStr = string.Join(" - ", horaires.Select(h => h.ToString(@"hh\:mm")));
 
-                liste.Add(new ArretHoraireViewModel
+                liste.Add(new ArretHoraire
                 {
                     NomArret = arret.NomArret,
                     Horaires = horairesStr
@@ -60,13 +60,13 @@ namespace SAE_S2.Classes
 
             if (dgv.Columns["colHoraires"] == null)
             {
-                var colH = new DataGridViewTextBoxColumn
+                var colHoraire = new DataGridViewTextBoxColumn
                 {
                     Name = "colHoraires",
                     HeaderText = "Horaires",
                     DataPropertyName = "Horaires"
                 };
-                dgv.Columns.Add(colH);
+                dgv.Columns.Add(colHoraire);
             }
 
             dgv.DataSource = liste;

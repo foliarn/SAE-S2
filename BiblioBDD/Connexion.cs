@@ -26,24 +26,5 @@ namespace BiblioBDD
                 return false;
             }
         }
-
-        public static bool FermerConnexion()
-        {
-            try
-            {
-                if (conn != null && conn.State == System.Data.ConnectionState.Open)
-                {
-                    conn.Close();
-                    conn.Dispose();
-                    return true;
-                }
-                return false;
-            }
-            catch (MySqlException ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Erreur lors de la fermeture de la connexion : {ex.Message}");
-                return false;
-            }
-        }
     }
 }

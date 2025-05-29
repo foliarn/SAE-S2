@@ -12,11 +12,30 @@ namespace BiblioBDD
     public static class ModifBDD
     {
         /// <summary>
+        /// Exécute une requête SQL avec des paramètres
+        /// </summary>
+        /// <param name="requete">La requête SQL à exécuter</param>
+        /// <param name="parametres">Les paramètres de la requête</param>
+        public static void ExecuterRequete(string requete, params MySqlParameter[] parametres)
+        {
+            using (var cmd = new MySqlCommand(requete, BDD.conn))
+            {
+                if (parametres != null)
+                {
+                    foreach (var param in parametres)
+                    {
+                        cmd.Parameters.Add(param);
+                    }
+                }
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
         /// Ajoute une ligne à la base de données.
         /// </summary>
         /// <param name="ligne">La ligne à ajouter.</param>"
         /// <returns>True si l'opération a réussi, et False sinon</returns>
-
         public static bool AjouterLigne(Ligne ligne)
         {
             // Requête pour insérer la ligne
@@ -40,11 +59,7 @@ namespace BiblioBDD
                         (id_ligne, premier_depart, dernier_depart, intervalle_minutes) 
                         VALUES (@idLigne, '06:00:00', '22:00:00', 15);";
 
-                    using (var cmdHoraire = new MySqlCommand(requeteHoraire, BDD.conn))
-                    {
-                        cmdHoraire.Parameters.AddWithValue("@idLigne", idLigne);
-                        cmdHoraire.ExecuteNonQuery();
-                    }
+                    ExecuterRequete(requeteHoraire, new MySqlParameter("@idLigne", idLigne));
 
                     return true;
                 }
@@ -56,49 +71,34 @@ namespace BiblioBDD
             }
         }
 
-
-/// <summary>
-/// Retire une ligne de la base de données.
-/// </summary>
-/// <param name="idLigne">L'ID de la ligne à retirer.</param>
-/// <returns>True si l'opération a réussi, False sinon</returns>
-public static bool RetirerLigne(int idLigne)
-{
-    try
-    {
-        // 1. Supprimer les entrées dans Lignes_Arrets
-        string requeteArrets = "DELETE FROM Lignes_Arrets WHERE id_ligne = @idLigne";
-        using (var cmdArrets = new MySqlCommand(requeteArrets, BDD.conn))
+        /// <summary>
+        /// Retire une ligne de la base de données.
+        /// </summary>
+        /// <param name="idLigne">L'ID de la ligne à retirer.</param>
+        /// <returns>True si l'opération a réussi, False sinon</returns>
+        public static bool RetirerLigne(int idLigne)
         {
-            cmdArrets.Parameters.AddWithValue("@idLigne", idLigne);
-            cmdArrets.ExecuteNonQuery();
+            try
+            {
+                var idParam = new MySqlParameter("@idLigne", idLigne);
+
+                // 1. Supprimer les entrées dans Lignes_Arrets
+                ExecuterRequete("DELETE FROM Lignes_Arrets WHERE id_ligne = @idLigne", idParam);
+
+                // 2. Supprimer les entrées dans Horaires_Lignes
+                ExecuterRequete("DELETE FROM Horaires_Lignes WHERE id_ligne = @idLigne", idParam);
+
+                // 3. Supprimer la ligne dans Lignes
+                ExecuterRequete("DELETE FROM Lignes WHERE id_ligne = @idLigne", idParam);
+
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
+                return false;
+            }
         }
-
-        // 2. Supprimer les entrées dans Horaires_Lignes
-        string requeteHoraires = "DELETE FROM Horaires_Lignes WHERE id_ligne = @idLigne";
-        using (var cmdHoraires = new MySqlCommand(requeteHoraires, BDD.conn))
-        {
-            cmdHoraires.Parameters.AddWithValue("@idLigne", idLigne);
-            cmdHoraires.ExecuteNonQuery();
-        }
-
-        // 3. Supprimer la ligne dans Lignes
-        string requeteLigne = "DELETE FROM Lignes WHERE id_ligne = @idLigne";
-        using (var cmdLigne = new MySqlCommand(requeteLigne, BDD.conn))
-        {
-            cmdLigne.Parameters.AddWithValue("@idLigne", idLigne);
-            cmdLigne.ExecuteNonQuery();
-        }
-
-        return true;
-    }
-    catch (MySqlException ex)
-    {
-        System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
-        return false;
-    }
-}
-
 
         /// <summary>
         /// Ajoute un arrêt à la base de données.
@@ -107,20 +107,16 @@ public static bool RetirerLigne(int idLigne)
         /// <returns>True si l'opération a réussi, False sinon</returns>
         public static bool AjouterArret(Arret arret)
         {
-            string requete = "INSERT INTO Arrets (nom_arret) VALUES (@nom)";
-            using (var cmd = new MySqlCommand(requete, BDD.conn))
+            try
             {
-                cmd.Parameters.AddWithValue("@nom", arret.NomArret);
-                try
-                {
-                    cmd.ExecuteNonQuery();
-                    return true;
-                }
-                catch (MySqlException ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
-                    return false;
-                }
+                ExecuterRequete("INSERT INTO Arrets (nom_arret) VALUES (@nom)",
+                    new MySqlParameter("@nom", arret.NomArret));
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
+                return false;
             }
         }
 
@@ -131,22 +127,19 @@ public static bool RetirerLigne(int idLigne)
         /// <returns>True si l'opération a réussi, False sinon</returns>
         public static bool RetirerArret(int idArret)
         {
-            string requete = "DELETE FROM Arrets WHERE id_arret = @idArret";
-            using (var cmd = new MySqlCommand(requete, BDD.conn))
+            try
             {
-                cmd.Parameters.AddWithValue("@idArret", idArret);
-                try
-                {
-                    cmd.ExecuteNonQuery();
-                    return true;
-                }
-                catch (MySqlException ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
-                    return false;
-                }
+                ExecuterRequete("DELETE FROM Arrets WHERE id_arret = @idArret",
+                    new MySqlParameter("@idArret", idArret));
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
+                return false;
             }
         }
+
         /// <summary>
         /// Change le nom d'un arrêt ou d'une ligne dans la BDD
         /// </summary>
@@ -155,43 +148,26 @@ public static bool RetirerLigne(int idLigne)
         /// <returns>Vrai si l'opération a réussi, False sinon</returns>
         public static bool ChangerNom(int id, string nouveauNom, bool isLigne)
         {
-            if (isLigne)
+            try
             {
-                string requete = "UPDATE Lignes SET nom_ligne = @nom WHERE id_ligne = @id";
-                using (var cmd = new MySqlCommand(requete, BDD.conn))
+                if (isLigne)
                 {
-                    cmd.Parameters.AddWithValue("@nom", nouveauNom);
-                    cmd.Parameters.AddWithValue("@id", id);
-                    try
-                    {
-                        cmd.ExecuteNonQuery();
-                        return true;
-                    }
-                    catch (MySqlException ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
-                        return false;
-                    }
+                    ExecuterRequete("UPDATE Lignes SET nom_ligne = @nom WHERE id_ligne = @id",
+                        new MySqlParameter("@nom", nouveauNom),
+                        new MySqlParameter("@id", id));
                 }
+                else
+                {
+                    ExecuterRequete("UPDATE Arrets SET nom_arret = @nom WHERE id_arret = @id",
+                        new MySqlParameter("@nom", nouveauNom),
+                        new MySqlParameter("@id", id));
+                }
+                return true;
             }
-            else
+            catch (MySqlException ex)
             {
-                string requete = "UPDATE Arrets SET nom_arret = @nom WHERE id_arret = @id";
-                using (var cmd = new MySqlCommand(requete, BDD.conn))
-                {
-                    cmd.Parameters.AddWithValue("@nom", nouveauNom);
-                    cmd.Parameters.AddWithValue("@id", id);
-                    try
-                    {
-                        cmd.ExecuteNonQuery();
-                        return true;
-                    }
-                    catch (MySqlException ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
-                        return false;
-                    }
-                }
+                System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
+                return false;
             }
         }
 
@@ -206,18 +182,15 @@ public static bool RetirerLigne(int idLigne)
         {
             try
             {
-                //Insérer le nouvel arrêt avec l'ordre choisi
                 string requeteInsert = @"
                     INSERT INTO Lignes_Arrets (id_ligne, id_arret, ordre, temps_depart)
                     VALUES (@idLigne, @idArret, @ordre, 99);";
 
-                using (var insertCmd = new MySqlCommand(requeteInsert, BDD.conn))
-                {
-                    insertCmd.Parameters.AddWithValue("@idLigne", idLigne);
-                    insertCmd.Parameters.AddWithValue("@idArret", idArret);
-                    insertCmd.Parameters.AddWithValue("@ordre", ordre);
-                    insertCmd.ExecuteNonQuery();
-                }
+                ExecuterRequete(requeteInsert,
+                    new MySqlParameter("@idLigne", idLigne),
+                    new MySqlParameter("@idArret", idArret),
+                    new MySqlParameter("@ordre", ordre));
+
                 return true;
             }
             catch (MySqlException ex)
@@ -238,13 +211,9 @@ public static bool RetirerLigne(int idLigne)
             try
             {
                 // Supprimer l'arrêt de la ligne (pas globalement)
-                string requeteDelete = "DELETE FROM Lignes_Arrets WHERE id_ligne = @idLigne AND id_arret = @idArret";
-                using (var cmd = new MySqlCommand(requeteDelete, BDD.conn))
-                {
-                    cmd.Parameters.AddWithValue("@idLigne", idLigne);
-                    cmd.Parameters.AddWithValue("@idArret", idArret);
-                    cmd.ExecuteNonQuery();
-                }
+                ExecuterRequete("DELETE FROM Lignes_Arrets WHERE id_ligne = @idLigne AND id_arret = @idArret",
+                    new MySqlParameter("@idLigne", idLigne),
+                    new MySqlParameter("@idArret", idArret));
 
                 // Réordonner les arrêts de cette ligne uniquement
                 ReordonnerArretsLigne(idLigne);
@@ -266,21 +235,17 @@ public static bool RetirerLigne(int idLigne)
         /// <returns>True si l'opération a réussi, False sinon</returns>
         public static bool ModifierHoraireDepart(int idLigne, TimeSpan horaireDepart)
         {
-            string requete = "UPDATE Horaires_Lignes SET premier_depart = @horaireDepart WHERE id_ligne = @idLigne";
-            using (var cmd = new MySqlCommand(requete, BDD.conn))
+            try
             {
-                cmd.Parameters.AddWithValue("@horaireDepart", horaireDepart);
-                cmd.Parameters.AddWithValue("@idLigne", idLigne);
-                try
-                {
-                    cmd.ExecuteNonQuery();
-                    return true;
-                }
-                catch (MySqlException ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
-                    return false;
-                }
+                ExecuterRequete("UPDATE Horaires_Lignes SET premier_depart = @horaireDepart WHERE id_ligne = @idLigne",
+                    new MySqlParameter("@horaireDepart", horaireDepart),
+                    new MySqlParameter("@idLigne", idLigne));
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
+                return false;
             }
         }
 
@@ -292,21 +257,17 @@ public static bool RetirerLigne(int idLigne)
         /// <returns>True si l'opération a réussi, False sinon</returns>    
         public static bool ModifierIntervalleDepart(int idLigne, int intervalleDepart)
         {
-            string requete = "UPDATE Horaires_Lignes SET intervalle_minutes = @intervalleDepart WHERE id_ligne = @idLigne";
-            using (var cmd = new MySqlCommand(requete, BDD.conn))
+            try
             {
-                cmd.Parameters.AddWithValue("@intervalleDepart", intervalleDepart);
-                cmd.Parameters.AddWithValue("@idLigne", idLigne);
-                try
-                {
-                    cmd.ExecuteNonQuery();
-                    return true;
-                }
-                catch (MySqlException ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
-                    return false;
-                }
+                ExecuterRequete("UPDATE Horaires_Lignes SET intervalle_minutes = @intervalleDepart WHERE id_ligne = @idLigne",
+                    new MySqlParameter("@intervalleDepart", intervalleDepart),
+                    new MySqlParameter("@idLigne", idLigne));
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
+                return false;
             }
         }
 
@@ -348,22 +309,18 @@ public static bool RetirerLigne(int idLigne)
                             return true; // Pas d'erreur, juste rien à faire
                         }
 
-                        // 2. Réécrire les ordres proprement
+                        // 2. Réécrire les ordres proprement using ExecuterRequete
                         string updateQuery = @"
                             UPDATE Lignes_Arrets 
                             SET ordre = @ordre 
                             WHERE id_ligne = @idLigne AND id_arret = @idArret;";
 
-                        using (var cmdUpdate = new MySqlCommand(updateQuery, BDD.conn))
+                        foreach (var idArret in arrets.Select((value, index) => new { value, index }))
                         {
-                            foreach (var idArret in arrets.Select((value, index) => new { value, index }))
-                            {
-                                cmdUpdate.Parameters.Clear();
-                                cmdUpdate.Parameters.AddWithValue("@ordre", idArret.index + 1);
-                                cmdUpdate.Parameters.AddWithValue("@idLigne", idLigne);
-                                cmdUpdate.Parameters.AddWithValue("@idArret", idArret.value);
-                                cmdUpdate.ExecuteNonQuery();
-                            }
+                            ExecuterRequete(updateQuery,
+                                new MySqlParameter("@ordre", idArret.index + 1),
+                                new MySqlParameter("@idLigne", idLigne),
+                                new MySqlParameter("@idArret", idArret.value));
                         }
                     }
                 }
@@ -376,7 +333,5 @@ public static bool RetirerLigne(int idLigne)
                 return false;
             }
         }
-
-
     }
 }

@@ -1,17 +1,6 @@
 ﻿using BiblioBDD;
 using BiblioSysteme;
 using SAE_S2.Classes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static SAE_S2.Classes.Utils;
 
 namespace SAE_S2
 {
@@ -51,6 +40,7 @@ namespace SAE_S2
         public Accueil()
         {
             InitializeComponent();
+            this.AutoScaleMode = AutoScaleMode.Dpi;
             BDD.OuvrirConnexion(); // Ouvre la connexion à la base de données
             ChargerDonnees.tousLesArrets = ChargerDonnees.ChargerTousLesArrets(); // Charge tous les arrêts depuis la base de données
             ChargerDonnees.toutesLesLignes = ChargerDonnees.ChargerToutesLesLignes(); // Charge toutes les lignes depuis la base de données

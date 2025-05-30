@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SAE_S2.Classes;
 
 namespace SAE_S2
 {
@@ -17,9 +18,17 @@ namespace SAE_S2
         {
             InitializeComponent();
             formAccueil = accueil;
+            Utils.CentrerControle(pnlRecherche, false, true);
+            Utils.CentrerControle(pnlItineraire1, false, true);
+            Utils.CentrerControle(pnlItineraire2, false, true);
         }
 
         private void PageItineraire_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label11_Click(object sender, EventArgs e)
         {
 
         }

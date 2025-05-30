@@ -154,7 +154,7 @@ namespace Interface
                     return;
                 }
 
-                // === RÉCUPÉRATION DES ARRÊTS ===
+                // === RÉCUPÉRATION DES ARRÊTS ===  
                 var arretDepart = cmbDepart.SelectedItem as Arret;
                 var arretDestination = cmbDest.SelectedItem as Arret;
 

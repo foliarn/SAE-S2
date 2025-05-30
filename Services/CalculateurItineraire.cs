@@ -105,16 +105,16 @@ namespace Services
         }
 
         /// <summary>
-        /// Alternative : Utiliser une List + tri manuel au lieu de SortedSet
-        /// Cette méthode est plus robuste et évite complètement le problème des doublons
+        /// VERSION OPTIMISÉE de l'algorithme de Dijkstra pour les transports en commun
         /// </summary>
         private List<CheminTransport> DijkstraTransport(Arret arretDepart, Arret arretDestination, ParametresRecherche parametres)
         {
-            var chemins = new List<CheminTransport>();  
+            var chemins = new List<CheminTransport>();
             var distancesMinimales = new Dictionary<int, TimeSpan>();
-            var noeudsATraiter = new List<NoeudDijkstra>(); // Remplace SortedSet
+            var noeudsVisites = new HashSet<int>(); // AJOUT : éviter de retraiter les mêmes arrêts
+            var noeudsATraiter = new List<NoeudDijkstra>();
 
-            // Vérifier que les arrêts existent dans notre cache
+            // Vérifications initiales
             if (!_horairesCache.ContainsKey(arretDepart.IdArret))
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur : Arrêt de départ {arretDepart.NomArret} non trouvé dans le cache");
@@ -140,26 +140,47 @@ namespace Services
             noeudsATraiter.Add(noeudDepart);
             distancesMinimales[arretDepart.IdArret] = TimeSpan.Zero;
 
-            System.Diagnostics.Debug.WriteLine($"Démarrage Dijkstra : {arretDepart.NomArret} → {arretDestination.NomArret} à {parametres.HeureSouhaitee}");
+            System.Diagnostics.Debug.WriteLine($"Démarrage Dijkstra optimisé : {arretDepart.NomArret} → {arretDestination.NomArret} à {parametres.HeureSouhaitee}");
 
-            int iterationsMax = 1000;
+            // OPTIMISATION : Limites plus strictes
+            int iterationsMax = 1000; // Réduit de 1000 à 50
             int iteration = 0;
+            var tempsLimite = parametres.HeureSouhaitee.Add(TimeSpan.FromMinutes(90)); // Limite à 90 minutes
 
-            while (noeudsATraiter.Count > 0 && chemins.Count < ParametresRecherche.NombreMaxItineraires && iteration < iterationsMax)
+            while (noeudsATraiter.Count > 0 &&
+                   chemins.Count < ParametresRecherche.NombreMaxItineraires &&
+                   iteration < iterationsMax)
             {
                 iteration++;
 
-                // Trier et prendre le meilleur nœud (équivalent de SortedSet.Min)
-                noeudsATraiter.Sort((a, b) => {
-                    var compareTemps = a.TempsTotal.CompareTo(b.TempsTotal);
-                    if (compareTemps != 0) return compareTemps;
-                    return a.NombreCorrespondances.CompareTo(b.NombreCorrespondances);
-                });
+                // OPTIMISATION : Trier seulement quand nécessaire (tous les 5 nœuds)
+                if (iteration % 5 == 1 || noeudsATraiter.Count < 10)
+                {
+                    noeudsATraiter.Sort((a, b) => {
+                        var compareTemps = a.TempsTotal.CompareTo(b.TempsTotal);
+                        if (compareTemps != 0) return compareTemps;
+                        return a.NombreCorrespondances.CompareTo(b.NombreCorrespondances);
+                    });
+                }
 
                 var noeudActuel = noeudsATraiter[0];
                 noeudsATraiter.RemoveAt(0);
 
-                System.Diagnostics.Debug.WriteLine($"Itération {iteration}: Traitement arrêt {ObtenirArret(noeudActuel.ArretId)?.NomArret} (temps: {noeudActuel.TempsTotal.TotalMinutes:F1}min)");
+                // OPTIMISATION : Éviter de retraiter les mêmes arrêts avec un temps plus long
+                string cleNoeud = $"{noeudActuel.ArretId}_{noeudActuel.HeureArrivee.Hours}_{noeudActuel.HeureArrivee.Minutes}";
+                if (noeudsVisites.Contains(noeudActuel.ArretId))
+                {
+                    // Si on a déjà visité cet arrêt avec un meilleur temps, ignorer
+                    if (distancesMinimales.TryGetValue(noeudActuel.ArretId, out var tempsPrecedent) &&
+                        noeudActuel.TempsTotal >= tempsPrecedent.Add(TimeSpan.FromMinutes(5))) // Tolérance de 5 min
+                    {
+                        continue;
+                    }
+                }
+
+                noeudsVisites.Add(noeudActuel.ArretId);
+
+                System.Diagnostics.Debug.WriteLine($"Itération {iteration}: {ObtenirArret(noeudActuel.ArretId)?.NomArret} (temps: {noeudActuel.TempsTotal.TotalMinutes:F0}min)");
 
                 // Si on a atteint la destination
                 if (noeudActuel.ArretId == arretDestination.IdArret)
@@ -171,22 +192,19 @@ namespace Services
                         NombreCorrespondances = noeudActuel.NombreCorrespondances
                     };
                     chemins.Add(chemin);
-                    System.Diagnostics.Debug.WriteLine($"Chemin trouvé ! {chemin.Etapes.Count} étapes, {chemin.TempsTotal.TotalMinutes:F0} min");
+                    System.Diagnostics.Debug.WriteLine($"✅ Chemin {chemins.Count} trouvé ! {chemin.Etapes.Count} étapes, {chemin.TempsTotal.TotalMinutes:F0} min");
                     continue;
                 }
 
-                // Vérifier si on a déjà trouvé un chemin plus court vers cet arrêt
-                if (distancesMinimales.TryGetValue(noeudActuel.ArretId, out var distanceConnue))
+                // OPTIMISATION : Arrêt précoce si on dépasse la limite de temps
+                if (noeudActuel.HeureArrivee > tempsLimite)
                 {
-                    if (noeudActuel.TempsTotal > distanceConnue)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Chemin plus long ignoré vers {ObtenirArret(noeudActuel.ArretId)?.NomArret}");
-                        continue;
-                    }
+                    System.Diagnostics.Debug.WriteLine($"Arrêt précoce : dépassement limite de temps");
+                    break;
                 }
 
-                // Explorer les voisins
-                ExplorerVoisins(noeudActuel, noeudsATraiter, parametres, distancesMinimales);
+                // Explorer les voisins avec contraintes plus strictes
+                ExplorerVoisinsOptimise(noeudActuel, noeudsATraiter, parametres, distancesMinimales, arretDestination.IdArret);
             }
 
             System.Diagnostics.Debug.WriteLine($"Dijkstra terminé après {iteration} itérations, {chemins.Count} chemins trouvés");
@@ -194,69 +212,65 @@ namespace Services
         }
 
         /// <summary>
-        /// Version améliorée d'ExplorerVoisinsAlternatif avec plus de debug
+        /// VERSION OPTIMISÉE de l'exploration des voisins
         /// </summary>
-        private void ExplorerVoisins(NoeudDijkstra noeudActuel, List<NoeudDijkstra> noeudsATraiter,
-            ParametresRecherche parametres, Dictionary<int, TimeSpan> distancesMinimales)
+        private void ExplorerVoisinsOptimise(NoeudDijkstra noeudActuel, List<NoeudDijkstra> noeudsATraiter,
+            ParametresRecherche parametres, Dictionary<int, TimeSpan> distancesMinimales, int arretDestinationId)
         {
             var arretActuel = ObtenirArret(noeudActuel.ArretId);
 
-            // AJOUT : Debug du cache pour cet arrêt si pas d'horaires
             if (!_horairesCache.ContainsKey(noeudActuel.ArretId))
             {
-                System.Diagnostics.Debug.WriteLine($"ERREUR: Arrêt {arretActuel?.NomArret} (ID: {noeudActuel.ArretId}) absent du cache !");
                 return;
             }
 
-            // Obtenir les horaires disponibles à partir de cet arrêt
-            var horairesDisponibles = ObtenirHorairesDepuis(noeudActuel.ArretId, noeudActuel.HeureArrivee, parametres);
+            // OPTIMISATION : Récupérer moins d'horaires mais de meilleure qualité
+            var horairesDisponibles = ObtenirHorairesDepuisOptimise(noeudActuel.ArretId, noeudActuel.HeureArrivee, parametres, arretDestinationId);
 
-            System.Diagnostics.Debug.WriteLine($"Exploration depuis {arretActuel?.NomArret}: {horairesDisponibles.Count} horaires disponibles");
-
-            // Si pas d'horaires, débugger le cache
-            if (horairesDisponibles.Count == 0)
-            {
-                System.Diagnostics.Debug.WriteLine($"PROBLÈME: Aucun horaire disponible depuis {arretActuel?.NomArret} après {noeudActuel.HeureArrivee}");
-                DebugCacheArret(noeudActuel.ArretId);
-            }
+            System.Diagnostics.Debug.WriteLine($"Exploration depuis {arretActuel?.NomArret}: {horairesDisponibles.Count} horaires sélectionnés");
 
             foreach (var horaire in horairesDisponibles)
             {
-                // Vérifier que l'arrêt de destination existe
+                // Vérifications de base
                 if (!_arretsParId.ContainsKey(horaire.ArretDestinationId))
-                {
-                    System.Diagnostics.Debug.WriteLine($"ERREUR: Arrêt destination ID {horaire.ArretDestinationId} inexistant");
                     continue;
-                }
 
-                // CORRECTION : Calcul du temps total plus robuste
-                TimeSpan nouveauTempsTotal;
+                // OPTIMISATION : Calculer le temps total de manière plus efficace
+                var nouveauTempsTotal = horaire.HeureArrivee - parametres.HeureSouhaitee;
 
-                if (horaire.HeureArrivee >= parametres.HeureSouhaitee)
-                {
-                    // Cas normal : même jour
-                    nouveauTempsTotal = horaire.HeureArrivee - parametres.HeureSouhaitee;
-                }
-                else
-                {
-                    // Cas rare : passage à minuit
-                    nouveauTempsTotal = horaire.HeureArrivee.Add(TimeSpan.FromDays(1)) - parametres.HeureSouhaitee;
-                }
+                // Gérer le passage à minuit (rare)
+                if (nouveauTempsTotal < TimeSpan.Zero)
+                    nouveauTempsTotal = nouveauTempsTotal.Add(TimeSpan.FromDays(1));
 
-                // Vérifier les contraintes de temps (plus permissif)
-                if (nouveauTempsTotal > parametres.TempsMaxRecherche)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Horaire écarté: temps total {nouveauTempsTotal.TotalMinutes:F0}min > limite {parametres.TempsMaxRecherche.TotalMinutes}min");
+                // OPTIMISATION : Contraintes plus strictes sur le temps
+                if (nouveauTempsTotal > TimeSpan.FromMinutes(90)) // Limite à 90 minutes
                     continue;
-                }
 
-                // Vérifier si on a déjà un meilleur chemin vers cette destination
+                // OPTIMISATION : Éviter les détours évidents
                 if (distancesMinimales.TryGetValue(horaire.ArretDestinationId, out var distanceConnue))
                 {
-                    if (nouveauTempsTotal >= distanceConnue)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Chemin vers {ObtenirArret(horaire.ArretDestinationId)?.NomArret} ignoré (temps {nouveauTempsTotal.TotalMinutes:F0}min >= {distanceConnue.TotalMinutes:F0}min)");
+                    if (nouveauTempsTotal >= distanceConnue.Add(TimeSpan.FromMinutes(10))) // Tolérance réduite
                         continue;
+                }
+
+                // OPTIMISATION : Limiter le nombre de correspondances plus strictement
+                var nombreCorrespondances = noeudActuel.NombreCorrespondances;
+                if (noeudActuel.CheminParcouru.Count > 0)
+                {
+                    var derniereEtape = noeudActuel.CheminParcouru.Last();
+                    if (derniereEtape.LigneId != horaire.LigneId)
+                    {
+                        nombreCorrespondances++;
+
+                        // OPTIMISATION : Maximum 2 correspondances
+                        if (nombreCorrespondances > 2)
+                            continue;
+
+                        // Vérifier le temps de correspondance
+                        var tempsCorrespondance = horaire.HeureDepart - noeudActuel.HeureArrivee;
+                        if (tempsCorrespondance < parametres.TempsCorrespondanceMin ||
+                            tempsCorrespondance > parametres.TempsCorrespondanceMax)
+                            continue;
                     }
                 }
 
@@ -267,179 +281,63 @@ namespace Services
                     TempsTotal = nouveauTempsTotal,
                     HeureArrivee = horaire.HeureArrivee,
                     CheminParcouru = new List<EtapeTransport>(noeudActuel.CheminParcouru),
-                    NombreCorrespondances = noeudActuel.NombreCorrespondances
+                    NombreCorrespondances = nombreCorrespondances
                 };
 
                 // Ajouter la nouvelle étape
-                var nouvelleEtape = new EtapeTransport
+                nouveauNoeud.CheminParcouru.Add(new EtapeTransport
                 {
                     ArretDepartId = noeudActuel.ArretId,
                     ArretDestinationId = horaire.ArretDestinationId,
                     LigneId = horaire.LigneId,
                     HeureDepart = horaire.HeureDepart,
                     HeureArrivee = horaire.HeureArrivee
-                };
+                });
 
-                nouveauNoeud.CheminParcouru.Add(nouvelleEtape);
-
-                // Compter les correspondances
-                if (noeudActuel.CheminParcouru.Count > 0)
-                {
-                    var derniereEtape = noeudActuel.CheminParcouru.Last();
-                    if (derniereEtape.LigneId != horaire.LigneId)
-                    {
-                        nouveauNoeud.NombreCorrespondances++;
-                    }
-                }
-
-                // Mettre à jour la distance minimale connue
+                // Mettre à jour la distance minimale
                 distancesMinimales[horaire.ArretDestinationId] = nouveauTempsTotal;
 
-                // Ajouter à la liste des nœuds à traiter
-                noeudsATraiter.Add(nouveauNoeud);
-
-                var arretDest = ObtenirArret(horaire.ArretDestinationId);
-                var ligneNom = ObtenirLigne(horaire.LigneId)?.NomLigne;
-                System.Diagnostics.Debug.WriteLine($"  → Ajout connexion vers {arretDest?.NomArret} (ligne {ligneNom}, temps total: {nouveauTempsTotal.TotalMinutes:F0}min)");
+                // OPTIMISATION : Limiter la taille de la file d'attente
+                if (noeudsATraiter.Count < 100) // Maximum 100 nœuds en attente
+                {
+                    noeudsATraiter.Add(nouveauNoeud);
+                }
             }
         }
 
         /// <summary>
-        /// Explore les arrêts voisins accessibles depuis le nœud actuel
+        /// VERSION OPTIMISÉE de la récupération des horaires
         /// </summary>
-        private void ExplorerVoisins2(NoeudDijkstra noeudActuel, SortedSet<NoeudDijkstra> filePriorite,
-            ParametresRecherche parametres, Dictionary<int, TimeSpan> distancesMinimales)
-        {
-            // Obtenir les horaires disponibles à partir de cet arrêt
-            var horairesDisponibles = ObtenirHorairesDepuis(noeudActuel.ArretId, noeudActuel.HeureArrivee, parametres);
-
-            foreach (var horaire in horairesDisponibles)
-            {
-                // Vérifier que l'arrêt de destination existe
-                if (!_arretsParId.ContainsKey(horaire.ArretDestinationId))
-                    continue;
-
-                //// Vérifier les contraintes de correspondance
-                //if (noeudActuel.CheminParcouru.Count > 0)
-                //{
-                //    var derniereEtape = noeudActuel.CheminParcouru.Last();
-                //    var tempsAttente = horaire.HeureDepart - noeudActuel.HeureArrivee;
-
-                //    // Temps de correspondance insuffisant
-                //    if (tempsAttente < parametres.TempsCorrespondanceMin)
-                //        continue;
-
-                //    // Temps de correspondance trop long
-                //    if (tempsAttente > parametres.TempsCorrespondanceMax)
-                //        continue;
-
-                //    // Trop de correspondances
-                //    if (derniereEtape.LigneId != horaire.LigneId &&
-                //        noeudActuel.NombreCorrespondances >= parametres.NombreMaxCorrespondances)
-                //        continue;
-                //}
-
-                // Calculer le nouveau temps total
-                var nouveauTempsTotal = (horaire.HeureArrivee >= noeudActuel.HeureArrivee)
-                    ? horaire.HeureArrivee - parametres.HeureSouhaitee  // Temps depuis le début
-                    : horaire.HeureArrivee.Add(TimeSpan.FromDays(1)) - parametres.HeureSouhaitee; // Gérer le passage à minuit
-
-                // Vérifier les contraintes de temps
-                if (nouveauTempsTotal > parametres.TempsMaxRecherche)
-                    continue;
-
-                // Vérifier si on a déjà un meilleur chemin vers cette destination
-                if (distancesMinimales.TryGetValue(horaire.ArretDestinationId, out var distanceConnue))
-                {
-                    if (nouveauTempsTotal >= distanceConnue)
-                        continue; // On a déjà un meilleur chemin
-                }
-
-                // Créer le nouveau nœud
-                var nouveauNoeud = new NoeudDijkstra
-                {
-                    ArretId = horaire.ArretDestinationId,
-                    TempsTotal = nouveauTempsTotal,
-                    HeureArrivee = horaire.HeureArrivee,
-                    CheminParcouru = new List<EtapeTransport>(noeudActuel.CheminParcouru),
-                    NombreCorrespondances = noeudActuel.NombreCorrespondances
-                };
-
-                // Ajouter la nouvelle étape
-                var nouvelleEtape = new EtapeTransport
-                {
-                    ArretDepartId = noeudActuel.ArretId,
-                    ArretDestinationId = horaire.ArretDestinationId,
-                    LigneId = horaire.LigneId,
-                    HeureDepart = horaire.HeureDepart,
-                    HeureArrivee = horaire.HeureArrivee
-                };
-
-                nouveauNoeud.CheminParcouru.Add(nouvelleEtape);
-
-                // Compter les correspondances
-                if (noeudActuel.CheminParcouru.Count > 0)
-                {
-                    var derniereEtape = noeudActuel.CheminParcouru.Last();
-                    if (derniereEtape.LigneId != horaire.LigneId)
-                    {
-                        nouveauNoeud.NombreCorrespondances++;
-                    }
-                }
-
-                // Mettre à jour la distance minimale connue
-                distancesMinimales[horaire.ArretDestinationId] = nouveauTempsTotal;
-
-                // Ajouter à la file de priorité
-                filePriorite.Add(nouveauNoeud);
-            }
-        }
-
-        /// <summary>
-        /// CORRIGÉ : Obtient les horaires de départ disponibles depuis un arrêt à partir d'une heure donnée
-        /// </summary>
-        private List<HoraireArret> ObtenirHorairesDepuis(int idArret, TimeSpan heureMinimale, ParametresRecherche parametres)
+        private List<HoraireArret> ObtenirHorairesDepuisOptimise(int idArret, TimeSpan heureMinimale,
+            ParametresRecherche parametres, int arretDestinationId)
         {
             if (!_horairesCache.TryGetValue(idArret, out var tousLesHoraires))
             {
-                System.Diagnostics.Debug.WriteLine($"Aucun horaire en cache pour l'arrêt ID {idArret}");
                 return new List<HoraireArret>();
             }
 
-            System.Diagnostics.Debug.WriteLine($"Filtrage horaires pour arrêt {idArret}: {tousLesHoraires.Count} horaires en cache, heure min: {heureMinimale}");
-
-            // CORRECTION PRINCIPALE : Logique de filtrage plus permissive
+            // OPTIMISATION : Récupérer moins d'horaires mais mieux ciblés
             var horairesFilters = tousLesHoraires.Where(h =>
             {
-                // 1. L'horaire de départ doit être >= heure minimale
-                bool heureOk = h.HeureDepart >= heureMinimale;
+                // Conditions de base
+                if (h.HeureDepart < heureMinimale || h.HeureDepart >= h.HeureArrivee)
+                    return false;
 
-                // 2. Vérification de cohérence : départ < arrivée
-                bool coherenceOk = h.HeureDepart < h.HeureArrivee;
+                // OPTIMISATION : Privilégier les connexions vers la destination
+                bool versDestination = h.ArretDestinationId == arretDestinationId;
 
-                // 3. Pas de limite trop stricte sur l'heure d'arrivée
-                // (on enlève le filtre sur parametres.HeureSouhaitee + TempsMaxRecherche qui était trop restrictif)
+                // Limite de temps plus stricte
+                var duree = h.HeureArrivee - parametres.HeureSouhaitee;
+                if (duree < TimeSpan.Zero) duree = duree.Add(TimeSpan.FromDays(1));
 
-                if (!heureOk)
-                    System.Diagnostics.Debug.WriteLine($"  Horaire {h.HeureDepart} écarté (< {heureMinimale})");
-                if (!coherenceOk)
-                    System.Diagnostics.Debug.WriteLine($"  Horaire incohérent: départ {h.HeureDepart} >= arrivée {h.HeureArrivee}");
+                bool dansLesTemps = duree <= TimeSpan.FromMinutes(90);
 
-                return heureOk && coherenceOk;
+                return dansLesTemps;
             })
-            .OrderBy(h => h.HeureDepart)
-            .Take(20) // Augmenté de 50 à 20 pour le debug, mais plus permissif
+            .OrderBy(h => h.ArretDestinationId == arretDestinationId ? 0 : 1) // Priorité à la destination
+            .ThenBy(h => h.HeureDepart)
+            .Take(10) // OPTIMISATION : Maximum 10 horaires par arrêt
             .ToList();
-
-            System.Diagnostics.Debug.WriteLine($"Après filtrage: {horairesFilters.Count} horaires disponibles");
-
-            // Debug détaillé des premiers horaires
-            foreach (var h in horairesFilters.Take(3))
-            {
-                var arretDest = ObtenirArret(h.ArretDestinationId);
-                var ligne = ObtenirLigne(h.LigneId);
-                System.Diagnostics.Debug.WriteLine($"  Horaire: {h.HeureDepart} → {h.HeureArrivee} vers {arretDest?.NomArret} (ligne {ligne?.NomLigne})");
-            }
 
             return horairesFilters;
         }
@@ -521,8 +419,40 @@ namespace Services
         }
 
         /// <summary>
-        /// Initialise le cache des horaires pour optimiser les recherches
-        /// CORRIGÉ : Génère les connexions dans les deux sens
+        /// OPTIMISATION : Nettoyer le cache après initialisation pour supprimer les doublons
+        /// </summary>
+        private void OptimiserCache()
+        {
+            try
+            {
+                int horairesAvant = _horairesCache.Values.Sum(h => h.Count);
+
+                foreach (var kvp in _horairesCache.ToList())
+                {
+                    var arretId = kvp.Key;
+                    var horaires = kvp.Value;
+
+                    // Supprimer les doublons
+                    var horairesDedupliques = horaires
+                        .GroupBy(h => new { h.ArretDestinationId, h.LigneId, h.HeureDepart })
+                        .Select(g => g.First())
+                        .OrderBy(h => h.HeureDepart)
+                        .ToList();
+
+                    _horairesCache[arretId] = horairesDedupliques;
+                }
+
+                int horairesApres = _horairesCache.Values.Sum(h => h.Count);
+                System.Diagnostics.Debug.WriteLine($"Cache optimisé : {horairesAvant} → {horairesApres} horaires ({horairesAvant - horairesApres} doublons supprimés)");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur optimisation cache : {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// MISE À JOUR de InitialiserCache avec optimisation finale
         /// </summary>
         private void InitialiserCache()
         {
@@ -532,102 +462,187 @@ namespace Services
 
                 foreach (var ligne in _toutesLesLignes)
                 {
-                    // Charger les arrêts de la ligne depuis la BDD
                     var arretsLigne = ChargerDonnees.ChargerArretsParLigne(ligne.IdLigne);
                     if (arretsLigne.Count < 2) continue;
 
-                    // CORRECTION : Assigner les arrêts à la ligne
                     ligne.Arrets.Clear();
                     ligne.Arrets.AddRange(arretsLigne);
 
-                    // Générer les temps entre arrêts si pas déjà fait (3 minutes fixes)
                     if (ligne.TempsEntreArrets == null || ligne.TempsEntreArrets.Count == 0)
                     {
                         LigneService.GenererTempsEntreArrets(ligne, 3);
                     }
 
-                    // CORRECTION : Générer les connexions dans les DEUX sens
-                    // 1. Sens normal : arrêt i → arrêt i+1
-                    for (int i = 0; i < arretsLigne.Count - 1; i++)
-                    {
-                        var arretDepart = arretsLigne[i];
-                        var arretArrivee = arretsLigne[i + 1];
-
-                        GenererHorairesEntreArrets(arretDepart, arretArrivee, ligne, i);
-                    }
-
-                    // 2. Sens inverse : arrêt i+1 → arrêt i  
-                    for (int i = arretsLigne.Count - 1; i > 0; i--)
-                    {
-                        var arretDepart = arretsLigne[i];
-                        var arretArrivee = arretsLigne[i - 1];
-
-                        // Index pour les temps = même que le sens normal
-                        int indexTemps = i - 1;
-                        GenererHorairesEntreArrets(arretDepart, arretArrivee, ligne, indexTemps);
-                    }
-
-                    System.Diagnostics.Debug.WriteLine($"Ligne {ligne.NomLigne} : {arretsLigne.Count} arrêts traités (bidirectionnel)");
+                    // Générer les horaires dans les deux sens
+                    GenererHorairesEntreArrets(ligne, arretsLigne);
                 }
 
-                // Statistiques finales
+                // OPTIMISATION : Nettoyer le cache après génération
+                OptimiserCache();
+
                 var nbArrets = _horairesCache.Count;
                 var nbHoraires = _horairesCache.Values.Sum(h => h.Count);
-                System.Diagnostics.Debug.WriteLine($"Cache initialisé : {nbArrets} arrêts, {nbHoraires} horaires");
+                System.Diagnostics.Debug.WriteLine($"Cache initialisé et optimisé : {nbArrets} arrêts, {nbHoraires} horaires");
 
-                // Vérification que le cache n'est pas vide
                 if (nbHoraires == 0)
                 {
-                    System.Diagnostics.Debug.WriteLine("ATTENTION : Le cache des horaires est vide ! Vérifier les données.");
+                    System.Diagnostics.Debug.WriteLine("ATTENTION : Le cache des horaires est vide !");
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Erreur initialisation cache : {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"StackTrace : {ex.StackTrace}");
+                System.Diagnostics.Debug.WriteLine($"Erreur initialisation cache optimisé : {ex.Message}");
             }
         }
 
         /// <summary>
-        /// Méthode helper pour générer les horaires entre deux arrêts
+        /// NOUVELLE MÉTHODE : Génère les horaires dans les deux sens pour une ligne
         /// </summary>
-        private void GenererHorairesEntreArrets(Arret arretDepart, Arret arretArrivee, Ligne ligne, int indexTemps)
+        private void GenererHorairesEntreArrets(Ligne ligne, List<Arret> arretsLigne)
         {
             try
             {
-                // Initialiser le cache pour cet arrêt de départ s'il n'existe pas
-                if (!_horairesCache.ContainsKey(arretDepart.IdArret))
-                {
-                    _horairesCache[arretDepart.IdArret] = new List<HoraireArret>();
-                }
+                // 1. SENS NORMAL (A → B → C → D)
+                GenererHorairesSens(ligne, arretsLigne, false);
 
-                // Calculer les horaires pour chacun de ces arrêts
-                var horairesArretDepart = LigneService.GetHorairesPourArret(ligne, arretDepart);
-                var horairesArretArrivee = LigneService.GetHorairesPourArret(ligne, arretArrivee);
-
-                // Créer les horaires pour ce tronçon
-                for (int j = 0; j < horairesArretDepart.Count && j < horairesArretArrivee.Count; j++)
-                {
-                    var heureDepart = horairesArretDepart[j];
-                    var heureArrivee = horairesArretArrivee[j];
-
-                    // Vérification de cohérence
-                    if (heureArrivee > heureDepart)
-                    {
-                        _horairesCache[arretDepart.IdArret].Add(new HoraireArret
-                        {
-                            ArretDestinationId = arretArrivee.IdArret,
-                            LigneId = ligne.IdLigne,
-                            HeureDepart = heureDepart,
-                            HeureArrivee = heureArrivee
-                        });
-                    }
-                }
+                // 2. SENS INVERSE (D → C → B → A)
+                var arretsInverses = new List<Arret>(arretsLigne);
+                arretsInverses.Reverse();
+                GenererHorairesSens(ligne, arretsInverses, true);
             }
-
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Erreur calcul horaire ligne {ligne.NomLigne} tronçon {arretDepart.NomArret}→{arretArrivee.NomArret} : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur génération horaires bidirectionnels ligne {ligne.NomLigne} : {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// VERSION OPTIMISÉE de la génération des horaires dans un sens
+        /// Génère moins d'horaires mais de meilleure qualité
+        /// </summary>
+        private void GenererHorairesSens(Ligne ligne, List<Arret> arretsOrdonnes, bool estSensInverse)
+        {
+            try
+            {
+                // OPTIMISATION : Décalage plus important pour différencier les sens
+                var decalageSensInverse = estSensInverse ? TimeSpan.FromMinutes(45) : TimeSpan.Zero;
+
+                // OPTIMISATION : Générer moins d'horaires de base (tous les 15 minutes au lieu de toutes les X minutes)
+                var horairesBase = GenererHorairesOptimises(ligne);
+
+                // Pour chaque tronçon entre arrêts consécutifs
+                for (int i = 0; i < arretsOrdonnes.Count - 1; i++)
+                {
+                    var arretDepart = arretsOrdonnes[i];
+                    var arretArrivee = arretsOrdonnes[i + 1];
+
+                    // Initialiser le cache pour cet arrêt de départ s'il n'existe pas
+                    if (!_horairesCache.ContainsKey(arretDepart.IdArret))
+                    {
+                        _horairesCache[arretDepart.IdArret] = new List<HoraireArret>();
+                    }
+
+                    // Pour chaque horaire de base, calculer l'horaire à ce tronçon
+                    foreach (var horaireBase in horairesBase)
+                    {
+                        // Calculer les temps cumulés
+                        var tempsCumuleDepart = CalculerTempsCumule(ligne, arretsOrdonnes, i, estSensInverse);
+                        var tempsCumuleArrivee = CalculerTempsCumule(ligne, arretsOrdonnes, i + 1, estSensInverse);
+
+                        // Horaires effectifs
+                        var heureDepart = horaireBase.Add(tempsCumuleDepart).Add(decalageSensInverse);
+                        var heureArrivee = horaireBase.Add(tempsCumuleArrivee).Add(decalageSensInverse);
+
+                        // OPTIMISATION : Limiter aux heures de service (6h-22h)
+                        if (heureDepart >= TimeSpan.FromHours(6) &&
+                            heureArrivee <= TimeSpan.FromHours(22) &&
+                            heureArrivee > heureDepart)
+                        {
+                            _horairesCache[arretDepart.IdArret].Add(new HoraireArret
+                            {
+                                ArretDestinationId = arretArrivee.IdArret,
+                                LigneId = ligne.IdLigne,
+                                HeureDepart = heureDepart,
+                                HeureArrivee = heureArrivee
+                            });
+                        }
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine($"Ligne {ligne.NomLigne} ({(estSensInverse ? "inverse" : "normal")}) : " +
+                    $"{horairesBase.Count} horaires de base générés");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur génération horaires sens ligne {ligne.NomLigne} : {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// OPTIMISATION : Génère des horaires de base optimisés (moins nombreux)
+        /// </summary>
+        private List<TimeSpan> GenererHorairesOptimises(Ligne ligne)
+        {
+            var horaires = new List<TimeSpan>();
+
+            // OPTIMISATION : Horaires toutes les 15 minutes au lieu d'utiliser l'intervalle de la ligne
+            var intervalle = TimeSpan.FromMinutes(15);
+            var debut = TimeSpan.FromHours(6);  // 6h00
+            var fin = TimeSpan.FromHours(22);   // 22h00
+
+            var heure = debut;
+            while (heure <= fin)
+            {
+                horaires.Add(heure);
+                heure = heure.Add(intervalle);
+            }
+
+            return horaires;
+        }
+
+        /// <summary>
+        /// NOUVELLE MÉTHODE : Calcule le temps cumulé jusqu'à un arrêt donné dans un sens
+        /// </summary>
+        private TimeSpan CalculerTempsCumule(Ligne ligne, List<Arret> arretsOrdonnes, int indexArret, bool estSensInverse)
+        {
+            try
+            {
+                if (indexArret <= 0) return TimeSpan.Zero;
+
+                var tempsCumule = TimeSpan.Zero;
+
+                // Dans le sens normal, on utilise les temps tels quels
+                // Dans le sens inverse, on utilise les mêmes temps mais dans l'ordre inverse
+                if (!estSensInverse)
+                {
+                    // Sens normal : additionner les temps de 0 à indexArret-1
+                    for (int i = 0; i < indexArret && i < ligne.TempsEntreArrets.Count; i++)
+                    {
+                        tempsCumule = tempsCumule.Add(ligne.TempsEntreArrets[i]);
+                    }
+                }
+                else
+                {
+                    // Sens inverse : les temps entre arrêts restent les mêmes, 
+                    // mais l'ordre des arrêts est inversé
+                    int nbArrets = arretsOrdonnes.Count;
+                    for (int i = 0; i < indexArret && i < ligne.TempsEntreArrets.Count; i++)
+                    {
+                        // Utiliser l'index correspondant dans le sens normal
+                        int indexTempsNormal = (nbArrets - 2) - i;
+                        if (indexTempsNormal >= 0 && indexTempsNormal < ligne.TempsEntreArrets.Count)
+                        {
+                            tempsCumule = tempsCumule.Add(ligne.TempsEntreArrets[indexTempsNormal]);
+                        }
+                    }
+                }
+
+                return tempsCumule;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur calcul temps cumulé : {ex.Message}");
+                return TimeSpan.Zero;
             }
         }
 

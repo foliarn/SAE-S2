@@ -24,7 +24,7 @@ namespace BiblioSysteme
         {
             HeureSouhaitee = TimeSpan.FromHours(DateTime.Now.Hour).Add(TimeSpan.FromMinutes(DateTime.Now.Minute));
             EstHeureDepart = true;
-            NombreMaxCorrespondances = 10;
+            NombreMaxCorrespondances = 2;
             TempsCorrespondanceMin = TimeSpan.FromMinutes(3);
             TempsCorrespondanceMax = TimeSpan.FromMinutes(20);
             TempsMaxRecherche = TimeSpan.FromHours(2);
@@ -38,7 +38,7 @@ namespace BiblioSysteme
             HeureSouhaitee = heureSouhaitee;
             EstHeureDepart = estHeureDepart;
 
-            NombreMaxCorrespondances = 10;
+            NombreMaxCorrespondances = 2;
             TempsCorrespondanceMin = TimeSpan.FromMinutes(3);
             TempsCorrespondanceMax = TimeSpan.FromMinutes(15);
             TempsMaxRecherche = TimeSpan.FromHours(2);
@@ -51,7 +51,7 @@ namespace BiblioSysteme
         {
             HeureSouhaitee = heureSouhaitee;
             EstHeureDepart = estHeureDepart;
-            NombreMaxCorrespondances = 10;
+            NombreMaxCorrespondances = 2;
             TempsCorrespondanceMin = tempsCorrespondanceMin;
             TempsCorrespondanceMax = TimeSpan.FromMinutes(20);
             TempsMaxRecherche = TimeSpan.FromHours(2);

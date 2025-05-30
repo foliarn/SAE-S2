@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BiblioBDD;
 using BiblioSysteme;
 
-namespace Interface.Classes
+namespace BiblioBDD
 {
     public static class ChargerDonnees
     {
@@ -25,7 +24,7 @@ namespace Interface.Classes
 
             if (tousLesArrets.Count == 0)
             {
-                MessageBox.Show("Aucun arrêt trouvé.");
+                //MessageBox.Show("Aucun arrêt trouvé.");
                 return new List<Arret>();
             }
 
@@ -41,7 +40,7 @@ namespace Interface.Classes
             toutesLesLignes = RecupDonnees.GetToutesLesLignes();
             if (toutesLesLignes.Count == 0)
             {
-                MessageBox.Show("Aucune ligne trouvée.");
+                //MessageBox.Show("Aucune ligne trouvée.");
                 return new List<Ligne>();
             }
             return toutesLesLignes;
@@ -77,7 +76,7 @@ namespace Interface.Classes
 
             if (arretsFiltres.Count == 0)
             {
-                MessageBox.Show("Aucun arrêt ne reste après le filtre.");
+                //MessageBox.Show("Aucun arrêt ne reste après le filtre.");
                 return new List<Arret>();
             }
 

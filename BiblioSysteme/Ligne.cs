@@ -295,7 +295,7 @@ namespace BiblioSysteme
         /// avec un temps fixe (ex: 5 minutes) entre chaque paire d'arrêts.
         /// </summary>
         /// <param name="tempsParTroncon">Temps en minutes entre chaque arrêt</param>
-        public void GenererTempsEntreArrets(int tempsParTroncon = 5)
+        public void GenererTempsEntreArrets(int tempsParTroncon = 2 )
         {
             if (tempsParTroncon <= 0)
                 throw new ArgumentException("Le temps par tronçon doit être positif", nameof(tempsParTroncon));

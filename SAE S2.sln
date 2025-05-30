@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface", "Interface\Inte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiblioSysteme", "BiblioSysteme\BiblioSysteme.csproj", "{B315015B-6B7A-4217-9D08-D531189AE3B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Data\Services.csproj", "{F5A1EB5C-191E-4FA6-B6E5-48AAFFFB4342}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{B315015B-6B7A-4217-9D08-D531189AE3B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B315015B-6B7A-4217-9D08-D531189AE3B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B315015B-6B7A-4217-9D08-D531189AE3B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5A1EB5C-191E-4FA6-B6E5-48AAFFFB4342}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5A1EB5C-191E-4FA6-B6E5-48AAFFFB4342}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5A1EB5C-191E-4FA6-B6E5-48AAFFFB4342}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5A1EB5C-191E-4FA6-B6E5-48AAFFFB4342}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

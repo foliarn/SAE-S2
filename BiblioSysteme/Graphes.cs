@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace BiblioSysteme
 {
-    internal class GestionnaireTransport
+    internal class Graphes
     {
+        public class Graphe()
+        {
 
+        }
     }
 }

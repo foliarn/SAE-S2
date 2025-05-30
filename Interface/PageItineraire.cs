@@ -200,6 +200,8 @@ namespace Interface
                 // Calculer les itinéraires de manière asynchrone
                 await Task.Run(() =>
                 {
+                    calculateur.DebugCacheArret(arretDepart.IdArret); // Pour Blum
+                    calculateur.DebugCacheArret(109);
                     itinerairesCalcules = calculateur.CalculerItineraires(arretDepart, arretDestination, parametresRecherche);
                 });
 

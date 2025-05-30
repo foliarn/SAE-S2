@@ -1,6 +1,7 @@
 ﻿using BiblioBDD;
 using BiblioSysteme;
 using Interface.Classes;
+using Services;
 
 namespace Interface
 {
@@ -11,7 +12,7 @@ namespace Interface
         {
             if (chkHeure.Checked)
             {
-                pnlRecherche.Size = new Size(250, 250);
+                pnlRecherche.Size = new Size(500, 500);
 
                 rdoDepart.Visible = false;
                 rdoArrive.Visible = false;
@@ -20,7 +21,7 @@ namespace Interface
 
             else
             {
-                pnlRecherche.Size = new Size(250, 300);
+                pnlRecherche.Size = new Size(500, 500);
 
                 rdoDepart.Top = chkHeure.Bottom + 10;
                 rdoArrive.Top = chkHeure.Bottom + 10;
@@ -143,10 +144,54 @@ namespace Interface
 
         private void btnTrouver_Click(object sender, EventArgs e)
         {
-            PageItineraire pageItineraire = new PageItineraire(this);
-            pageItineraire.Show();
+            try
+            {
+                // === VALIDATION DES SÉLECTIONS ===
+                if (cmbDepart.SelectedItem == null || cmbDest.SelectedItem == null)
+                {
+                    MessageBox.Show("Veuillez sélectionner un arrêt de départ et de destination.",
+                        "Sélection requise", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-            this.Hide();
+                // === RÉCUPÉRATION DES ARRÊTS ===
+                var arretDepart = cmbDepart.SelectedItem as Arret;
+                var arretDestination = cmbDest.SelectedItem as Arret;
+
+                if (arretDepart == null || arretDestination == null)
+                {
+                    MessageBox.Show("Erreur lors de la récupération des arrêts sélectionnés.",
+                        "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // === VALIDATION DÉPART ≠ DESTINATION ===
+                if (arretDepart.IdArret == arretDestination.IdArret)
+                {
+                    MessageBox.Show("L'arrêt de départ et de destination doivent être différents.",
+                        "Erreur de sélection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // === CRÉATION DES PARAMÈTRES AVEC LA CLASSE UTILITAIRE ===
+                // ✅ UTILISATION DE ParametresHelper
+                var parametres = ParametresHelper.CreerDepuisInterface(chkHeure, dtpHeure, rdoDepart, rdoArrive);
+
+                // Optionnel : afficher les paramètres créés pour le débogage
+                string descriptionParametres = ParametresHelper.DecrireParametres(parametres);
+                System.Diagnostics.Debug.WriteLine($"Paramètres créés : {descriptionParametres}");
+
+                // === OUVERTURE DE LA PAGE ITINÉRAIRE ===
+                PageItineraire pageItineraire = new PageItineraire(this, arretDepart, arretDestination, parametres);
+                pageItineraire.Show();
+                this.Hide();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de la recherche d'itinéraire : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Diagnostics.Debug.WriteLine($"Erreur btnTrouver_Click (Accueil) : {ex.Message}");
+            }
         }
     }
 }

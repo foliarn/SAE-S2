@@ -71,9 +71,9 @@
             pnlRecherche.Controls.Add(cmbDepart);
             pnlRecherche.Controls.Add(lblTitre);
             pnlRecherche.Location = new Point(43, 435);
-            pnlRecherche.Margin = new Padding(10, 10, 10, 10);
+            pnlRecherche.Margin = new Padding(10);
             pnlRecherche.Name = "pnlRecherche";
-            pnlRecherche.Padding = new Padding(3, 3, 3, 3);
+            pnlRecherche.Padding = new Padding(3);
             pnlRecherche.Size = new Size(356, 332);
             pnlRecherche.TabIndex = 0;
             // 
@@ -130,8 +130,6 @@
             // chkHeure
             // 
             chkHeure.AutoSize = true;
-            chkHeure.Checked = true;
-            chkHeure.CheckState = CheckState.Checked;
             chkHeure.Location = new Point(17, 218);
             chkHeure.Name = "chkHeure";
             chkHeure.Size = new Size(185, 29);

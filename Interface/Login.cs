@@ -1,4 +1,4 @@
-﻿using SAE_S2.Classes;
+﻿using Interface.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SAE_S2
+namespace Interface
 {
     public partial class Login : Form
     {

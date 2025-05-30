@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BiblioBDD;
+using Services;
 
-namespace SAE_S2.Classes
+namespace Interface.Classes
 {
     public static class Affichage
     {
@@ -22,7 +23,7 @@ namespace SAE_S2.Classes
             // Récupérer la ligne
             Ligne ligne = RecupDonnees.GetLigneComplete(idLigne);
 
-            if (ligne == null || !ligne.EstValide())
+            if (ligne == null || !LigneService.EstValide(ligne))
             {
                 dgv.DataSource = null;
                 dgv.Rows.Clear();
@@ -34,7 +35,7 @@ namespace SAE_S2.Classes
             foreach (var arret in ligne.Arrets)
             {
                 // Utilise GetHorairesDepart() + TempsEntreArrets via CalculerHorairesPourArret()
-                var horaires = ligne.GetHorairesPourArret(arret);
+                var horaires = LigneService.GetHorairesPourArret(ligne, arret);
                 string horairesStr = string.Join(" - ", horaires.Select(h => h.ToString(@"hh\:mm")));
 
                 liste.Add(new ArretHoraire

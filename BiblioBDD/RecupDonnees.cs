@@ -1,7 +1,6 @@
 ﻿using BiblioSysteme;
 using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -237,10 +236,11 @@ namespace BiblioBDD
                 {
                     foreach (var arret in arrets)
                     {
-                        ligne.AjouterArret(arret);
+                        ligne.Arrets.Add(arret);
+                        ligne.TempsEntreArrets.Add(TimeSpan.FromMinutes(3));
                     }
                 }
-                ligne.GenererTempsEntreArrets(3);
+
 
                 return ligne;
             }
@@ -272,7 +272,7 @@ namespace BiblioBDD
                     {
                         foreach (var arret in arrets)
                         {
-                            ligne.AjouterArret(arret);
+                            ligne.Arrets.Add(arret);
                         }
                     }
                 }

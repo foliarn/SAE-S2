@@ -1,4 +1,4 @@
-namespace SAE_S2
+namespace Interface
 {
     internal static class Program
     {

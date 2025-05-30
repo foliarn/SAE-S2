@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <RootNamespace>SAE_S2</RootNamespace>
+    <RootNamespace>Interface</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BiblioBDD\BiblioBDD.csproj" />
     <ProjectReference Include="..\BiblioSysteme\BiblioSysteme.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

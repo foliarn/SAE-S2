@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BiblioSysteme;
 using BiblioBDD;
-using SAE_S2.Classes;
+using Interface.Classes;
 
-namespace SAE_S2
+namespace Interface
 {
     public partial class ConsulterLigne : Form
     {

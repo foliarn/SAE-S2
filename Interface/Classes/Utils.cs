@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SAE_S2.Classes
+namespace Interface.Classes
 {
     internal class Utils
     {

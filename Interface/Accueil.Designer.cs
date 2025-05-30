@@ -1,4 +1,4 @@
-﻿namespace SAE_S2
+﻿namespace Interface
 {
     partial class Accueil
     {

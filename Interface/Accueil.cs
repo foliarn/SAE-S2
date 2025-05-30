@@ -1,8 +1,8 @@
 ﻿using BiblioBDD;
 using BiblioSysteme;
-using SAE_S2.Classes;
+using Interface.Classes;
 
-namespace SAE_S2
+namespace Interface
 {
     public partial class Accueil : Form
     {

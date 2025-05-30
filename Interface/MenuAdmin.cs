@@ -1,10 +1,10 @@
 ﻿using BiblioBDD;
 using BiblioSysteme;
 using MySql.Data.MySqlClient;
-using SAE_S2.Classes;
+using Interface.Classes;
 using System.Data;
 
-namespace SAE_S2
+namespace Interface
 {
     public partial class MenuAdmin : Form
     {

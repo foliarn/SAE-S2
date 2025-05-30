@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BiblioBDD;
+using BiblioSysteme;
 
-namespace BiblioSysteme
+namespace Interface.Classes
 {
     public static class ChargerDonnees
     {

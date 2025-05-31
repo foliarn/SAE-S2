@@ -87,9 +87,9 @@ namespace Services
         }
 
         /// <summary>
-        /// Supprime une étape spécifique d'un itinéraire
+        /// Supprime une étape spécifique d'un itinéraire (??)
         /// </summary>
-        public static bool SupprimerEtape(Itineraire itineraire, EtapeItineraire etape)
+        public static bool SupprimerEtapeSpec(Itineraire itineraire, EtapeItineraire etape)
         {
             try
             {

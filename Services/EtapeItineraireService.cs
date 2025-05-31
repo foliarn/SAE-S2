@@ -13,15 +13,15 @@ namespace Services
         /// <summary>
         /// Calcule le nombre d'arrêts traversés pendant cette étape
         /// </summary>
-        public static int CalculerNombreArrets(EtapeItineraire etape)
+        /*public static int CalculerNombreArrets(EtapeItineraire etape)
         {
             try
             {
                 if (etape.LigneUtilisee?.Arrets == null)
                     return 0;
 
-                int indexDepart = etape.LigneUtilisee.Arrets.FindIndex(a => a.IdArret == etape.ArretDepart.IdArret);
-                int indexArrivee = etape.LigneUtilisee.Arrets.FindIndex(a => a.IdArret == etape.ArretArrivee.IdArret);
+                int indexDepart = etape.LigneUtilisee.Arrets.FindIndex(a => a.Arret.IdArret == etape.ArretDepart.IdArret);
+                int indexArrivee = etape.LigneUtilisee.Arrets.FindIndex(a => a.Arret.IdArret == etape.ArretArrivee.IdArret);
 
                 if (indexDepart == -1 || indexArrivee == -1)
                     return 0;
@@ -102,7 +102,6 @@ namespace Services
 
         /// <summary>
         /// Calcule le temps d'attente nécessaire avant cette étape
-        /// TODO : voir si on peut l'enlever (3min entre chaque etape ici)
         /// </summary>
         public static TimeSpan CalculerTempsAttente(EtapeItineraire etape, TimeSpan heureArriveeEtapePrecedente)
         {
@@ -252,6 +251,6 @@ namespace Services
             }
 
             return true;
-        }
+        }*/
     }
 }

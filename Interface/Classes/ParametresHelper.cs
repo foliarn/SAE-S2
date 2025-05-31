@@ -189,7 +189,6 @@ namespace Interface.Classes
             {
                 string typeHeure = parametres.EstHeureDepart ? "départ" : "arrivée";
                 return $"Heure de {typeHeure} : {parametres.HeureSouhaitee:hh\\:mm}, " +
-                       $"Max correspondances : {parametres.NombreMaxCorrespondances}, " +
                        $"Temps min correspondance : {parametres.TempsCorrespondanceMin.TotalMinutes}min";
             }
             catch (Exception ex)

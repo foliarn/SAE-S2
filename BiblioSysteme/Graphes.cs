@@ -9,8 +9,7 @@ namespace BiblioSysteme
     /// </summary>
     public class Noeud
     {
-        public int IdArret { get; set; }
-        public string NomArret { get; set; }
+        public Arret ArretNoeud { get; set; }
         public List<Arete> AretesSortantes { get; set; }
 
         // Propriétés pour l'algorithme de Dijkstra
@@ -21,8 +20,8 @@ namespace BiblioSysteme
 
         public Noeud(int idArret, string nomArret)
         {
-            IdArret = idArret;
-            NomArret = nomArret;
+            ArretNoeud.IdArret = idArret;
+            ArretNoeud.NomArret = nomArret;
             AretesSortantes = new List<Arete>();
             ReinitialiserDijkstra();
         }
@@ -36,11 +35,6 @@ namespace BiblioSysteme
             Precedent = null;
             Visite = false;
             AretePrecedente = null;
-        }
-
-        public override string ToString()
-        {
-            return $"{NomArret} (ID: {IdArret})";
         }
     }
 
@@ -62,12 +56,6 @@ namespace BiblioSysteme
             LigneUtilisee = ligne;
             Poids = poids;
             EstCorrespondance = estCorrespondance;
-        }
-
-        public override string ToString()
-        {
-            string type = EstCorrespondance ? "Correspondance" : "Direct";
-            return $"{NoeudDepart.NomArret} -> {NoeudArrivee.NomArret} ({LigneUtilisee?.NomLigne}) [{type}] {Poids}min";
         }
     }
 

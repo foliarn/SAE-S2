@@ -6,9 +6,10 @@ namespace BiblioSysteme
     public class ParametresRecherche
     {
         public const int NombreMaxItineraires = 2;
+        public const int NombreMaxCorrespondances = 2; // A voir si on ajoute les pref user
         public TimeSpan HeureSouhaitee { get; set; }
         public bool EstHeureDepart { get; set; }
-        public int NombreMaxCorrespondances { get; set; }
+
         public TimeSpan TempsCorrespondanceMin { get; set; }
         public TimeSpan TempsCorrespondanceMax { get; set; }
         public TimeSpan TempsMaxRecherche { get; set; }
@@ -24,7 +25,6 @@ namespace BiblioSysteme
         {
             HeureSouhaitee = TimeSpan.FromHours(DateTime.Now.Hour).Add(TimeSpan.FromMinutes(DateTime.Now.Minute));
             EstHeureDepart = true;
-            NombreMaxCorrespondances = 2;
             TempsCorrespondanceMin = TimeSpan.FromMinutes(3);
             TempsCorrespondanceMax = TimeSpan.FromMinutes(20);
             TempsMaxRecherche = TimeSpan.FromHours(2);
@@ -38,7 +38,6 @@ namespace BiblioSysteme
             HeureSouhaitee = heureSouhaitee;
             EstHeureDepart = estHeureDepart;
 
-            NombreMaxCorrespondances = 2;
             TempsCorrespondanceMin = TimeSpan.FromMinutes(3);
             TempsCorrespondanceMax = TimeSpan.FromMinutes(15);
             TempsMaxRecherche = TimeSpan.FromHours(2);
@@ -51,7 +50,6 @@ namespace BiblioSysteme
         {
             HeureSouhaitee = heureSouhaitee;
             EstHeureDepart = estHeureDepart;
-            NombreMaxCorrespondances = 2;
             TempsCorrespondanceMin = tempsCorrespondanceMin;
             TempsCorrespondanceMax = TimeSpan.FromMinutes(20);
             TempsMaxRecherche = TimeSpan.FromHours(2);

@@ -20,7 +20,7 @@ namespace Interface
         {
             InitializeComponent();
             formAccueil = accueil;
-            Utils.RemplirComboBox(cmbChoixLigne, ChargerDonnees.toutesLesLignes, "NomLigne", "IdLigne");
+            Utils.RemplirComboBox(cmbChoixLigne, RecupDonnees.toutesLesLignes, "NomLigne", "IdLigne");
         }
 
         private void btnMenu_Click(object sender, EventArgs e)
@@ -34,12 +34,11 @@ namespace Interface
 
         }
 
-
         private void btnValiderChoix_Click(object sender, EventArgs e)
         {
-            BDD.OuvrirConnexion();
             int idLigne = (int)cmbChoixLigne.SelectedValue;
             Affichage.AfficherLigneComplete(idLigne, dgvLigne);
+
         }
     }
 }

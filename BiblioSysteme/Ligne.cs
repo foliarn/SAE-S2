@@ -18,36 +18,31 @@ namespace BiblioSysteme
         public TimeSpan PremierDepart { get; set; }
         public TimeSpan DernierDepart { get; set; }
         public int IntervalleMinutes { get; set; }
-        public List<TimeSpan> TempsEntreArrets { get; set; }
+        public List<TimeSpan> TempsDepuisDepart { get; set; }
 
         // Liste des arrêts de cette ligne dans l'ordre (relation Many-to-Many)
-        public List<Arret> Arrets { get; set; }
+        public List<ArretLigne> Arrets { get; set; }
 
-        // Cache pour les horaires par arrêt (peut être géré par le service)
+        // Cache pour les horaires par arrêt
         public Dictionary<Arret, List<TimeSpan>> HorairesCache { get; set; }
+        public int VersionCache { get; set; } // Version du cache pour la gestion des modifications (savoir quand le recharger)
 
         // Constructeur par défaut
         public Ligne()
         {
-            Arrets = new List<Arret>();
-            TempsEntreArrets = new List<TimeSpan>();
+            Arrets = new List<ArretLigne>();
+            TempsDepuisDepart = new List<TimeSpan>();
             HorairesCache = new Dictionary<Arret, List<TimeSpan>>();
             NomLigne = string.Empty;
             Description = string.Empty;
         }
 
-        // Constructeur avec paramètres (validation déléguée au service)
+        // Constructeur avec paramètres
         public Ligne(int idLigne, string nomLigne, string description = "") : this()
         {
             IdLigne = idLigne;
             NomLigne = nomLigne?.Trim().ToUpper() ?? string.Empty;
             Description = string.IsNullOrWhiteSpace(description) ? string.Empty : description.Trim();
-        }
-
-        // Méthode ToString simple pour l'affichage
-        public override string ToString()
-        {
-            return string.IsNullOrWhiteSpace(NomLigne) ? $"Ligne #{IdLigne}" : NomLigne;
         }
     }
 }

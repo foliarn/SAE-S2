@@ -1,12 +1,9 @@
 ﻿using BiblioSysteme;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BiblioBDD;
 using Services;
+
+//using Services;
 
 namespace Interface.Classes
 {
@@ -21,9 +18,9 @@ namespace Interface.Classes
         public static void AfficherLigneComplete(int idLigne, DataGridView dgv)
         {
             // Récupérer la ligne
-            Ligne ligne = RecupDonnees.GetLigneComplete(idLigne);
+            Ligne ligne = RecupDonnees.GetLigneParId(idLigne);
 
-            if (ligne == null || !LigneService.EstValide(ligne))
+            if (ligne == null || !LigneService.EstValide(ligne)) // Remplacer par la bonne condition si nécessaire
             {
                 dgv.DataSource = null;
                 dgv.Rows.Clear();
@@ -32,10 +29,14 @@ namespace Interface.Classes
 
             var liste = new List<ArretHoraire>();
 
-            foreach (var arret in ligne.Arrets)
+            foreach (var arretLigne in ligne.Arrets)
             {
-                // Utilise GetHorairesDepart() + TempsEntreArrets via CalculerHorairesPourArret()
-                var horaires = LigneService.GetHorairesPourArret(ligne, arret);
+                Arret arret = arretLigne.Arret;
+
+                // Récupère TOUS les horaires de la journée en passant un horaire très bas
+                TimeSpan horaireDebutJournee = new TimeSpan(0, 0, 0); // 00:00
+                List<TimeSpan> horaires = ArretService.GetHorairesPassage(arret, ligne, horaireDebutJournee);
+
                 string horairesStr = string.Join(" - ", horaires.Select(h => h.ToString(@"hh\:mm")));
 
                 liste.Add(new ArretHoraire

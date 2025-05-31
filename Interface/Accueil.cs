@@ -43,12 +43,12 @@ namespace Interface
             InitializeComponent();
             this.AutoScaleMode = AutoScaleMode.Dpi;
             BDD.OuvrirConnexion(); // Ouvre la connexion à la base de données
-            ChargerDonnees.tousLesArrets = ChargerDonnees.ChargerTousLesArrets(); // Charge tous les arrêts depuis la base de données
-            ChargerDonnees.toutesLesLignes = ChargerDonnees.ChargerToutesLesLignes(); // Charge toutes les lignes depuis la base de données
+            RecupDonnees.tousLesArrets = RecupDonnees.GetTousLesArrets(); // Charge tous les arrêts depuis la base de données
+            RecupDonnees.toutesLesLignes = RecupDonnees.GetToutesLesLignes(); // Charge toutes les lignes depuis la base de données
 
             // Remplir les comboBox avec les arrêts
-            Utils.RemplirComboBox(cmbDepart, ChargerDonnees.tousLesArrets, "NomArret", "IdArret");
-            Utils.RemplirComboBox(cmbDest, ChargerDonnees.tousLesArrets, "NomArret", "IdArret");
+            Utils.RemplirComboBox(cmbDepart, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
+            Utils.RemplirComboBox(cmbDest, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
 
             Utils.CentrerControle(pnlRecherche, false, true);
             // Pour centrer les éléments dans le panel de recherche
@@ -182,8 +182,8 @@ namespace Interface
                 System.Diagnostics.Debug.WriteLine($"Paramètres créés : {descriptionParametres}");
 
                 // === OUVERTURE DE LA PAGE ITINÉRAIRE ===
-                PageItineraire pageItineraire = new PageItineraire(this, arretDepart, arretDestination, parametres);
-                pageItineraire.Show();
+                //PageItineraire pageItineraire = new PageItineraire(this, arretDepart, arretDestination, parametres);
+                //pageItineraire.Show();
                 this.Hide();
             }
             catch (Exception ex)

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using BiblioBDD;
+using BiblioSysteme;
 
 namespace Interface.Classes
 {
@@ -36,28 +31,32 @@ namespace Interface.Classes
         }
 
         /// <summary>
-        /// Replace un contrôle à une position donnée dans son parent.
-        /// <summary>
-        
-        public static void PositionnerControle(Control control, int x, int y)
+        /// Crée une liste de tous les arrêts de la base sans ceux d'une ligne spécifique. (pour une comboBox d'ajout d'arrêt)
+        /// </summary>
+        /// <param name="idLigne">La ligne utilisée</param>
+        /// <returns>Une liste d'arrêts</returns>
+        public static List<Arret> ChargerTousLesArretsSaufLigne(int idLigne)
         {
-            // Permet de trouver le conteneur parent du contrôle
-            Control parent = control.Parent ?? control.FindForm();
-            if (parent == null) return;
-
-            Point newLocation = control.Location;
-            newLocation.X = x;
-            newLocation.Y = y;
-            control.Location = newLocation;
+            // On récupère les arrêts de la ligne spécifiée
+            List<ArretLigne> arretsDeLaLigne = RecupDonnees.GetArretsParLigne(idLigne);
+            // On filtre les arrêts pour ne garder que ceux qui ne sont pas dans la ligne spécifiée
+            List<Arret> arretsFiltres = RecupDonnees.tousLesArrets
+                .Where(a => !arretsDeLaLigne.Any(al => al.Arret.IdArret == a.IdArret))
+                .ToList();
+            return arretsFiltres;
         }
+
 
         public static void RemplirComboBox<Type>(ComboBox comboBox, List<Type> liste, string displayMember, string valueMember)
         {
             if (comboBox == null || liste == null) return;
 
-            // Créer une copie indépendante de la liste
+            // Créer une copie indépendante de la liste dans un BindingList
+            var bindingList = new BindingList<Type>(new List<Type>(liste));
+
+            // Utiliser un BindingSource pour faciliter la gestion (rafraîchissement automatique, desynchronisation, etc.)
             var bindingSource = new BindingSource();
-            bindingSource.DataSource = new BindingList<Type>(new List<Type>(liste));
+            bindingSource.DataSource = bindingList;
 
             // Affecter au ComboBox
             comboBox.DataSource = bindingSource;

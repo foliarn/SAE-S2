@@ -19,13 +19,13 @@ namespace Services
             if (comparison == 0)
             {
                 // Si même distance, comparer par ID pour éviter les doublons
-                comparison = x.IdArret.CompareTo(y.IdArret);
+                comparison = x.ArretNoeud.IdArret.CompareTo(y.ArretNoeud.IdArret);
             }
             return comparison;
         }
     }
 
-    /// <summary>
+    /*/// <summary>
     /// Responsable de la construction du graphe de transport
     /// </summary>
     public static class ConstructeurGraphe
@@ -74,10 +74,10 @@ namespace Services
             {
                 foreach (var arret in ligne.Arrets)
                 {
-                    if (!graphe.Noeuds.ContainsKey(arret.IdArret))
+                    if (!graphe.Noeuds.ContainsKey(arret.Arret.IdArret))
                     {
-                        var noeud = new Noeud(arret.IdArret, arret.NomArret);
-                        graphe.Noeuds[arret.IdArret] = noeud;
+                        var noeud = new Noeud(arret.Arret.IdArret, arret.Arret.NomArret);
+                        graphe.Noeuds[arret.Arret.IdArret] = noeud;
                     }
                 }
             }
@@ -284,5 +284,5 @@ namespace Services
 
             return noeud.AretesSortantes.Select(a => a.NoeudArrivee).ToList();
         }
-    }
+    }*/
 }

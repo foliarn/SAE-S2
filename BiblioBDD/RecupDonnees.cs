@@ -10,6 +10,10 @@ namespace BiblioBDD
 {
     public static class RecupDonnees
     {
+        // Propriétés statiques pour stocker les données récupérées (pour éviter de les charger plusieurs fois)
+        public static List<Arret> tousLesArrets { get; set; }
+        public static List<Ligne> toutesLesLignes { get; set; }
+
         // Déclaration des requêtes multi-lignes afin d'améliorer la lisibilité
         private static string requeteGetToutesLesLignes = @"
                     SELECT l.id_ligne, l.nom_ligne, l.description, 
@@ -18,11 +22,11 @@ namespace BiblioBDD
                     LEFT JOIN Horaires_Lignes h ON l.id_ligne = h.id_ligne";
 
         private static string requeteGetArretsParLigne = @"
-                    SELECT a.id_arret, a.nom_arret, la.Ordre
+                    SELECT a.id_arret, a.nom_arret, la.ordre, la.temps_depart
                     FROM Arrets a
                     INNER JOIN Lignes_Arrets la ON a.id_arret = la.id_arret
                     WHERE la.id_ligne = @idLigne
-                    ORDER BY la.Ordre";
+                    ORDER BY la.ordre";
 
         private static string requeteGetLigneParId = @"
                     SELECT l.id_ligne, l.nom_ligne, l.description, 
@@ -40,7 +44,7 @@ namespace BiblioBDD
         {
             try
             {
-                if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
+                if (BDD.conn == null || BDD.conn.State != ConnectionState.Open)
                 {
                     System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
                     return [];
@@ -48,7 +52,7 @@ namespace BiblioBDD
 
                 var lignes = new List<Ligne>();
 
-
+                // Étape 1 : Charger toutes les lignes sans appeler GetArretsParLigne
                 using (var cmd = new MySqlCommand(requeteGetToutesLesLignes, BDD.conn))
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -60,7 +64,7 @@ namespace BiblioBDD
                             reader.IsDBNull("description") ? "" : reader.GetString("description")
                         );
 
-                        // Récupération des horaires si disponibles
+                        // Ne PAS charger les arrêts ici
                         if (!reader.IsDBNull("premier_depart"))
                         {
                             ligne.PremierDepart = reader.GetTimeSpan("premier_depart");
@@ -70,6 +74,12 @@ namespace BiblioBDD
 
                         lignes.Add(ligne);
                     }
+                }
+
+                // Étape 2 : Charger les arrêts pour chaque ligne, maintenant que le reader est fermé
+                foreach (var ligne in lignes)
+                {
+                    ligne.Arrets = GetArretsParLigne(ligne.IdLigne);
                 }
 
                 return lignes;
@@ -96,6 +106,9 @@ namespace BiblioBDD
                     return new Ligne();
                 }
 
+                // On charge d'abord les arrêts de la ligne pour éviter d'avoir deux readers ouverts en même temps
+                var listeArrets = GetArretsParLigne(idLigne);
+
                 using (var cmd = new MySqlCommand(requeteGetLigneParId, BDD.conn))
                 {
                     cmd.Parameters.AddWithValue("@idLigne", idLigne);
@@ -110,13 +123,15 @@ namespace BiblioBDD
                                 reader.IsDBNull("description") ? "" : reader.GetString("description")
                             );
 
-                            // Récupération des horaires si disponibles
                             if (!reader.IsDBNull("premier_depart"))
                             {
                                 ligne.PremierDepart = reader.GetTimeSpan("premier_depart");
                                 ligne.DernierDepart = reader.GetTimeSpan("dernier_depart");
                                 ligne.IntervalleMinutes = reader.GetInt32("intervalle_minutes");
                             }
+
+                            // Utiliser la liste d'arrêts chargée précédemment
+                            ligne.Arrets = listeArrets;
 
                             return ligne;
                         }
@@ -172,11 +187,11 @@ namespace BiblioBDD
         }
 
         /// <summary>
-        /// Récupère les arrêts d'une ligne dans l'ordre
+        /// Récupère les arrêts d'une ligne (avec leur ordre et temps de départ)
         /// </summary>
         /// <param name="idLigne">ID de la ligne</param>
-        /// <returns>Liste des arrêts ordonnés ou liste vide en cas d'erreur</returns>
-        public static List<Arret> GetArretsParLigne(int idLigne)
+        /// <returns>Liste des arrêts (ArretLigne)</returns>
+        public static List<ArretLigne> GetArretsParLigne(int idLigne)
         {
             try
             {
@@ -186,7 +201,7 @@ namespace BiblioBDD
                     return [];
                 }
 
-                var arrets = new List<Arret>();
+                var arretsLigne = new List<ArretLigne>();
 
                 using (var cmd = new MySqlCommand(requeteGetArretsParLigne, BDD.conn))
                 {
@@ -200,12 +215,18 @@ namespace BiblioBDD
                                 reader.GetInt32("id_arret"),
                                 reader.GetString("nom_arret")
                             );
-                            arrets.Add(arret);
+
+                            var arretLigne = new ArretLigne(
+                                arret,
+                                reader.GetInt32("ordre"),
+                                reader.GetInt32("temps_depart")
+                            );
+                            arretsLigne.Add(arretLigne);
                         }
                     }
                 }
 
-                return arrets;
+                return arretsLigne;
             }
             catch (Exception ex)
             {
@@ -214,42 +235,6 @@ namespace BiblioBDD
             }
         }
 
-        /// <summary>
-        /// Récupère une ligne complète avec tous ses arrêts et horaires
-        /// </summary>
-        /// <param name="idLigne">ID de la ligne</param>
-        /// <returns>Ligne complète ou ligne vide en cas d'erreur</returns>
-        public static Ligne GetLigneComplete(int idLigne)
-        {
-            try
-            {
-                // Récupérer la ligne de base
-                var ligne = GetLigneParId(idLigne);
-                if (ligne == null)
-                {
-                    return new Ligne();
-                }
-
-                // Récupérer les arrêts de cette ligne
-                var arrets = GetArretsParLigne(idLigne);
-                if (arrets != null)
-                {
-                    foreach (var arret in arrets)
-                    {
-                        ligne.Arrets.Add(arret);
-                        ligne.TempsEntreArrets.Add(TimeSpan.FromMinutes(3));
-                    }
-                }
-
-
-                return ligne;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération de la ligne complète : {ex.Message}");
-                return new Ligne();
-            }
-        }
 
         /// <summary>
         /// Récupère toutes les lignes avec leurs arrêts
@@ -284,6 +269,29 @@ namespace BiblioBDD
                 System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des lignes complètes : {ex.Message}");
                 return [];
             }
+        }
+
+        // Méthodes pour actualiser chaque type de données (au cas où une desynchronisation arriverait)
+        public static void ActualiserLignes()
+        {
+            if (BDD.conn != null && BDD.conn.State == System.Data.ConnectionState.Open)
+            {
+                toutesLesLignes = RecupDonnees.GetToutesLesLignes() ?? new List<Ligne>();
+            }
+        }
+
+        public static void ActualiserArrets()
+        {
+            if (BDD.conn != null && BDD.conn.State == System.Data.ConnectionState.Open)
+            {
+                tousLesArrets = RecupDonnees.GetTousLesArrets() ?? new List<Arret>();
+            }
+        }
+
+        public static void ActualiserTout()
+        {
+            ActualiserLignes();
+            ActualiserArrets();
         }
     }
 }

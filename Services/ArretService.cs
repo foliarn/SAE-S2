@@ -5,142 +5,114 @@ using System.Text;
 using System.Threading.Tasks;
 using BiblioSysteme;
 using BiblioBDD;
+using System.Linq.Expressions;
 
 namespace Services
 {
     public class ArretService
     {
+
         /// <summary>
-        /// Ajoute une ligne à cet arrêt avec gestion d'erreur
+        /// Ajoute un arrêt en mémoire et en base de données
         /// </summary>
-        /// <param name="ligne">Ligne à ajouter</param>
-        /// <returns>True si l'ajout a réussi, False sinon</returns>
-        public static bool AjouterLigne(Ligne ligne, Arret arret)
+        /// <param name="arret">Arrêt à ajouter</param>
+        /// <returns>True si l'arrêt a été ajouté avec succès, False sinon</returns>
+        public static bool AjouterArret(Arret arret)
+        {
+            if (arret == null || string.IsNullOrWhiteSpace(arret.NomArret))
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur : L'arrêt ou son nom est invalide.");
+                return false;
+            }
+
+            int idInsere = ModifBDD.AjouterArret(arret);
+
+            if (idInsere == -1)
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur : Échec de l'ajout de l'arrêt en base de données.");
+                return false;
+            }
+
+            arret.IdArret = idInsere;
+            RecupDonnees.tousLesArrets.Add(arret);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Retire un arrêt de la base de données et de la mémoire
+        /// </summary>
+        /// <param name="idArret">Arrêt à retirer</param>
+        /// <returns>True si l'arrêt a été retiré avec succès, False sinon</returns>
+        public static bool RetirerArret(int idArret)
+        {             
+            try
+            {
+                var arret = RecupDonnees.tousLesArrets.FirstOrDefault(a => a.IdArret == idArret);
+                if (arret == null || arret.IdArret <= 0)
+                {
+                    throw new ArgumentException("L'arrêt à retirer n'est pas valide.");
+                }
+
+                if (ModifBDD.RetirerArret(arret.IdArret))
+                {
+                    RecupDonnees.tousLesArrets.Remove(arret);
+                    return true;
+                }
+
+                throw new Exception("Échec du retrait de l'arrêt en base de données.");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur lors du retrait de l'arrêt : {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Retourne tous les horaires de passage à cet arrêt d'une ligne spécifique à partir de l'horaire précisé.
+        /// Utilise un lazy cache pour éviter de recalculer plusieurs fois les mêmes données.
+        /// </summary>
+        /// <param name="arret">Arrêt concerné</param>
+        /// <param name="idLigne">Identifiant de la ligne</param>
+        /// <param name="horaire">Horaire à partir duquel on veut les passages</param>
+        /// <returns>Liste ordonnée des horaires à partir de l'horaire spécifié</returns>
+        public static List<TimeSpan> GetHorairesPassage(Arret arret, Ligne ligne, TimeSpan horaire)
         {
             try
             {
-                // Vérifications des paramètres
                 if (ligne == null)
+                    throw new ArgumentNullException(nameof(ligne), "La ligne ne peut pas être null.");
+
+                // Vérifier si on a déjà calculé les horaires pour cet arrêt
+                if (ligne.HorairesCache.TryGetValue(arret, out var horaires))
                 {
-                    throw new ArgumentNullException(nameof(ligne), "La ligne ne peut pas être null");
+                    // Filtrer uniquement les horaires supérieurs ou égaux à l'horaire demandé
+                    return horaires.Where(h => h >= horaire).ToList();
                 }
 
-                // Vérifier si la ligne existe déjà
-                if (arret.Lignes.Contains(ligne))
+                // Sinon, on calcule toutes les horaires pour cet arrêt/ligne
+                var toutesLesHoraires = new List<TimeSpan>();
+                TimeSpan tempsJusquAArret = LigneService.ObtenirTempsDepuisDepartInitial(ligne, arret);
+
+                TimeSpan HoraireActuel = ligne.PremierDepart + tempsJusquAArret;
+
+                while (HoraireActuel <= ligne.DernierDepart + tempsJusquAArret)
                 {
-                    throw new InvalidOperationException($"La ligne '{ligne.NomLigne}' dessert déjà l'arrêt '{arret.NomArret}'");
+                    toutesLesHoraires.Add(HoraireActuel);
+                    HoraireActuel = HoraireActuel.Add(TimeSpan.FromMinutes(ligne.IntervalleMinutes));
                 }
 
-                // Ajout de la ligne
-                arret.Lignes.Add(ligne);
-                return true;
+                // Mets toutes les horaires en cache (une seule fois par ligne)
+                ligne.HorairesCache[arret] = toutesLesHoraires;
+
+                // Filtre pour ne retourner que les horaires à partir de l'horaire spécifié en paramètre
+                return toutesLesHoraires.Where(h => h >= horaire).ToList();
             }
 
-            catch (ArgumentNullException ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Erreur - Paramètre null : {ex.Message}");
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Erreur - Opération invalide : {ex.Message}");
-                return false;
-            }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Erreur inattendue lors de l'ajout de la ligne : {ex.Message}");
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Retire une ligne de cet arrêt avec gestion d'erreur
-        /// </summary>
-        /// <param name="ligne">Ligne à retirer</param>
-        /// <returns>True si la suppression a réussi, False sinon</returns>
-        public static bool RetirerLigne(Ligne ligne, Arret arret)
-        {
-            try
-            {
-                if (ligne == null)
-                {
-                    throw new ArgumentNullException(nameof(ligne), "La ligne ne peut pas être null");
-                }
-
-                // Tentative de suppression
-                if (!arret.Lignes.Remove(ligne))
-                {
-                    throw new InvalidOperationException($"La ligne '{ligne.NomLigne}' ne dessert pas l'arrêt '{arret.NomArret}'");
-                }
-
-                return true;
-            }
-            catch (ArgumentNullException ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Erreur - Paramètre null : {ex.Message}");
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Erreur - Opération invalide : {ex.Message}");
-                return false;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Erreur inattendue lors de la suppression de la ligne : {ex.Message}");
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Retourne les noms de toutes les lignes qui passent par cet arrêt
-        /// </summary>
-        /// <returns>Liste des noms de lignes, ou liste vide en cas d'erreur</returns>
-        public static List<string> GetNomsLignes(Arret arret)
-        {
-            try
-            {
-                if (arret.Lignes == null || arret.Lignes.Count == 0)
-                {
-                    return new List<string>();
-                }
-
-                return arret.Lignes.Select(l => l.NomLigne).ToList();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des noms de lignes : {ex.Message}");
-                return new List<string>();
-            }
-        }
-
-        /// <summary>
-        /// Retourne tous les horaires de passage à cet arrêt, combinés depuis toutes les lignes associées.
-        /// </summary>
-        /// <returns>Liste ordonnée des horaires</returns>
-        public static List<TimeSpan> GetHorairesPassage(Arret arret)
-        {
-            try
-            {
-                var horaires = new List<TimeSpan>();
-
-                if (arret.Lignes == null || arret.Lignes.Count == 0)
-                    return horaires; // Aucune ligne => pas d'horaire
-
-                foreach (var ligne in arret.Lignes)
-                {
-                    var horairesLigne = LigneService.GetHorairesDepart(ligne);
-                    horaires.AddRange(horairesLigne);
-                }
-
-                // Supprimer les doublons et trier
-                horaires = horaires.Distinct().OrderBy(t => t).ToList();
-
-                return horaires;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des horaires : {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des horaires de passage : {ex.Message}");
                 return new List<TimeSpan>();
             }
         }
@@ -155,8 +127,7 @@ namespace Services
             {
                 return arret.IdArret > 0 &&
                        !string.IsNullOrWhiteSpace(arret.NomArret) &&
-                       arret.NomArret.Length <= 30 &&
-                       arret.Lignes != null;
+                       arret.NomArret.Length <= 30;
             }
             catch (Exception ex)
             {
@@ -164,21 +135,5 @@ namespace Services
                 return false;
             }
         }
-
-        ///// <summary>
-        ///// Affiche le nom de l'arrêt dans les listes déroulantes
-        ///// </summary>
-        //public override string ToString(Arret arret)
-        //{
-        //    try
-        //    {
-        //        return string.IsNullOrWhiteSpace(arret.NomArret) ? $"Arrêt #{arret.IdArret}" : arret.NomArret;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return "Arrêt invalide";
-        //    }
-        //}
-
     }
 }

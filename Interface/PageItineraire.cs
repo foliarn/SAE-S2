@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Interface.Classes;
 using BiblioSysteme;
-using Services;
+//using Services;
 using BiblioBDD;
 
 namespace Interface
@@ -20,7 +20,7 @@ namespace Interface
         private Arret arretDepart;
         private Arret arretDestination;
         private ParametresRecherche parametresRecherche;
-        private CalculateurItineraire calculateur;
+        //private CalculateurItineraire calculateur;
         private List<Itineraire> itinerairesCalcules;
 
         // Constructeur existant (pour compatibilité)
@@ -41,7 +41,7 @@ namespace Interface
             parametresRecherche = parametres;
 
             InitialiserInterface();
-            ChargerItineraires();
+            //ChargerItineraires();
         }
 
         private void InitialiserInterface()
@@ -49,14 +49,14 @@ namespace Interface
             try
             {
                 // Charger les données si pas déjà fait
-                if (ChargerDonnees.tousLesArrets == null || ChargerDonnees.tousLesArrets.Count == 0)
+                if (RecupDonnees.tousLesArrets == null || RecupDonnees.tousLesArrets.Count == 0)
                 {
-                    ChargerDonnees.tousLesArrets = ChargerDonnees.ChargerTousLesArrets();
+                    RecupDonnees.tousLesArrets = RecupDonnees.GetTousLesArrets();
                 }
 
                 // Remplir les comboBox
-                Utils.RemplirComboBox(cmbDepart, ChargerDonnees.tousLesArrets, "NomArret", "IdArret");
-                Utils.RemplirComboBox(cmbDest, ChargerDonnees.tousLesArrets, "NomArret", "IdArret");
+                Utils.RemplirComboBox(cmbDepart, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
+                Utils.RemplirComboBox(cmbDest, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
 
                 // Centrer les contrôles
                 Utils.CentrerControle(pnlRecherche, false, true);
@@ -64,7 +64,7 @@ namespace Interface
                 Utils.CentrerControle(pnlItineraire2, false, true);
 
                 // Initialiser le calculateur
-                calculateur = new CalculateurItineraire();
+                //calculateur = new CalculateurItineraire();
 
                 // Préremplir les champs si on a des données
                 if (arretDepart != null)
@@ -83,7 +83,7 @@ namespace Interface
                 }
 
                 // Ajouter l'événement du bouton recherche
-                btnTrouver.Click += BtnTrouver_Click;
+                //btnTrouver.Click += BtnTrouver_Click;
 
                 // Masquer les panneaux d'itinéraires au début
                 pnlItineraire1.Visible = false;
@@ -122,7 +122,7 @@ namespace Interface
             }
         }
 
-        private void BtnTrouver_Click(object sender, EventArgs e)
+        /*private void BtnTrouver_Click(object sender, EventArgs e)
         {
             try
             {
@@ -157,7 +157,7 @@ namespace Interface
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 System.Diagnostics.Debug.WriteLine($"Erreur BtnTrouver_Click : {ex.Message}");
             }
-        }
+        }*/
 
         public ParametresRecherche CreerParametresRecherche()
         {
@@ -185,7 +185,7 @@ namespace Interface
             }
         }
 
-        private async void ChargerItineraires()
+        /*private async void ChargerItineraires()
         {
             try
             {
@@ -221,7 +221,7 @@ namespace Interface
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 System.Diagnostics.Debug.WriteLine($"Erreur ChargerItineraires : {ex.Message}");
             }
-        }
+        }*/
 
         private void AfficherResultats()
         {

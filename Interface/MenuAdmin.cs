@@ -3,6 +3,7 @@ using BiblioSysteme;
 using MySql.Data.MySqlClient;
 using Interface.Classes;
 using System.Data;
+using Services;
 
 namespace Interface
 {
@@ -32,24 +33,16 @@ namespace Interface
 
 
             // Remplir les ComboBox avec les arrêts
-            ActualiserComboBoxes();
-
-        }
-
-        public void ActualiserComboBoxes()
-        {
-            //Actualiser les données depuis la BDD
-            ChargerDonnees.ActualiserTout();
-
             Utils.RemplirComboBox(cmbChoix,
-            isLigne ? ChargerDonnees.toutesLesLignes.Cast<object>().ToList() : ChargerDonnees.tousLesArrets.Cast<object>().ToList(),
+            isLigne ? RecupDonnees.toutesLesLignes.Cast<object>().ToList() : RecupDonnees.tousLesArrets.Cast<object>().ToList(),
             isLigne ? "NomLigne" : "NomArret",
             isLigne ? "IdLigne" : "IdArret");
 
-            Utils.RemplirComboBox(cmbLigneAjoutArret, ChargerDonnees.ChargerTousLesArretsSaufLigne(idChoixMain), "NomArret", "IdArret");
-            Utils.RemplirComboBox(cmbLigneRetraitArret, ChargerDonnees.ChargerArretsParLigne(idChoixMain), "NomArret", "IdArret");
-            Utils.RemplirComboBox(cmbArretModifLigneChoixAdd, ChargerDonnees.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : Ajouter un élément "Aucun" pour éviter les erreurs si aucune ligne n'est sélectionnée
-            Utils.RemplirComboBox(cmbArretModifLigneChoixSuppr, ChargerDonnees.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : idem
+            Utils.RemplirComboBox(cmbLigneAjoutArret, Utils.ChargerTousLesArretsSaufLigne(idChoixMain), "NomArret", "IdArret");
+            Utils.RemplirComboBox(cmbLigneRetraitArret, RecupDonnees.GetArretsParLigne(idChoixMain), "Arret.NomArret", "Arret.IdArret");
+            Utils.RemplirComboBox(cmbArretModifLigneChoixAdd, RecupDonnees.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : Ajouter un élément "Aucun" pour éviter les erreurs si aucune ligne n'est sélectionnée
+            Utils.RemplirComboBox(cmbArretModifLigneChoixSuppr, RecupDonnees.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : idem
+
         }
         private void pnlCreerLigne_Click(object sender, EventArgs e)
         {
@@ -70,7 +63,7 @@ namespace Interface
 
             lblSaisirNomHead.Text = "Saisir le nom du nouvel arrêt";
 
-            Utils.RemplirComboBox(cmbChoix, ChargerDonnees.tousLesArrets, "NomArret", "IdArret");
+            Utils.RemplirComboBox(cmbChoix, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
         }
 
         private void pnlModifLigne_Click(object sender, EventArgs e)
@@ -82,7 +75,7 @@ namespace Interface
             lblModifHead.Text = "Choisir une ligne";
             lblModif.Text = "Choisissez une ligne à modifier :";
 
-            Utils.RemplirComboBox(cmbChoix, ChargerDonnees.toutesLesLignes, "NomLigne", "IdLigne");
+            Utils.RemplirComboBox(cmbChoix, RecupDonnees.toutesLesLignes, "NomLigne", "IdLigne");
         }
 
         private void pnlModifArret_Click(object sender, EventArgs e)
@@ -94,7 +87,7 @@ namespace Interface
             lblModifHead.Text = "Choisir un arrêt";
             lblModif.Text = "Choisissez un arrêt à modifier :";
 
-            Utils.RemplirComboBox(cmbChoix, ChargerDonnees.tousLesArrets, "NomArret", "IdArret");
+            Utils.RemplirComboBox(cmbChoix, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
         }
 
 
@@ -137,7 +130,7 @@ namespace Interface
             if (isLigne)
             {
                 // Récupérer les informations de la ligne choisie
-                var ligneChoisie = ChargerDonnees.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idChoixMain);
+                var ligneChoisie = RecupDonnees.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idChoixMain);
                 if (ligneChoisie != null)
                 {
                     lblTitreModifLigneChoisie.Text = $"Ligne sélectionnée : {ligneChoisie.NomLigne}";
@@ -147,14 +140,14 @@ namespace Interface
             else
             {
                 // Récupérer les informations de l'arrêt choisi
-                var arretChoisi = ChargerDonnees.tousLesArrets.FirstOrDefault(a => a.IdArret == idChoixMain);
+                var arretChoisi = RecupDonnees.tousLesArrets.FirstOrDefault(a => a.IdArret == idChoixMain);
                 if (arretChoisi != null)
                 {
                     lblTitreModifArretChoisi.Text = $"Arrêt sélectionné : {arretChoisi.NomArret}";
                 }
                 pnlModifArretChoisi.Visible = true;
             }
-            ActualiserComboBoxes(); // Mettre à jour les ComboBox avec les données actuelles
+            //ActualiserComboBoxes(); // Mettre à jour les ComboBox avec les données actuelles
         }
 
         private void pnlModifAppartenance_Click(object sender, EventArgs e)
@@ -272,7 +265,7 @@ namespace Interface
                 System.Diagnostics.Debug.WriteLine("Erreur Générale : " + ex);
             }
 
-            ActualiserComboBoxes();
+            //ActualiserComboBoxes();
         }
 
         private void btnRetirerArret_Click(object sender, EventArgs e)
@@ -280,15 +273,19 @@ namespace Interface
             try
             {
                 int idArret = (int)cmbLigneRetraitArret.SelectedValue;
-                ModifBDD.RetirerArretDeLigne(idArret, idChoixMain);
+                Ligne ligne = RecupDonnees.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idChoixMain);
+                int ordre = ligne.Arrets.FirstOrDefault(a => a.Arret.IdArret == idArret)?.Ordre ?? -1;
+
+                ModifBDD.RetirerArretDeLigne(idArret, idChoixMain, ordre);
             }
+
             catch (Exception ex)
             {
                 MessageBox.Show($"Une erreur inattendue est survenue : {ex.Message}", "Erreur générale",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 System.Diagnostics.Debug.WriteLine("Erreur: " + ex);
             }
-            ActualiserComboBoxes();
+            //ActualiserComboBoxes();
             MessageBox.Show("Arrêt retiré avec succès de la ligne.");
         }
 
@@ -313,7 +310,7 @@ namespace Interface
                 {
                     NomArret = txtSaisirNom.Text.Trim()
                 };
-                ModifBDD.AjouterArret(nouvelArret);
+                ArretService.AjouterArret(nouvelArret);
             }
             else
             {
@@ -322,7 +319,7 @@ namespace Interface
                 {
                     NomLigne = txtSaisirNom.Text.Trim()
                 };
-                ModifBDD.AjouterLigne(nouvelleLigne);
+                LigneService.AjouterLigne(nouvelleLigne);
             }
             // Réinitialiser le champ de saisie
             txtSaisirNom.Clear();
@@ -330,7 +327,7 @@ namespace Interface
             MessageBox.Show("Création réussie.", "Succès",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            ActualiserComboBoxes();
+            //ActualiserComboBoxes();
 
             Utils.AfficherUniquement(this, pnlMenuModif, pnlMenuCreation);
             inMenu = true; // On est de retour dans le menu principal
@@ -348,7 +345,7 @@ namespace Interface
             if (!isLigne)
             {
                 // Supprimer l'arrêt
-                if (ModifBDD.RetirerArret(idChoixMain))
+                if (ArretService.RetirerArret(idChoixMain))
                 {
                     MessageBox.Show("Arrêt supprimé avec succès.", "Succès",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -362,7 +359,7 @@ namespace Interface
             else
             {
                 // Supprimer la ligne
-                if (ModifBDD.RetirerLigne(idChoixMain))
+                if (LigneService.RetirerLigne(idChoixMain))
                 {
                     MessageBox.Show("Ligne supprimée avec succès.", "Succès",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -374,7 +371,7 @@ namespace Interface
                 }
 
             }
-            ActualiserComboBoxes();
+            //ActualiserComboBoxes();
             // Réinitialiser le champ de saisie
             txtSupprConfirmer.Clear();
             idChoixMain = 0; // Réinitialiser l'ID choisi
@@ -446,7 +443,7 @@ namespace Interface
             // Réinitialiser le champ de saisie
             txtChangeNom.Clear();
 
-            ActualiserComboBoxes();
+            //ActualiserComboBoxes();
             MessageBox.Show("Nom modifié avec succès.", "Succès",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
 

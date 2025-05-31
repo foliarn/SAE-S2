@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using BiblioSysteme;
-using BiblioBDD;
+﻿using BiblioSysteme;
 
 namespace Services
 {
@@ -15,7 +11,7 @@ namespace Services
         {
             if (x == null || y == null) return 0;
 
-            int comparison = x.Distance.CompareTo(y.Distance);
+            int comparison = x.CoutMinimal.CompareTo(y.CoutMinimal);
             if (comparison == 0)
             {
                 // Si même distance, comparer par ID pour éviter les doublons
@@ -241,19 +237,6 @@ namespace Services
         }
 
         /// <summary>
-        /// Retourne des statistiques sur le graphe
-        /// </summary>
-        public static string ObtenirStatistiques(Graphe graphe)
-        {
-            if (graphe == null) return "Graphe null";
-
-            int correspondances = graphe.Aretes.Count(a => a.EstCorrespondance);
-            int aretesDirect = graphe.Aretes.Count - correspondances;
-
-            return $"{graphe.Noeuds.Count} arrêts, {aretesDirect} connexions directes, {correspondances} correspondances";
-        }
-
-        /// <summary>
         /// Remet à zéro tous les nœuds pour une nouvelle recherche Dijkstra
         /// </summary>
         public static void ReinitialiserPourDijkstra(Graphe graphe)
@@ -264,19 +247,6 @@ namespace Services
             {
                 noeud.ReinitialiserDijkstra();
             }
-        }
-
-        /// <summary>
-        /// Trouve tous les voisins d'un nœud (pour debug)
-        /// </summary>
-        public static List<Noeud> ObtenirVoisins(Graphe graphe, int idArret)
-        {
-            if (graphe == null || !graphe.Noeuds.TryGetValue(idArret, out var noeud))
-            {
-                return new List<Noeud>();
-            }
-
-            return noeud.AretesSortantes.Select(a => a.NoeudArrivee).ToList();
         }
     }
 }

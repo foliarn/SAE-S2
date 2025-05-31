@@ -5,8 +5,8 @@ namespace BiblioSysteme
     // Paramètres de recherche d'itinéraire - définit les critères souhaités par l'utilisateur
     public class ParametresRecherche
     {
-        public const int NombreMaxItineraires = 2;
-        public const int NombreMaxCorrespondances = 2; // A voir si on ajoute les pref user
+        public const int NOMBRE_ITINERAIRES = 2;
+        public int NombreMaxCorrespondances { get; set; }
         public TimeSpan HeureSouhaitee { get; set; }
         public bool EstHeureDepart { get; set; }
 
@@ -15,8 +15,9 @@ namespace BiblioSysteme
         public TimeSpan TempsMaxRecherche { get; set; }
         
         // Préférence utilisateur (à choisir dans les paramètres de l'application)
-        public bool PreferenceTrajetDirect { get; set; }
-        public bool PreferenceVitesse { get; set; }
+        public double CoefficientTempsTransport { get; set; }
+        public double CoefficientCorrespondance { get; set; }
+        public double CoefficientAttente { get; set; }
 
         //Constructeurs :
 
@@ -28,8 +29,10 @@ namespace BiblioSysteme
             TempsCorrespondanceMin = TimeSpan.FromMinutes(3);
             TempsCorrespondanceMax = TimeSpan.FromMinutes(20);
             TempsMaxRecherche = TimeSpan.FromHours(2);
-            PreferenceTrajetDirect = false;
-            PreferenceVitesse = true;
+
+            // On décourage les temps d'attente et les correspondances par défaut
+            CoefficientTempsTransport = 1.0;
+            CoefficientCorrespondance = 2.0; 
         }
 
         // Constructeur simplifié
@@ -41,8 +44,9 @@ namespace BiblioSysteme
             TempsCorrespondanceMin = TimeSpan.FromMinutes(3);
             TempsCorrespondanceMax = TimeSpan.FromMinutes(15);
             TempsMaxRecherche = TimeSpan.FromHours(2);
-            PreferenceTrajetDirect = false;
-            PreferenceVitesse = true;
+            CoefficientTempsTransport = 1.0;
+            CoefficientCorrespondance = 2.0;
+            CoefficientAttente = 2.0; 
         }
 
         public ParametresRecherche(TimeSpan heureSouhaitee, bool estHeureDepart,

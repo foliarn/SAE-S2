@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using BiblioSysteme;
+﻿using BiblioSysteme;
 using BiblioBDD;
-using System.Security.Cryptography;
 
 namespace Services;
 

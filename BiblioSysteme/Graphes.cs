@@ -13,14 +13,15 @@ namespace BiblioSysteme
         public List<Arete> AretesSortantes { get; set; }
 
         // Propriétés pour l'algorithme de Dijkstra
-        public double Distance { get; set; }
+        public double CoutMinimal { get; set; }
         public Noeud Precedent { get; set; }
         public bool Visite { get; set; }
         public Arete AretePrecedente { get; set; } // Pour connaître la ligne utilisée
+        public TimeSpan HeureArrivee { get; set; }
 
         public Noeud(int idArret, string nomArret)
         {
-            ArretNoeud.IdArret = idArret;
+            ArretNoeud = new Arret(idArret, nomArret);
             ArretNoeud.NomArret = nomArret;
             AretesSortantes = new List<Arete>();
             ReinitialiserDijkstra();
@@ -31,7 +32,7 @@ namespace BiblioSysteme
         /// </summary>
         public void ReinitialiserDijkstra()
         {
-            Distance = double.MaxValue;
+            CoutMinimal = double.MaxValue;
             Precedent = null;
             Visite = false;
             AretePrecedente = null;

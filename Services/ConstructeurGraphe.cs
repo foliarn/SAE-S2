@@ -25,7 +25,7 @@ namespace Services
         }
     }
 
-    /*/// <summary>
+    /// <summary>
     /// Responsable de la construction du graphe de transport
     /// </summary>
     public static class ConstructeurGraphe
@@ -96,12 +96,6 @@ namespace Services
                 return;
             }
 
-            // Générer les temps entre arrêts si pas encore fait
-            if (ligne.TempsEntreArrets == null || ligne.TempsEntreArrets.Count == 0)
-            {
-                LigneService.GenererTempsEntreArrets(ligne, 3); // 3 minutes par défaut entre arrêts
-            }
-
             int aretesCreees = 0;
 
             // Créer les arêtes dans les deux sens (aller et retour)
@@ -111,15 +105,15 @@ namespace Services
                 var arretArrivee = ligne.Arrets[i + 1];
 
                 // Vérifier que les nœuds existent
-                if (!graphe.Noeuds.TryGetValue(arretDepart.IdArret, out var noeudDepart) ||
-                    !graphe.Noeuds.TryGetValue(arretArrivee.IdArret, out var noeudArrivee))
+                if (!graphe.Noeuds.TryGetValue(arretDepart.Arret.IdArret, out var noeudDepart) ||
+                    !graphe.Noeuds.TryGetValue(arretArrivee.Arret.IdArret, out var noeudArrivee))
                 {
                     System.Diagnostics.Debug.WriteLine($"Erreur : Nœud manquant pour ligne {ligne.NomLigne}");
                     continue;
                 }
 
                 // Temps de trajet entre ces deux arrêts
-                double tempsTrajet = ligne.TempsEntreArrets[i].TotalMinutes;
+                int tempsTrajet = arretArrivee.TempsDepart - arretDepart.TempsDepart;
 
                 // Arête aller
                 var areteAller = new Arete(noeudDepart, noeudArrivee, ligne, tempsTrajet);
@@ -142,7 +136,7 @@ namespace Services
         /// </summary>
         private static void CreerCorrespondances(Graphe graphe)
         {
-            const double TEMPS_CORRESPONDANCE = 5.0; // 5 minutes pour changer de ligne
+            const int TEMPS_CORRESPONDANCE = 5; // 5 minutes pour changer de ligne
 
             // Pour chaque arrêt, regarder quelles lignes y passent
             var arretsParLigne = new Dictionary<int, List<Ligne>>();
@@ -150,7 +144,7 @@ namespace Services
             // Construire la map arrêt -> lignes
             foreach (var arete in graphe.Aretes.Where(a => !a.EstCorrespondance))
             {
-                int idArret = arete.NoeudDepart.IdArret;
+                int idArret = arete.NoeudDepart.ArretNoeud.IdArret;
                 if (!arretsParLigne.ContainsKey(idArret))
                 {
                     arretsParLigne[idArret] = new List<Ligne>();
@@ -189,7 +183,7 @@ namespace Services
                         }
                     }
 
-                    System.Diagnostics.Debug.WriteLine($"Arrêt {noeud.NomArret} : {lignes.Count} lignes, {lignes.Count * (lignes.Count - 1)} correspondances");
+                    System.Diagnostics.Debug.WriteLine($"Arrêt {noeud.ArretNoeud.NomArret} : {lignes.Count} lignes, {lignes.Count * (lignes.Count - 1)} correspondances");
                 }
             }
 
@@ -216,7 +210,7 @@ namespace Services
                 {
                     if (noeud.AretesSortantes.Count == 0)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Attention : Nœud isolé {noeud.NomArret}");
+                        System.Diagnostics.Debug.WriteLine($"Attention : Nœud isolé {noeud.ArretNoeud.NomArret}");
                         noeudsIsoles++;
                     }
                 }
@@ -224,7 +218,7 @@ namespace Services
                 // Vérifier que toutes les arêtes pointent vers des nœuds existants
                 foreach (var arete in graphe.Aretes)
                 {
-                    if (!graphe.Noeuds.ContainsKey(arete.NoeudArrivee.IdArret))
+                    if (!graphe.Noeuds.ContainsKey(arete.NoeudArrivee.ArretNoeud.IdArret))
                     {
                         System.Diagnostics.Debug.WriteLine($"Erreur : Arête vers nœud inexistant");
                         return false;
@@ -284,5 +278,5 @@ namespace Services
 
             return noeud.AretesSortantes.Select(a => a.NoeudArrivee).ToList();
         }
-    }*/
+    }
 }

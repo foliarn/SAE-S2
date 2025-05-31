@@ -46,10 +46,10 @@ namespace BiblioSysteme
         public Noeud NoeudDepart { get; set; }
         public Noeud NoeudArrivee { get; set; }
         public Ligne LigneUtilisee { get; set; }
-        public double Poids { get; set; } // Temps en minutes
+        public int Poids { get; set; } // Temps en minutes
         public bool EstCorrespondance { get; set; }
 
-        public Arete(Noeud depart, Noeud arrivee, Ligne ligne, double poids, bool estCorrespondance = false)
+        public Arete(Noeud depart, Noeud arrivee, Ligne ligne, int poids, bool estCorrespondance = false)
         {
             NoeudDepart = depart;
             NoeudArrivee = arrivee;

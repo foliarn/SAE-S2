@@ -28,7 +28,6 @@ namespace BiblioSysteme
                                                     .ToList() ?? new List<Ligne>();
 
         // Métadonnées
-        public DateTime DateCalcul { get; set; }
         public string TypeItineraire { get; set; }      // "Rapide", "Direct", "Économique", etc.
 
         // Statistiques détaillées
@@ -40,7 +39,6 @@ namespace BiblioSysteme
         public Itineraire()
         {
             Etapes = new List<EtapeItineraire>();
-            DateCalcul = DateTime.Now;
             TypeItineraire = "Standard";
         }
 
@@ -53,7 +51,6 @@ namespace BiblioSysteme
                 throw new ArgumentException("L'arrêt de départ ne peut pas être identique à l'arrêt de destination");
 
             Etapes = new List<EtapeItineraire>();
-            DateCalcul = DateTime.Now;
             TypeItineraire = "Standard";
         }
 

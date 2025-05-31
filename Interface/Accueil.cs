@@ -1,7 +1,6 @@
 ﻿using BiblioBDD;
 using BiblioSysteme;
 using Interface.Classes;
-using Services;
 
 namespace Interface
 {
@@ -12,7 +11,7 @@ namespace Interface
         {
             if (chkHeure.Checked)
             {
-                pnlRecherche.Size = new Size(500, 500);
+                pnlRecherche.Size = new Size(250, 300);
 
                 rdoDepart.Visible = false;
                 rdoArrive.Visible = false;
@@ -21,7 +20,7 @@ namespace Interface
 
             else
             {
-                pnlRecherche.Size = new Size(500, 500);
+                pnlRecherche.Size = new Size(250, 350);
 
                 rdoDepart.Top = chkHeure.Bottom + 10;
                 rdoArrive.Top = chkHeure.Bottom + 10;
@@ -173,17 +172,12 @@ namespace Interface
                     return;
                 }
 
-                // === CRÉATION DES PARAMÈTRES AVEC LA CLASSE UTILITAIRE ===
-                // ✅ UTILISATION DE ParametresHelper
+                // === CRÉATION DES PARAMÈTRES AVEC TRANSFERT ===
                 var parametres = ParametresHelper.CreerDepuisInterface(chkHeure, dtpHeure, rdoDepart, rdoArrive);
 
-                // Optionnel : afficher les paramètres créés pour le débogage
-                string descriptionParametres = ParametresHelper.DecrireParametres(parametres);
-                System.Diagnostics.Debug.WriteLine($"Paramètres créés : {descriptionParametres}");
-
-                // === OUVERTURE DE LA PAGE ITINÉRAIRE ===
-                //PageItineraire pageItineraire = new PageItineraire(this, arretDepart, arretDestination, parametres);
-                //pageItineraire.Show();
+                // === OUVERTURE DE LA PAGE ITINÉRAIRE AVEC TRANSFERT ===
+                PageItineraire pageItineraire = new PageItineraire(this, arretDepart, arretDestination, parametres);
+                pageItineraire.Show();
                 this.Hide();
             }
             catch (Exception ex)

@@ -68,42 +68,69 @@ namespace Services
         /// Utilise un lazy cache pour éviter de recalculer plusieurs fois les mêmes données.
         /// </summary>
         /// <param name="arret">Arrêt concerné</param>
-        /// <param name="idLigne">Identifiant de la ligne</param>
+        /// <param name="ligne">Ligne concernée</param>
         /// <param name="horaire">Horaire à partir duquel on veut les passages</param>
         /// <returns>Liste ordonnée des horaires à partir de l'horaire spécifié</returns>
         public static List<TimeSpan> GetHorairesPassage(Arret arret, Ligne ligne, TimeSpan horaire)
         {
             try
             {
+                // Vérifier que les paramètres sont valides
                 if (ligne == null)
-                    throw new ArgumentNullException(nameof(ligne), "La ligne ne peut pas être null.");
+                {
+                    System.Diagnostics.Debug.WriteLine("Erreur GetHorairesPassage : ligne null");
+                    return new List<TimeSpan>();
+                }
+
+                if (arret == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("Erreur GetHorairesPassage : arrêt null");
+                    return new List<TimeSpan>();
+                }
 
                 // Vérifier si on a déjà calculé les horaires pour cet arrêt
                 if (ligne.HorairesCache.TryGetValue(arret, out var horaires))
                 {
                     // Filtrer uniquement les horaires supérieurs ou égaux à l'horaire demandé
-                    return horaires.Where(h => h >= horaire).ToList();
+                    var horairesFiltrés = horaires.Where(h => h >= horaire).ToList();
+                    System.Diagnostics.Debug.WriteLine($"Cache hit : {horairesFiltrés.Count} horaires trouvés pour {arret.NomArret} sur ligne {ligne.NomLigne}");
+                    return horairesFiltrés;
                 }
 
                 // Sinon, on calcule toutes les horaires pour cet arrêt/ligne
                 var toutesLesHoraires = new List<TimeSpan>();
-                TimeSpan tempsJusquAArret = LigneService.ObtenirTempsDepuisDepartInitial(ligne, arret);
 
-                TimeSpan HoraireActuel = ligne.PremierDepart + tempsJusquAArret;
-
-                while (HoraireActuel <= ligne.DernierDepart + tempsJusquAArret)
+                // Vérifier que l'arrêt fait partie de la ligne
+                TimeSpan tempsJusquAArret;
+                try
                 {
-                    toutesLesHoraires.Add(HoraireActuel);
-                    HoraireActuel = HoraireActuel.Add(TimeSpan.FromMinutes(ligne.IntervalleMinutes));
+                    tempsJusquAArret = LigneService.ObtenirTempsDepuisDepartInitial(ligne, arret);
+                }
+                catch (ArgumentException ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Erreur : L'arrêt {arret.NomArret} n'appartient pas à la ligne {ligne.NomLigne}");
+                    return new List<TimeSpan>();
                 }
 
-                // Mets toutes les horaires en cache (une seule fois par ligne)
+                // Calculer tous les horaires de passage
+                TimeSpan horaireActuel = ligne.PremierDepart.Add(tempsJusquAArret);
+                TimeSpan horaireLimite = ligne.DernierDepart.Add(tempsJusquAArret);
+
+                while (horaireActuel <= horaireLimite)
+                {
+                    toutesLesHoraires.Add(horaireActuel);
+                    horaireActuel = horaireActuel.Add(TimeSpan.FromMinutes(ligne.IntervalleMinutes));
+                }
+
+                // Mettre en cache toutes les horaires (une seule fois par ligne)
                 ligne.HorairesCache[arret] = toutesLesHoraires;
 
-                // Filtre pour ne retourner que les horaires à partir de l'horaire spécifié en paramètre
-                return toutesLesHoraires.Where(h => h >= horaire).ToList();
-            }
+                // Filtrer pour ne retourner que les horaires à partir de l'horaire spécifié
+                var resultats = toutesLesHoraires.Where(h => h >= horaire).ToList();
 
+                System.Diagnostics.Debug.WriteLine($"Calculé : {resultats.Count} horaires pour {arret.NomArret} sur ligne {ligne.NomLigne} à partir de {horaire}");
+                return resultats;
+            }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des horaires de passage : {ex.Message}");

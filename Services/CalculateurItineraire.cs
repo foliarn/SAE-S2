@@ -139,10 +139,14 @@ namespace Services
                         double nouveauCout;
                         TimeSpan nouvelleHeure;
 
+                        //Si c'est une correspondance :
                         if (arete.EstCorrespondance)
                         {
-                            // Pour une correspondance, trouver le prochain départ
                             var prochainDepart = CalculItineraireServices.TrouverProchainDepart(arete.NoeudArrivee.ArretNoeud, arete.LigneUtilisee, noeudCourant.HeureArrivee);
+
+                            if (prochainDepart == TimeSpan.Zero)
+                                continue; // Aucun service disponible, ignorer cette correspondance
+
                             nouveauCout = noeudCourant.CoutMinimal + CalculateurCout.CalculerCoutCorrespondance(arete, noeudCourant.HeureArrivee, prochainDepart, parametres);
                             nouvelleHeure = prochainDepart;
                         }

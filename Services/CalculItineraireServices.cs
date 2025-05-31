@@ -20,18 +20,27 @@ namespace Services
         {
             try
             {
-                // Utiliser le service existant pour obtenir tous les horaires à partir de l'heure actuelle
-                // On récupère le premier horaire de passage (First)
-                var horairesDisponibles = ArretService.GetHorairesPassage(arret, ligne, heureActuelle).First();
-
-                if (horairesDisponibles == TimeSpan.Zero)
+                if (arret == null || ligne == null)
                 {
-                    return TimeSpan.Zero; // Aucun service disponible
+                    System.Diagnostics.Debug.WriteLine("Erreur TrouverProchainDepart : arrêt ou ligne null");
+                    return TimeSpan.Zero;
                 }
 
-                return horairesDisponibles;
+                // Utiliser le service existant pour obtenir tous les horaires à partir de l'heure actuelle
+                var horairesDisponibles = ArretService.GetHorairesPassage(arret, ligne, heureActuelle);
 
-                // Retourner le premier horaire disponible
+                // Vérifier qu'on a au moins un horaire disponible
+                if (horairesDisponibles == null || horairesDisponibles.Count == 0)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Aucun horaire disponible pour {arret.NomArret} sur ligne {ligne.NomLigne} après {heureActuelle}");
+                    return TimeSpan.Zero;
+                }
+
+                // Retourner le premier (plus proche) horaire disponible
+                var prochainHoraire = horairesDisponibles.First();
+
+                System.Diagnostics.Debug.WriteLine($"Prochain départ trouvé : {prochainHoraire} pour {arret.NomArret} sur ligne {ligne.NomLigne}");
+                return prochainHoraire;
             }
             catch (Exception ex)
             {

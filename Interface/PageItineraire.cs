@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Interface.Classes;
-using BiblioSysteme;
-//using Services;
+﻿//using Services;
 using BiblioBDD;
+using BiblioSysteme;
+using Interface.Classes;
+using Services;
+using System.Data;
 
 namespace Interface
 {
@@ -31,7 +24,7 @@ namespace Interface
             InitialiserInterface();
         }
 
-        // Nouveau constructeur avec paramètres de recherche
+        // Constructeur avec transfert automatique
         public PageItineraire(Accueil accueil, Arret depart, Arret destination, ParametresRecherche parametres)
         {
             InitializeComponent();
@@ -41,14 +34,19 @@ namespace Interface
             parametresRecherche = parametres;
 
             InitialiserInterface();
-            //ChargerItineraires();
+
+            // Lancer automatiquement la recherche si tous les paramètres sont fournis
+            if (arretDepart != null && arretDestination != null && parametresRecherche != null)
+            {
+                ChargerItineraires();
+            }
         }
 
         private void InitialiserInterface()
         {
             try
             {
-                // Charger les données si pas déjà fait
+                // Charger les données
                 if (RecupDonnees.tousLesArrets == null || RecupDonnees.tousLesArrets.Count == 0)
                 {
                     RecupDonnees.tousLesArrets = RecupDonnees.GetTousLesArrets();
@@ -58,15 +56,10 @@ namespace Interface
                 Utils.RemplirComboBox(cmbDepart, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
                 Utils.RemplirComboBox(cmbDest, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
 
-                // Centrer les contrôles
-                Utils.CentrerControle(pnlRecherche, false, true);
-                Utils.CentrerControle(pnlItineraire1, false, true);
-                Utils.CentrerControle(pnlItineraire2, false, true);
+                // AJOUTER L'ÉVÉNEMENT ICI
+                btnTrouver.Click += BtnTrouver_Click;
 
-                // Initialiser le calculateur
-                //calculateur = new CalculateurItineraire();
-
-                // Préremplir les champs si on a des données
+                // Préremplir les champs si on a des données (TRANSFERT)
                 if (arretDepart != null)
                 {
                     cmbDepart.SelectedValue = arretDepart.IdArret;
@@ -76,16 +69,14 @@ namespace Interface
                     cmbDest.SelectedValue = arretDestination.IdArret;
                 }
 
-                // Configurer les heures si nécessaire
+                // Configurer les heures (TRANSFERT)
                 if (parametresRecherche != null)
                 {
                     ConfigurerHeures();
                 }
 
-                // Ajouter l'événement du bouton recherche
-                //btnTrouver.Click += BtnTrouver_Click;
-
-                // Masquer les panneaux d'itinéraires au début
+                // Interface
+                Utils.CentrerControle(pnlRecherche, false, true);
                 pnlItineraire1.Visible = false;
                 pnlItineraire2.Visible = false;
             }
@@ -93,7 +84,6 @@ namespace Interface
             {
                 MessageBox.Show($"Erreur lors de l'initialisation : {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                System.Diagnostics.Debug.WriteLine($"Erreur InitialiserInterface : {ex.Message}");
             }
         }
 
@@ -122,7 +112,7 @@ namespace Interface
             }
         }
 
-        /*private void BtnTrouver_Click(object sender, EventArgs e)
+        private void BtnTrouver_Click(object sender, EventArgs e)
         {
             try
             {
@@ -145,8 +135,8 @@ namespace Interface
                     return;
                 }
 
-                // Mettre à jour les paramètres
-                parametresRecherche = CreerParametresRecherche();
+                // Mettre à jour les paramètres avec ParametresHelper
+                parametresRecherche = ParametresHelper.CreerDepuisInterface(chkHeure, dtpHeure, rdoDepart, rdoArrive);
 
                 // Lancer la recherche
                 ChargerItineraires();
@@ -157,7 +147,7 @@ namespace Interface
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 System.Diagnostics.Debug.WriteLine($"Erreur BtnTrouver_Click : {ex.Message}");
             }
-        }*/
+        }
 
         public ParametresRecherche CreerParametresRecherche()
         {
@@ -185,7 +175,7 @@ namespace Interface
             }
         }
 
-        /*private async void ChargerItineraires()
+        private async void ChargerItineraires()
         {
             try
             {
@@ -193,16 +183,14 @@ namespace Interface
                 pnlItineraire1.Visible = false;
                 pnlItineraire2.Visible = false;
 
-                // Afficher un message de chargement (optionnel)
+                // Afficher un message de chargement
                 btnTrouver.Text = "Calcul en cours...";
                 btnTrouver.Enabled = false;
 
                 // Calculer les itinéraires de manière asynchrone
                 await Task.Run(() =>
                 {
-                    calculateur.DebugCacheArret(arretDepart.IdArret); // Pour Blum
-                    calculateur.DebugCacheArret(109);
-                    itinerairesCalcules = calculateur.CalculerItineraires(arretDepart, arretDestination, parametresRecherche);
+                    itinerairesCalcules = CalculateurItineraire.CalculerItineraires(arretDepart, arretDestination, parametresRecherche);
                 });
 
                 // Restaurer le bouton
@@ -221,7 +209,7 @@ namespace Interface
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 System.Diagnostics.Debug.WriteLine($"Erreur ChargerItineraires : {ex.Message}");
             }
-        }*/
+        }
 
         private void AfficherResultats()
         {

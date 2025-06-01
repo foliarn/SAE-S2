@@ -186,7 +186,6 @@ namespace BiblioBDD
 
         /// <summary>
         /// Récupère les arrêts d'une ligne (avec leur ordre et temps de départ bidirectionnels)
-        /// MODIFIÉ : Prend en charge les nouvelles colonnes bidirectionnelles
         /// </summary>
         /// <param name="idLigne">ID de la ligne</param>
         /// <returns>Liste des arrêts (ArretLigne)</returns>

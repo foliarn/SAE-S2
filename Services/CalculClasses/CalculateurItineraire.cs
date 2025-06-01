@@ -38,10 +38,7 @@ namespace Services.CalculClasses
                 // Construire le graphe
                 var graphe = new Graphe();
 
-                // 🔥🔥🔥 VERIFIER QUE TOUTESLESLIGNES EST ACTUALISÉ AVANT DE CONTINUER 🔥🔥🔥
-                // 🔥🔥🔥 VERIFIER QUE TOUTESLESLIGNES EST ACTUALISÉ AVANT DE CONTINUER 🔥🔥🔥
-                // 🔥🔥🔥 VERIFIER QUE TOUTESLESLIGNES EST ACTUALISÉ AVANT DE CONTINUER 🔥🔥🔥
-
+                // Vérifier que les données sont disponibles
                 if (Init.toutesLesLignes == null || Init.toutesLesLignes.Count == 0)
                 {
                     System.Diagnostics.Debug.WriteLine("Erreur : Aucune ligne disponible");
@@ -82,6 +79,7 @@ namespace Services.CalculClasses
 
         /// <summary>
         /// Exécute l'algorithme de Dijkstra adapté aux transports en commun
+        /// MODIFIÉ : Gère correctement les sens de circulation
         /// </summary>
         /// <param name="graphe">Le graphe de transport</param>
         /// <param name="idArretDepart">ID de l'arrêt de départ</param>
@@ -95,7 +93,6 @@ namespace Services.CalculClasses
                 System.Diagnostics.Debug.WriteLine($"=== DIJKSTRA DEBUG ===");
                 System.Diagnostics.Debug.WriteLine($"Départ: {idArretDepart}, Destination: {idArretDestination}");
                 System.Diagnostics.Debug.WriteLine($"Heure: {parametres.HeureSouhaitee}");
-
 
                 // Initialiser le graphe
                 CalculItineraireServices.InitialiserGraphe(graphe, idArretDepart, parametres);
@@ -150,34 +147,12 @@ namespace Services.CalculClasses
                         if (noeudVoisin.Visite)
                             continue;
 
-                        // Calculer le nouveau coût
-                        double nouveauCout;
-                        TimeSpan nouvelleHeure;
+                        // NOUVEAU : Calculer le nouveau coût et la nouvelle heure avec gestion bidirectionnelle
+                        var (nouveauCout, nouvelleHeure) = CalculerCoutEtHeure(noeudCourant, arete, parametres);
 
-                        //Si c'est une correspondance :
-                        if (arete.EstCorrespondance)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"Correspondance détectée : {arete.NoeudDepart.ArretNoeud.NomArret} → ligne {arete.LigneUtilisee.NomLigne}");
-                            var prochainDepart = CalculItineraireServices.TrouverProchainDepart(arete.NoeudArrivee.ArretNoeud, arete.LigneUtilisee, noeudCourant.HeureArrivee);
-
-                            if (prochainDepart == TimeSpan.Zero)
-                                continue; // Aucun service disponible, ignorer cette correspondance
-
-                            nouveauCout = noeudCourant.CoutMinimal + CalculateurCout.CalculerCoutCorrespondance(arete, noeudCourant.HeureArrivee, prochainDepart, parametres);
-                            nouvelleHeure = prochainDepart;
-                        }
-                        else
-                        {
-                            // Pour un trajet normal
-                            nouveauCout = noeudCourant.CoutMinimal + CalculateurCout.CalculerCout(noeudCourant, arete, noeudCourant.HeureArrivee, parametres);
-
-                            // Calculer l'heure d'arrivée
-                            var prochainDepart = CalculItineraireServices.TrouverProchainDepart(noeudCourant.ArretNoeud, arete.LigneUtilisee, noeudCourant.HeureArrivee);
-                            if (prochainDepart == TimeSpan.Zero)
-                                continue; // Aucun service disponible
-
-                            nouvelleHeure = prochainDepart.Add(TimeSpan.FromMinutes(arete.Poids));
-                        }
+                        // Si aucun service disponible, ignorer cette arête
+                        if (nouveauCout == double.MaxValue || nouvelleHeure == TimeSpan.Zero)
+                            continue;
 
                         // Si ce chemin est meilleur, mettre à jour
                         if (nouveauCout < noeudVoisin.CoutMinimal)
@@ -194,15 +169,13 @@ namespace Services.CalculClasses
                             // Ajouter à la file de priorité
                             filePriorite.Add(noeudVoisin);
                         }
-                        if (arete.NoeudDepart.ArretNoeud.IdArret == arete.NoeudArrivee.ArretNoeud.IdArret)
+
+                        // Debug pour les correspondances
+                        if (arete.EstCorrespondance)
                         {
-                            System.Diagnostics.Debug.WriteLine($"Correspondance trouvée: {arete.NoeudDepart.ArretNoeud.NomArret} vers ligne {arete.LigneUtilisee.NomLigne}");
+                            System.Diagnostics.Debug.WriteLine($"Correspondance: {arete.NoeudDepart.ArretNoeud.NomArret} vers ligne {arete.LigneUtilisee.NomLigne}");
                         }
-                        // Dans ExecuterDijkstra(), dans la boucle foreach (var arete in noeudCourant.AretesSortantes)
-                        //System.Diagnostics.Debug.WriteLine($"Arete: {arete.NoeudDepart.ArretNoeud.NomArret}→{arete.NoeudArrivee.ArretNoeud.NomArret}, EstCorrespondance: {arete.EstCorrespondance}");
                     }
-                    // Ajoutez ce debug dans la boucle Dijkstra
-                    
                 }
 
                 System.Diagnostics.Debug.WriteLine("Aucun chemin trouvé vers la destination");
@@ -212,6 +185,91 @@ namespace Services.CalculClasses
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur Dijkstra : {ex.Message}");
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// NOUVEAU : Calcule le coût et l'heure pour une arête en tenant compte du sens
+        /// </summary>
+        /// <param name="noeudCourant">Nœud actuel</param>
+        /// <param name="arete">Arête à explorer</param>
+        /// <param name="parametres">Paramètres de recherche</param>
+        /// <returns>Tuple (nouveauCout, nouvelleHeure)</returns>
+        private static (double nouveauCout, TimeSpan nouvelleHeure) CalculerCoutEtHeure(Noeud noeudCourant, Arete arete, ParametresRecherche parametres)
+        {
+            try
+            {
+                // Déterminer le sens de circulation
+                bool sensNormal = DeterminerSensArete(arete);
+
+                if (arete.EstCorrespondance)
+                {
+                    // Pour une correspondance : chercher le prochain départ sur la nouvelle ligne
+                    var prochainDepart = CalculItineraireServices.TrouverProchainDepart(
+                        arete.NoeudArrivee.ArretNoeud,
+                        arete.LigneUtilisee,
+                        noeudCourant.HeureArrivee,
+                        sensNormal);
+
+                    if (prochainDepart == TimeSpan.Zero)
+                        return (double.MaxValue, TimeSpan.Zero);
+
+                    var coutCorrespondance = CalculateurCout.CalculerCoutCorrespondance(arete, noeudCourant.HeureArrivee, prochainDepart, parametres);
+                    return (noeudCourant.CoutMinimal + coutCorrespondance, prochainDepart);
+                }
+                else
+                {
+                    // Pour un trajet normal : chercher le départ depuis l'arrêt actuel
+                    var prochainDepart = CalculItineraireServices.TrouverProchainDepart(
+                        noeudCourant.ArretNoeud,
+                        arete.LigneUtilisee,
+                        noeudCourant.HeureArrivee,
+                        sensNormal);
+
+                    if (prochainDepart == TimeSpan.Zero)
+                        return (double.MaxValue, TimeSpan.Zero);
+
+                    var coutTrajet = CalculateurCout.CalculerCout(noeudCourant, arete, noeudCourant.HeureArrivee, parametres);
+                    var heureArrivee = prochainDepart.Add(TimeSpan.FromMinutes(arete.Poids));
+
+                    return (coutTrajet, heureArrivee);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur calcul coût/heure : {ex.Message}");
+                return (double.MaxValue, TimeSpan.Zero);
+            }
+        }
+
+        /// <summary>
+        /// NOUVEAU : Détermine le sens de circulation pour une arête
+        /// </summary>
+        /// <param name="arete">Arête à analyser</param>
+        /// <returns>True si sens normal, False si sens inverse</returns>
+        private static bool DeterminerSensArete(Arete arete)
+        {
+            // Pour une correspondance, le sens n'a pas d'importance (même arrêt)
+            if (arete.EstCorrespondance)
+                return true;
+
+            try
+            {
+                var ligne = arete.LigneUtilisee;
+                if (ligne?.Arrets == null) return true;
+
+                var arretDepart = ligne.Arrets.FirstOrDefault(a => a.Arret.IdArret == arete.NoeudDepart.ArretNoeud.IdArret);
+                var arretArrivee = ligne.Arrets.FirstOrDefault(a => a.Arret.IdArret == arete.NoeudArrivee.ArretNoeud.IdArret);
+
+                if (arretDepart == null || arretArrivee == null)
+                    return true;
+
+                // Sens normal si ordre croissant
+                return arretDepart.Ordre < arretArrivee.Ordre;
+            }
+            catch
+            {
+                return true; // Par défaut sens normal
             }
         }
 

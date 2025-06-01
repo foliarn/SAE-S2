@@ -15,15 +15,10 @@ namespace BiblioBDD
     {
         // Définition des requetes SQL multiligne pour éviter les répétitions et simplifier l'affichage
         private static string requeteSelectMAJ = @"
-            SELECT id_arret, ordre, temps_depart 
+            SELECT id_arret, ordre
             FROM Lignes_Arrets 
             WHERE id_ligne = @idLigne 
             ORDER BY ordre;";
-
-        private static string requeteMAJOrdre = @"
-            UPDATE Lignes_Arrets 
-            SET temps_depart = @tempsDepart 
-            WHERE id_ligne = @idLigne AND id_arret = @idArret;";
 
         /// <summary>
         /// Exécute une requête SQL avec des paramètres.
@@ -208,6 +203,7 @@ namespace BiblioBDD
 
         /// <summary>
         /// Ajoute un arrêt d'une ligne dans la BDD
+        /// MODIFIÉ : Utilise les nouvelles colonnes bidirectionnelles
         /// </summary>
         /// <param name="idArret">L'ID de l'arrêt à ajouter</param>
         /// <param name="idLigne">L'ID de la ligne</param>
@@ -217,23 +213,28 @@ namespace BiblioBDD
         {
             try
             {
-                // Partie pour récupérer l'horaire de départ du nouvel arrêt
+                // Récupérer les arrêts existants de la ligne
                 var arretsExistants = RecupDonnees.GetArretsParLigne(idLigne);
 
-                int tempsDepart = 0; // Valeur par défaut pour le premier arrêt
+                int tempsDepuisDebut = 0;
+                int tempsDepuisFin = 0;
 
                 if (arretsExistants.Count > 0)
                 {
                     if (ordre == 1)
                     {
-                        // Si on insère en première position, temps = 0
-                        tempsDepart = 0;
+                        // Si on insère en première position
+                        tempsDepuisDebut = 0;
+                        // Calculer le temps depuis la fin = temps max + délai
+                        var tempsMaxDebut = arretsExistants.Max(a => a.TempsDepuisDebut);
+                        tempsDepuisFin = tempsMaxDebut + new Random().Next(2, 5);
                     }
                     else if (ordre > arretsExistants.Count)
                     {
-                        // Si on ajoute à la fin, prendre le dernier temps + un délai
+                        // Si on ajoute à la fin
                         var dernierArret = arretsExistants.OrderBy(a => a.Ordre).LastOrDefault();
-                        tempsDepart = dernierArret?.TempsDepart + new Random().Next(2, 5) ?? 0;
+                        tempsDepuisDebut = dernierArret.TempsDepuisDebut + new Random().Next(2, 5);
+                        tempsDepuisFin = 0;
                     }
                     else
                     {
@@ -243,30 +244,37 @@ namespace BiblioBDD
 
                         if (arretPrecedent != null && arretSuivant != null)
                         {
-                            tempsDepart = (arretPrecedent.TempsDepart + arretSuivant.TempsDepart) / 2;
+                            // Moyenne pour temps depuis début
+                            tempsDepuisDebut = (arretPrecedent.TempsDepuisDebut + arretSuivant.TempsDepuisDebut) / 2;
+                            // Moyenne pour temps depuis fin
+                            tempsDepuisFin = (arretPrecedent.TempsDepuisFin + arretSuivant.TempsDepuisFin) / 2;
                         }
                         else if (arretPrecedent != null)
                         {
-                            tempsDepart = arretPrecedent.TempsDepart + new Random().Next(2, 5);
+                            tempsDepuisDebut = arretPrecedent.TempsDepuisDebut + new Random().Next(2, 5);
+                            tempsDepuisFin = Math.Max(0, arretPrecedent.TempsDepuisFin - new Random().Next(2, 5));
                         }
                         else
                         {
-                            tempsDepart = 0;
+                            tempsDepuisDebut = 0;
+                            var tempsMaxDebut = arretsExistants.Max(a => a.TempsDepuisDebut);
+                            tempsDepuisFin = tempsMaxDebut + new Random().Next(2, 5);
                         }
                     }
                 }
 
-
+                // Requête avec les colonnes bidirectionnelles
                 string requeteInsert = @"
-                    INSERT INTO Lignes_Arrets (id_ligne, id_arret, ordre, temps_depart)
-                    VALUES (@idLigne, @idArret, @ordre, @tempsDepart);";
+                    INSERT INTO Lignes_Arrets (id_ligne, id_arret, ordre, temps_depuis_debut, temps_depuis_fin)
+                    VALUES (@idLigne, @idArret, @ordre, @tempsDepuisDebut, @tempsDepuisFin);";
 
                 int succes = ExecuterRequete(requeteInsert,
                     false,
                     new MySqlParameter("@idLigne", idLigne),
                     new MySqlParameter("@idArret", idArret),
                     new MySqlParameter("@ordre", ordre),
-                    new MySqlParameter("@tempsDepart", tempsDepart));
+                    new MySqlParameter("@tempsDepuisDebut", tempsDepuisDebut),
+                    new MySqlParameter("@tempsDepuisFin", tempsDepuisFin));
 
                 if (succes == -1)
                 {
@@ -274,10 +282,10 @@ namespace BiblioBDD
                     return false;
                 }
 
-                // Méthodes pour réordonner les arrêts et mettre à jour les temps de départ
+                // Réordonner les arrêts et recalculer les temps bidirectionnels
                 ReordonnerArretsLigne(idLigne);
-                MAJTempsDepart(idLigne, 1, true);
-                
+                RecalculerTempsBidirectionnels(idLigne);
+
                 return true;
             }
             catch (MySqlException ex)
@@ -287,12 +295,15 @@ namespace BiblioBDD
             }
         }
 
+
+
         /// <summary>
         /// Retire un arrêt spécifique d'une ligne, sans affecter les autres.
+        /// MODIFIÉ : Utilise la logique bidirectionnelle
         /// </summary>
         /// <param name="idArret">L'ID de l'arrêt à retirer</param>
         /// <param name="idLigne">L'ID de la ligne</param>
-        /// <param name="ordre">L'ordre de l'arrêt dans la ligne (pour la MAJ des temps)</param>
+        /// <param name="ordre">L'ordre de l'arrêt dans la ligne (pour compatibilité, peut être ignoré)</param>
         /// <returns>True si l'opération a réussi, False sinon</returns>
         public static bool RetirerArretDeLigne(int idArret, int idLigne, int ordre)
         {
@@ -304,9 +315,11 @@ namespace BiblioBDD
                     new MySqlParameter("@idLigne", idLigne),
                     new MySqlParameter("@idArret", idArret));
 
-                // On réordonne les arrêts et on met à jour les temps de départ
+                // Réordonner les arrêts restants
                 ReordonnerArretsLigne(idLigne);
-                MAJTempsDepart(idLigne, ordre , false);
+
+                // Recalculer tous les temps bidirectionnels pour la ligne
+                RecalculerTempsBidirectionnels(idLigne);
 
                 return true;
             }
@@ -394,19 +407,19 @@ namespace BiblioBDD
                             return true; // Pas d'erreur, juste rien à faire
                         }
 
-                        // 2. Réécrire les ordres proprement
+                        // B. Réécrire les ordres proprement (1, 2, 3...)
                         string updateQuery = @"
                             UPDATE Lignes_Arrets 
                             SET ordre = @ordre 
                             WHERE id_ligne = @idLigne AND id_arret = @idArret;";
 
-                        foreach (var idArret in arrets.Select((value, index) => new { value, index }))
+                        for (int i = 0; i < arrets.Count; i++)
                         {
                             ExecuterRequete(updateQuery,
                                 false,
-                                new MySqlParameter("@ordre", idArret.index + 1),
+                                new MySqlParameter("@ordre", i + 1), // Ordre commence à 1
                                 new MySqlParameter("@idLigne", idLigne),
-                                new MySqlParameter("@idArret", idArret.value));
+                                new MySqlParameter("@idArret", arrets[i]));
                         }
                     }
                 }
@@ -414,61 +427,80 @@ namespace BiblioBDD
             }
             catch (MySqlException ex)
             {
-                System.Diagnostics.Debug.WriteLine("Erreur SQL lors du réordonnancement : " + ex.Message);
+                System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
                 return false;
             }
         }
+
         /// <summary>
-        /// Met à jour les temps de départ des arrêts d'une ligne en ajoutant ou soustrayant un delta aléatoire (1 à 3 min) par rapport au précédent.
+        /// Recalcule tous les temps bidirectionnels d'une ligne après modification
         /// </summary>
-        /// <param name="idLigne">L'ID de la ligne à mettre à jour.</param>
-        /// <param name="ordre">L'ordre de l'arrêt à partir duquel on commence la mise à jour (1 pour le premier arrêt).</param>
-        /// <param name="ajout">Booléen indiquant si on ajoute ou soustrait les minutes</param>
-        /// <returns>True si l'opération a réussi, False sinon</returns>
-        public static bool MAJTempsDepart(int idLigne, int ordre, bool ajout = true)
+        /// <param name="idLigne">ID de la ligne</param>
+        /// <returns>True si succès, False sinon</returns>
+        private static bool RecalculerTempsBidirectionnels(int idLigne)
         {
-            if (Connexion.conn.State != ConnectionState.Open)
-            {
-                System.Diagnostics.Debug.WriteLine("Erreur : Connexion non ouverte.");
-                return false;
-            }
-
-            var random = new Random();
-
             try
             {
-                // 1. Récupérer les arrêts avec leurs temps_depart existants
-                var arrets = RecupDonnees.GetArretsParLigne(idLigne);
+                var arretsLigne = RecupDonnees.GetArretsParLigne(idLigne);
+                if (arretsLigne.Count == 0) return true;
 
-                if (arrets.Count == 0)
+                var random = new Random();
+                int tempsAccumuleDebut = 0;
+                int tempsAccumuleFin = 0;
+
+                // Calculer temps depuis début (ordre croissant)
+                for (int i = 0; i < arretsLigne.Count; i++)
                 {
-                    System.Diagnostics.Debug.WriteLine("Aucun arrêt trouvé pour cette ligne.");
-                    return false;
-                }
+                    var arret = arretsLigne[i];
 
-                // 2. Calculer à partir de l'arrêt spécifié (ordre)
-                int tempsCourant = arrets[ordre - 1].TempsDepart;
+                    // Premier arrêt = 0, autres = temps précédent + delta
+                    if (i == 0)
+                    {
+                        tempsAccumuleDebut = 0;
+                    }
+                    else
+                    {
+                        tempsAccumuleDebut += random.Next(1, 4); // 1-3 minutes entre arrêts
+                    }
 
-                // 3. Mettre à jour chaque arrêt suivant
-                foreach (var item in arrets)
-                {
-                    // On ajoute ou soustrait un delta aléatoire entre 1 et 3 minutes
-                    int delta = random.Next(1, 4); // Entre 1 et 3 inclus
-
-                    if (!ajout) delta = -delta;
-                    tempsCourant += delta;
-                    // Mise à jour du temps de départ pour l'arrêt courant
-                    ExecuterRequete(requeteMAJOrdre,
+                    // Mettre à jour temps_depuis_debut
+                    ExecuterRequete(
+                        "UPDATE Lignes_Arrets SET temps_depuis_debut = @temps WHERE id_ligne = @idLigne AND id_arret = @idArret",
                         false,
-                        new MySqlParameter("@tempsDepart", tempsCourant),
+                        new MySqlParameter("@temps", tempsAccumuleDebut),
                         new MySqlParameter("@idLigne", idLigne),
-                        new MySqlParameter("@idArret", item.Arret.IdArret));
+                        new MySqlParameter("@idArret", arret.Arret.IdArret));
                 }
+
+                // Calculer temps depuis fin (ordre décroissant)
+                for (int i = arretsLigne.Count - 1; i >= 0; i--)
+                {
+                    var arret = arretsLigne[i];
+
+                    // Dernier arrêt = 0, autres = temps précédent + delta
+                    if (i == arretsLigne.Count - 1)
+                    {
+                        tempsAccumuleFin = 0;
+                    }
+                    else
+                    {
+                        tempsAccumuleFin += random.Next(1, 4); // 1-3 minutes entre arrêts
+                    }
+
+                    // Mettre à jour temps_depuis_fin
+                    ExecuterRequete(
+                        "UPDATE Lignes_Arrets SET temps_depuis_fin = @temps WHERE id_ligne = @idLigne AND id_arret = @idArret",
+                        false,
+                        new MySqlParameter("@temps", tempsAccumuleFin),
+                        new MySqlParameter("@idLigne", idLigne),
+                        new MySqlParameter("@idArret", arret.Arret.IdArret));
+                }
+
                 return true;
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Erreur SQL lors de la mise à jour des temps de départ : " + ex.Message);
+                System.Diagnostics.Debug.WriteLine($"Erreur recalcul temps bidirectionnels : {ex.Message}");
                 return false;
             }
         }

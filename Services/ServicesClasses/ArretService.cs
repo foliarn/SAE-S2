@@ -39,7 +39,7 @@ namespace Services.ServicesClasses
         /// <param name="idArret">Arrêt à retirer</param>
         /// <returns>True si l'arrêt a été retiré avec succès, False sinon</returns>
         public static bool RetirerArret(int idArret)
-        {             
+        {
             try
             {
                 var arret = Init.tousLesArrets.FirstOrDefault(a => a.IdArret == idArret);
@@ -65,7 +65,7 @@ namespace Services.ServicesClasses
 
         /// <summary>
         /// Retourne tous les horaires de passage à cet arrêt d'une ligne spécifique à partir de l'horaire précisé.
-        /// Utilise un lazy cache pour éviter de recalculer plusieurs fois les mêmes données.
+        /// NOUVEAU : Cache bidirectionnel complet
         /// </summary>
         /// <param name="arret">Arrêt concerné</param>
         /// <param name="ligne">Ligne concernée</param>
@@ -89,60 +89,31 @@ namespace Services.ServicesClasses
                     return new List<TimeSpan>();
                 }
 
-                // Créer une clé de cache qui inclut le sens
+                // NOUVEAU : Cache bidirectionnel avec clé incluant le sens
                 string cleCache = $"{arret.IdArret}_{sensNormal}";
 
-                // Vérifier si on a déjà calculé les horaires pour cet arrêt dans ce sens
-                if (ligne.HorairesCache.TryGetValue(arret, out var horaires))
+                // Créer un dictionnaire de cache bidirectionnel si il n'existe pas
+                if (ligne.HorairesCache == null)
                 {
-                    // Pour l'instant, on utilise le cache existant (à améliorer plus tard avec une clé incluant le sens)
-                    var horairesFiltrés = horaires.Where(h => h >= horaire).ToList();
+                    ligne.HorairesCache = new Dictionary<Arret, List<TimeSpan>>();
+                }
+
+                // Vérifier si on a déjà calculé les horaires pour cet arrêt dans ce sens
+                // On utilise une astuce : stocker dans le cache avec une clé composite
+                var arretCacheKey = new Arret(arret.IdArret * 1000 + (sensNormal ? 1 : 0), $"{arret.NomArret}_{(sensNormal ? "N" : "I")}");
+
+                if (ligne.HorairesCache.TryGetValue(arretCacheKey, out var horairesCache))
+                {
+                    var horairesFiltrés = horairesCache.Where(h => h >= horaire).ToList();
                     return horairesFiltrés;
                 }
 
-                // Sinon, on calcule toutes les horaires pour cet arrêt/ligne dans le sens spécifié
-                var toutesLesHoraires = new List<TimeSpan>();
 
-                // Vérifier que l'arrêt fait partie de la ligne
-                TimeSpan tempsJusquAArret;
-                try
-                {
-                    tempsJusquAArret = LigneService.ObtenirTempsDepuisDepartInitial(ligne, arret, sensNormal);
-                }
-                catch (ArgumentException ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Erreur : L'arrêt {arret.NomArret} n'appartient pas à la ligne {ligne.NomLigne}");
-                    return new List<TimeSpan>();
-                }
+                // Calculer tous les horaires pour cet arrêt/ligne dans le sens spécifié
+                var toutesLesHoraires = CalculerHorairesComplets(arret, ligne, sensNormal);
 
-                // Calculer tous les horaires de passage selon le sens
-                TimeSpan horaireDepart, horaireLimite;
-
-                if (sensNormal)
-                {
-                    // Sens normal : utiliser les horaires de la ligne tels quels
-                    horaireDepart = ligne.PremierDepart;
-                    horaireLimite = ligne.DernierDepart;
-                }
-                else
-                {
-                    // Sens inverse : les horaires sont inversés
-                    // Le "premier départ" en sens inverse correspond au dernier départ en sens normal
-                    horaireDepart = ligne.PremierDepart;
-                    horaireLimite = ligne.DernierDepart;
-                }
-
-                TimeSpan horaireActuel = horaireDepart.Add(tempsJusquAArret);
-                TimeSpan horaireLimiteArret = horaireLimite.Add(tempsJusquAArret);
-
-                while (horaireActuel <= horaireLimiteArret)
-                {
-                    toutesLesHoraires.Add(horaireActuel);
-                    horaireActuel = horaireActuel.Add(TimeSpan.FromMinutes(ligne.IntervalleMinutes));
-                }
-
-                // Mettre en cache toutes les horaires
-                ligne.HorairesCache[arret] = toutesLesHoraires;
+                // Mettre en cache toutes les horaires avec la clé bidirectionnelle
+                ligne.HorairesCache[arretCacheKey] = toutesLesHoraires;
 
                 // Filtrer pour ne retourner que les horaires à partir de l'horaire spécifié
                 var resultats = toutesLesHoraires.Where(h => h >= horaire).ToList();
@@ -157,18 +128,93 @@ namespace Services.ServicesClasses
         }
 
         /// <summary>
-        /// Version surchargée pour compatibilité (utilise le sens normal par défaut)
+        /// NOUVEAU : Calcule tous les horaires de passage pour un arrêt/ligne/sens
         /// </summary>
-        public static List<TimeSpan> GetHorairesPassage(Arret arret, Ligne ligne, TimeSpan horaire)
+        /// <param name="arret">Arrêt concerné</param>
+        /// <param name="ligne">Ligne concernée</param>
+        /// <param name="sensNormal">Sens de circulation</param>
+        /// <returns>Liste complète des horaires</returns>
+        private static List<TimeSpan> CalculerHorairesComplets(Arret arret, Ligne ligne, bool sensNormal)
         {
-            return GetHorairesPassage(arret, ligne, horaire, true);
+            var toutesLesHoraires = new List<TimeSpan>();
+
+            try
+            {
+                // Vérifier que l'arrêt fait partie de la ligne et obtenir le temps jusqu'à l'arrêt
+                TimeSpan tempsJusquAArret;
+                try
+                {
+                    tempsJusquAArret = LigneService.ObtenirTempsDepuisDepartInitial(ligne, arret, sensNormal);
+                }
+                catch (ArgumentException)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Erreur : L'arrêt {arret.NomArret} n'appartient pas à la ligne {ligne.NomLigne}");
+                    return toutesLesHoraires;
+                }
+
+                // Calculer tous les horaires de passage selon le sens
+                TimeSpan horaireDepart, horaireLimite;
+
+                if (sensNormal)
+                {
+                    // Sens normal : utiliser les horaires de la ligne tels quels
+                    horaireDepart = ligne.PremierDepart;
+                    horaireLimite = ligne.DernierDepart;
+                }
+                else
+                {
+                    // Sens inverse : même logique pour l'instant
+                    // TODO : Dans une version avancée, on pourrait avoir des horaires différents selon le sens
+                    horaireDepart = ligne.PremierDepart;
+                    horaireLimite = ligne.DernierDepart;
+                }
+
+                TimeSpan horaireActuel = horaireDepart.Add(tempsJusquAArret);
+                TimeSpan horaireLimiteArret = horaireLimite.Add(tempsJusquAArret);
+
+                while (horaireActuel <= horaireLimiteArret)
+                {
+                    toutesLesHoraires.Add(horaireActuel);
+                    horaireActuel = horaireActuel.Add(TimeSpan.FromMinutes(ligne.IntervalleMinutes));
+                }
+
+                System.Diagnostics.Debug.WriteLine($"Calculé {toutesLesHoraires.Count} horaires pour {arret.NomArret} sur ligne {ligne.NomLigne} (sens: {(sensNormal ? "normal" : "inverse")})");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur calcul horaires complets : {ex.Message}");
+            }
+
+            return toutesLesHoraires;
         }
 
         /// <summary>
-        /// Obtient le temps de trajet selon le sens de circulation
+        /// NOUVEAU : Vide le cache bidirectionnel pour une ligne
         /// </summary>
-        /// <param name="sensNormal">True pour le sens normal (début vers fin), False pour le sens inverse</param>
-        /// <returns>Temps en minutes depuis le point de départ approprié</returns>
+        /// <param name="ligne">Ligne dont il faut vider le cache</param>
+        public static void ViderCacheLigne(Ligne ligne)
+        {
+            if (ligne?.HorairesCache != null)
+            {
+                ligne.HorairesCache.Clear();
+                System.Diagnostics.Debug.WriteLine($"Cache vidé pour la ligne {ligne.NomLigne}");
+            }
+        }
+
+        /// <summary>
+        /// NOUVEAU : Vide tous les caches de toutes les lignes
+        /// </summary>
+        public static void ViderTousLesCaches()
+        {
+            if (Init.toutesLesLignes != null)
+            {
+                foreach (var ligne in Init.toutesLesLignes)
+                {
+                    ViderCacheLigne(ligne);
+                }
+                System.Diagnostics.Debug.WriteLine("Tous les caches horaires ont été vidés");
+            }
+        }
         public static int ObtenirTempsSelon(ArretLigne arretLigne, bool sensNormal)
         {
             return sensNormal ? arretLigne.TempsDepuisDebut : arretLigne.TempsDepuisFin;

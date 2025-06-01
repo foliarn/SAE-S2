@@ -49,6 +49,8 @@ namespace Services
 
                 ConstructeurGraphe.ConstruireGraphe(graphe, RecupDonnees.toutesLesLignes);
 
+                ConstructeurGraphe.DebugGrapheBidirectionnel(graphe, arretDepart.IdArret, arretDestination.IdArret);
+
                 // Vérifier que les arrêts existent dans le graphe
                 if (!graphe.Noeuds.ContainsKey(arretDepart.IdArret) || !graphe.Noeuds.ContainsKey(arretDestination.IdArret))
                 {
@@ -89,6 +91,11 @@ namespace Services
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine($"=== DIJKSTRA DEBUG ===");
+                System.Diagnostics.Debug.WriteLine($"Départ: {idArretDepart}, Destination: {idArretDestination}");
+                System.Diagnostics.Debug.WriteLine($"Heure: {parametres.HeureSouhaitee}");
+
+
                 // Initialiser le graphe
                 CalculItineraireServices.InitialiserGraphe(graphe, idArretDepart, parametres);
 
@@ -115,7 +122,14 @@ namespace Services
                     // Si on a atteint la destination, on a trouvé le chemin optimal
                     if (noeudCourant.ArretNoeud.IdArret == idArretDestination)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Destination atteinte - Coût: {noeudCourant.CoutMinimal:F1}, Heure: {noeudCourant.HeureArrivee}");
+                        System.Diagnostics.Debug.WriteLine($"CHEMIN TROUVÉ - Coût: {noeudCourant.CoutMinimal:F1}");
+                        // Reconstruire le chemin pour debug
+                        var debug = noeudCourant;
+                        while (debug.Precedent != null)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"  {debug.Precedent.ArretNoeud.NomArret} → {debug.ArretNoeud.NomArret} (Ligne: {debug.AretePrecedente?.LigneUtilisee?.NomLigne})");
+                            debug = debug.Precedent;
+                        }
                         return noeudCourant;
                     }
 
@@ -142,6 +156,7 @@ namespace Services
                         //Si c'est une correspondance :
                         if (arete.EstCorrespondance)
                         {
+                            System.Diagnostics.Debug.WriteLine($"Correspondance détectée : {arete.NoeudDepart.ArretNoeud.NomArret} → ligne {arete.LigneUtilisee.NomLigne}");
                             var prochainDepart = CalculItineraireServices.TrouverProchainDepart(arete.NoeudArrivee.ArretNoeud, arete.LigneUtilisee, noeudCourant.HeureArrivee);
 
                             if (prochainDepart == TimeSpan.Zero)
@@ -178,7 +193,15 @@ namespace Services
                             // Ajouter à la file de priorité
                             filePriorite.Add(noeudVoisin);
                         }
+                        if (arete.NoeudDepart.ArretNoeud.IdArret == arete.NoeudArrivee.ArretNoeud.IdArret)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Correspondance trouvée: {arete.NoeudDepart.ArretNoeud.NomArret} vers ligne {arete.LigneUtilisee.NomLigne}");
+                        }
+                        // Dans ExecuterDijkstra(), dans la boucle foreach (var arete in noeudCourant.AretesSortantes)
+                        //System.Diagnostics.Debug.WriteLine($"Arete: {arete.NoeudDepart.ArretNoeud.NomArret}→{arete.NoeudArrivee.ArretNoeud.NomArret}, EstCorrespondance: {arete.EstCorrespondance}");
                     }
+                    // Ajoutez ce debug dans la boucle Dijkstra
+                    
                 }
 
                 System.Diagnostics.Debug.WriteLine("Aucun chemin trouvé vers la destination");

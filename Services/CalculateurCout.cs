@@ -55,9 +55,9 @@ namespace Services
 
             double coutTotal = coutAttente + coutTrajet;
 
-            System.Diagnostics.Debug.WriteLine($"Trajet {arete.NoeudDepart.ArretNoeud.NomArret} → {arete.NoeudArrivee.ArretNoeud.NomArret} " +
-                                              $"(Ligne {arete.LigneUtilisee.NomLigne}): " +
-                                              $"Attente={tempsAttente:F1}min, Trajet={tempsTrajet}min, Coût={coutTotal:F1}");
+            //System.Diagnostics.Debug.WriteLine($"Trajet {arete.NoeudDepart.ArretNoeud.NomArret} → {arete.NoeudArrivee.ArretNoeud.NomArret} " +
+            //                                  $"(Ligne {arete.LigneUtilisee.NomLigne}): " +
+            //                                  $"Attente={tempsAttente:F1}min, Trajet={tempsTrajet}min, Coût={coutTotal:F1}");
 
             return coutTotal;
         }
@@ -83,13 +83,10 @@ namespace Services
 
             double coutCorrespondance = tempsAttente * parametres.CoefficientCorrespondance;
 
-            System.Diagnostics.Debug.WriteLine($"Correspondance à {arete.NoeudDepart.ArretNoeud.NomArret} " +
-                                              $"vers ligne {arete.LigneUtilisee.NomLigne}: " +
-                                              $"Attente={tempsAttente:F1}min, Coût={coutCorrespondance:F1}");
-
+            // Dans CalculateurCout.cs, méthode CalculerCoutCorrespondance()
+            // Avant le return coutCorrespondance;
+            System.Diagnostics.Debug.WriteLine($"Correspondance {arete.NoeudDepart.ArretNoeud.NomArret}: ligne {arete.LigneUtilisee.NomLigne}, attente={tempsAttente:F1}min, coût={coutCorrespondance:F1}");
             return coutCorrespondance;
         }
-
-        
     }   
 }

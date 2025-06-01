@@ -39,7 +39,7 @@ namespace Services
                 // Retourner le premier (plus proche) horaire disponible
                 var prochainHoraire = horairesDisponibles.First();
 
-                System.Diagnostics.Debug.WriteLine($"Prochain départ trouvé : {prochainHoraire} pour {arret.NomArret} sur ligne {ligne.NomLigne}");
+                //System.Diagnostics.Debug.WriteLine($"Prochain départ trouvé : {prochainHoraire} pour {arret.NomArret} sur ligne {ligne.NomLigne}");
                 return prochainHoraire;
             }
             catch (Exception ex)

@@ -94,37 +94,31 @@ namespace Services
 
             int aretesCreees = 0;
 
-            // Créer les arêtes dans les deux sens (aller et retour)
-            for (int i = 0; i < ligne.Arrets.Count - 1; i++)
+            // Créer les arêtes entre TOUS les arrêts dans les deux sens
+            for (int i = 0; i < ligne.Arrets.Count; i++)
             {
-                var arretDepart = ligne.Arrets[i];
-                var arretArrivee = ligne.Arrets[i + 1];
-
-                // Vérifier que les nœuds existent
-                if (!graphe.Noeuds.TryGetValue(arretDepart.Arret.IdArret, out var noeudDepart) ||
-                    !graphe.Noeuds.TryGetValue(arretArrivee.Arret.IdArret, out var noeudArrivee))
+                for (int j = 0; j < ligne.Arrets.Count; j++)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Erreur : Nœud manquant pour ligne {ligne.NomLigne}");
-                    continue;
+                    if (i == j) continue; // Pas d'arête vers soi-même
+
+                    var arretDepart = ligne.Arrets[i];
+                    var arretArrivee = ligne.Arrets[j];
+
+                    if (!graphe.Noeuds.TryGetValue(arretDepart.Arret.IdArret, out var noeudDepart) ||
+                        !graphe.Noeuds.TryGetValue(arretArrivee.Arret.IdArret, out var noeudArrivee))
+                        continue;
+
+                    // Temps = différence absolue
+                    int tempsTrajet = Math.Abs(arretArrivee.TempsDepart - arretDepart.TempsDepart);
+
+                    var arete = new Arete(noeudDepart, noeudArrivee, ligne, tempsTrajet);
+                    noeudDepart.AretesSortantes.Add(arete);
+                    graphe.Aretes.Add(arete);
+                    aretesCreees++;
                 }
-
-                // Temps de trajet entre ces deux arrêts
-                int tempsTrajet = arretArrivee.TempsDepart - arretDepart.TempsDepart;
-
-                // Arête aller
-                var areteAller = new Arete(noeudDepart, noeudArrivee, ligne, tempsTrajet);
-                noeudDepart.AretesSortantes.Add(areteAller);
-                graphe.Aretes.Add(areteAller);
-                aretesCreees++;
-
-                // Arête retour
-                var areteRetour = new Arete(noeudArrivee, noeudDepart, ligne, tempsTrajet);
-                noeudArrivee.AretesSortantes.Add(areteRetour);
-                graphe.Aretes.Add(areteRetour);
-                aretesCreees++;
             }
 
-            System.Diagnostics.Debug.WriteLine($"Ligne {ligne.NomLigne} : {aretesCreees} arêtes créées");
+            //System.Diagnostics.Debug.WriteLine($"Ligne {ligne.NomLigne} : {aretesCreees} arêtes créées");
         }
 
         /// <summary>
@@ -132,7 +126,7 @@ namespace Services
         /// </summary>
         private static void CreerCorrespondances(Graphe graphe)
         {
-            const int TEMPS_CORRESPONDANCE = 5; // 5 minutes pour changer de ligne
+            const int TEMPS_CORRESPONDANCE = 0; // 5 minutes pour changer de ligne
 
             // Pour chaque arrêt, regarder quelles lignes y passent
             var arretsParLigne = new Dictionary<int, List<Ligne>>();
@@ -174,12 +168,13 @@ namespace Services
                                 var areteCorrespondance = new Arete(noeud, noeud, lignes[j], TEMPS_CORRESPONDANCE, true);
                                 noeud.AretesSortantes.Add(areteCorrespondance);
                                 graphe.Aretes.Add(areteCorrespondance);
+                                //System.Diagnostics.Debug.WriteLine($"Correspondance : {noeud.ArretNoeud.NomArret} ligne {lignes[i].NomLigne} → ligne {lignes[j].NomLigne}");
                                 correspondancesCreees++;
                             }
                         }
                     }
 
-                    System.Diagnostics.Debug.WriteLine($"Arrêt {noeud.ArretNoeud.NomArret} : {lignes.Count} lignes, {lignes.Count * (lignes.Count - 1)} correspondances");
+                    //System.Diagnostics.Debug.WriteLine($"Arrêt {noeud.ArretNoeud.NomArret} : {lignes.Count} lignes, {lignes.Count * (lignes.Count - 1)} correspondances");
                 }
             }
 
@@ -248,5 +243,66 @@ namespace Services
                 noeud.ReinitialiserDijkstra();
             }
         }
+
+        public static void DebugGrapheBidirectionnel(Graphe graphe, int idArretA, int idArretB)
+        {
+            if (!graphe.Noeuds.ContainsKey(idArretA) || !graphe.Noeuds.ContainsKey(idArretB))
+            {
+                System.Diagnostics.Debug.WriteLine("Arrêts non trouvés dans le graphe");
+                return;
+            }
+
+            var noeudA = graphe.Noeuds[idArretA];
+            var noeudB = graphe.Noeuds[idArretB];
+
+            System.Diagnostics.Debug.WriteLine($"=== DEBUG GRAPHE BIDIRECTIONNEL ===");
+            System.Diagnostics.Debug.WriteLine($"Arrêt A: {noeudA.ArretNoeud.NomArret} (ID: {idArretA})");
+            System.Diagnostics.Debug.WriteLine($"Arrêt B: {noeudB.ArretNoeud.NomArret} (ID: {idArretB})");
+
+            // Vérifier arêtes sortantes de A vers B
+            var aretesAversB = noeudA.AretesSortantes.Where(a => a.NoeudArrivee.ArretNoeud.IdArret == idArretB).ToList();
+            System.Diagnostics.Debug.WriteLine($"\nArêtes A → B: {aretesAversB.Count}");
+            foreach (var arete in aretesAversB)
+            {
+                System.Diagnostics.Debug.WriteLine($"  Ligne: {arete.LigneUtilisee?.NomLigne}, Poids: {arete.Poids}, Correspondance: {arete.EstCorrespondance}");
+            }
+
+            // Vérifier arêtes sortantes de B vers A
+            var aretesBversA = noeudB.AretesSortantes.Where(a => a.NoeudArrivee.ArretNoeud.IdArret == idArretA).ToList();
+            System.Diagnostics.Debug.WriteLine($"\nArêtes B → A: {aretesBversA.Count}");
+            foreach (var arete in aretesBversA)
+            {
+                System.Diagnostics.Debug.WriteLine($"  Ligne: {arete.LigneUtilisee?.NomLigne}, Poids: {arete.Poids}, Correspondance: {arete.EstCorrespondance}");
+            }
+
+            // Vérifier symétrie
+            System.Diagnostics.Debug.WriteLine($"\n=== ANALYSE SYMÉTRIE ===");
+            System.Diagnostics.Debug.WriteLine($"Nombre arêtes A→B: {aretesAversB.Count}");
+            System.Diagnostics.Debug.WriteLine($"Nombre arêtes B→A: {aretesBversA.Count}");
+
+            if (aretesAversB.Count != aretesBversA.Count)
+            {
+                System.Diagnostics.Debug.WriteLine("⚠️ ASYMÉTRIE DÉTECTÉE dans le nombre d'arêtes!");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("✅ Nombre d'arêtes symétrique");
+            }
+
+            
+            System.Diagnostics.Debug.WriteLine($"\n=== CORRESPONDANCES ===");
+            System.Diagnostics.Debug.WriteLine($"Correspondances depuis A: {noeudA.AretesSortantes.Count(a => a.EstCorrespondance)}");
+            System.Diagnostics.Debug.WriteLine($"Correspondances depuis B: {noeudB.AretesSortantes.Count(a => a.EstCorrespondance)}");
+
+            System.Diagnostics.Debug.WriteLine($"Arêtes normales depuis A: {noeudA.AretesSortantes.Count(a => !a.EstCorrespondance)}");
+            System.Diagnostics.Debug.WriteLine($"Arêtes normales depuis B: {noeudB.AretesSortantes.Count(a => !a.EstCorrespondance)}");
+
+            var correspondances = noeudA.AretesSortantes.Where(a => a.EstCorrespondance).ToList();
+            System.Diagnostics.Debug.WriteLine($"Correspondances réelles dans AretesSortantes A: {correspondances.Count}");
+            foreach (var c in correspondances)
+                System.Diagnostics.Debug.WriteLine($"  - Vers ligne {c.LigneUtilisee.NomLigne}");
+
+        }
+
     }
 }

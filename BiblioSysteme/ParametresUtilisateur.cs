@@ -32,7 +32,8 @@ namespace BiblioSysteme
 
             // On décourage les temps d'attente et les correspondances par défaut
             CoefficientTempsTransport = 1.0;
-            CoefficientCorrespondance = 2.0; 
+            CoefficientCorrespondance = 1.0;
+            CoefficientAttente = 1.0;
         }
 
         // Constructeur simplifié
@@ -45,8 +46,8 @@ namespace BiblioSysteme
             TempsCorrespondanceMax = TimeSpan.FromMinutes(15);
             TempsMaxRecherche = TimeSpan.FromHours(2);
             CoefficientTempsTransport = 1.0;
-            CoefficientCorrespondance = 2.0;
-            CoefficientAttente = 2.0; 
+            CoefficientCorrespondance = 1.0;
+            CoefficientAttente = 1.0; 
         }
 
         public ParametresRecherche(TimeSpan heureSouhaitee, bool estHeureDepart,

@@ -93,7 +93,7 @@ namespace Services
                 {
                     // Filtrer uniquement les horaires supérieurs ou égaux à l'horaire demandé
                     var horairesFiltrés = horaires.Where(h => h >= horaire).ToList();
-                    System.Diagnostics.Debug.WriteLine($"Cache hit : {horairesFiltrés.Count} horaires trouvés pour {arret.NomArret} sur ligne {ligne.NomLigne}");
+                    //System.Diagnostics.Debug.WriteLine($"Cache hit : {horairesFiltrés.Count} horaires trouvés pour {arret.NomArret} sur ligne {ligne.NomLigne}");
                     return horairesFiltrés;
                 }
 
@@ -128,7 +128,7 @@ namespace Services
                 // Filtrer pour ne retourner que les horaires à partir de l'horaire spécifié
                 var resultats = toutesLesHoraires.Where(h => h >= horaire).ToList();
 
-                System.Diagnostics.Debug.WriteLine($"Calculé : {resultats.Count} horaires pour {arret.NomArret} sur ligne {ligne.NomLigne} à partir de {horaire}");
+                // System.Diagnostics.Debug.WriteLine($"Calculé : {resultats.Count} horaires pour {arret.NomArret} sur ligne {ligne.NomLigne} à partir de {horaire}");
                 return resultats;
             }
             catch (Exception ex)

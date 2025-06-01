@@ -350,5 +350,36 @@ namespace Interface
         {
             this.Close();
         }
+
+        private void chkHeure_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkHeure.Checked)
+            {
+                pnlRecherche.Size = new Size(250, 300);
+
+                rdoDepart.Visible = false;
+                rdoArrive.Visible = false;
+                dtpHeure.Visible = false;
+            }
+
+            else
+            {
+                pnlRecherche.Size = new Size(250, 350);
+
+                rdoDepart.Top = chkHeure.Bottom + 10;
+                rdoArrive.Top = chkHeure.Bottom + 10;
+                dtpHeure.Top = rdoDepart.Bottom + 15;
+
+                rdoDepart.Location = new Point(15, chkHeure.Bottom + 10);
+                rdoArrive.Location = new Point(130, chkHeure.Bottom + 10);
+
+                rdoDepart.Visible = true;
+                rdoArrive.Visible = true;
+                dtpHeure.Visible = true;
+
+            }
+
+            Utils.CentrerControle(pnlRecherche, false, true);
+        }
     }
 }

@@ -128,20 +128,21 @@
             pnlRecherche.Controls.Add(lblDepart);
             pnlRecherche.Controls.Add(cmbDepart);
             pnlRecherche.Controls.Add(lblTitre);
-            pnlRecherche.Location = new Point(34, 444);
-            pnlRecherche.Margin = new Padding(10);
+            pnlRecherche.Location = new Point(23, 84);
+            pnlRecherche.Margin = new Padding(7);
             pnlRecherche.Name = "pnlRecherche";
-            pnlRecherche.Padding = new Padding(3);
-            pnlRecherche.Size = new Size(356, 332);
+            pnlRecherche.Padding = new Padding(2);
+            pnlRecherche.Size = new Size(313, 434);
             pnlRecherche.TabIndex = 1;
             // 
             // rdoArrive
             // 
             rdoArrive.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             rdoArrive.AutoSize = true;
-            rdoArrive.Location = new Point(358, 233);
+            rdoArrive.Location = new Point(132, 208);
+            rdoArrive.Margin = new Padding(2);
             rdoArrive.Name = "rdoArrive";
-            rdoArrive.Size = new Size(156, 29);
+            rdoArrive.Size = new Size(105, 19);
             rdoArrive.TabIndex = 2;
             rdoArrive.TabStop = true;
             rdoArrive.Text = "Heure d'arrivée";
@@ -153,9 +154,10 @@
             btnTrouver.Anchor = AnchorStyles.Bottom;
             btnTrouver.AutoSize = true;
             btnTrouver.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnTrouver.Location = new Point(158, 492);
+            btnTrouver.Location = new Point(66, 368);
+            btnTrouver.Margin = new Padding(2);
             btnTrouver.Name = "btnTrouver";
-            btnTrouver.Size = new Size(277, 58);
+            btnTrouver.Size = new Size(185, 39);
             btnTrouver.TabIndex = 8;
             btnTrouver.Text = "Trouver un itinéraire";
             btnTrouver.UseVisualStyleBackColor = true;
@@ -164,9 +166,10 @@
             // 
             rdoDepart.Anchor = AnchorStyles.None;
             rdoDepart.AutoSize = true;
-            rdoDepart.Location = new Point(97, 343);
+            rdoDepart.Location = new Point(9, 208);
+            rdoDepart.Margin = new Padding(2);
             rdoDepart.Name = "rdoDepart";
-            rdoDepart.Size = new Size(166, 29);
+            rdoDepart.Size = new Size(110, 19);
             rdoDepart.TabIndex = 1;
             rdoDepart.TabStop = true;
             rdoDepart.Text = "Heure de départ";
@@ -177,10 +180,11 @@
             // 
             dtpHeure.CustomFormat = "HH:mm";
             dtpHeure.Format = DateTimePickerFormat.Custom;
-            dtpHeure.Location = new Point(14, 265);
+            dtpHeure.Location = new Point(9, 177);
+            dtpHeure.Margin = new Padding(2);
             dtpHeure.Name = "dtpHeure";
             dtpHeure.ShowUpDown = true;
-            dtpHeure.Size = new Size(103, 31);
+            dtpHeure.Size = new Size(70, 23);
             dtpHeure.TabIndex = 5;
             dtpHeure.Visible = false;
             // 
@@ -189,19 +193,22 @@
             chkHeure.AutoSize = true;
             chkHeure.Checked = true;
             chkHeure.CheckState = CheckState.Checked;
-            chkHeure.Location = new Point(20, 221);
+            chkHeure.Location = new Point(13, 147);
+            chkHeure.Margin = new Padding(2);
             chkHeure.Name = "chkHeure";
-            chkHeure.Size = new Size(185, 29);
+            chkHeure.Size = new Size(126, 19);
             chkHeure.TabIndex = 7;
             chkHeure.Text = "Partir maintenant ?";
             chkHeure.UseVisualStyleBackColor = true;
+            chkHeure.CheckedChanged += chkHeure_CheckedChanged;
             // 
             // lblDest
             // 
             lblDest.AutoSize = true;
-            lblDest.Location = new Point(20, 146);
+            lblDest.Location = new Point(13, 97);
+            lblDest.Margin = new Padding(2, 0, 2, 0);
             lblDest.Name = "lblDest";
-            lblDest.Size = new Size(102, 25);
+            lblDest.Size = new Size(67, 15);
             lblDest.TabIndex = 3;
             lblDest.Text = "Destination";
             // 
@@ -211,17 +218,19 @@
             cmbDest.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbDest.FormattingEnabled = true;
             cmbDest.Items.AddRange(new object[] { "Ar1", "A2", "A3", "A4", "A5", "A6", "A7" });
-            cmbDest.Location = new Point(14, 172);
+            cmbDest.Location = new Point(9, 115);
+            cmbDest.Margin = new Padding(2);
             cmbDest.Name = "cmbDest";
-            cmbDest.Size = new Size(244, 33);
+            cmbDest.Size = new Size(164, 23);
             cmbDest.TabIndex = 2;
             // 
             // lblDepart
             // 
             lblDepart.AutoSize = true;
-            lblDepart.Location = new Point(20, 66);
+            lblDepart.Location = new Point(13, 44);
+            lblDepart.Margin = new Padding(2, 0, 2, 0);
             lblDepart.Name = "lblDepart";
-            lblDepart.Size = new Size(66, 25);
+            lblDepart.Size = new Size(42, 15);
             lblDepart.TabIndex = 2;
             lblDepart.Text = "Départ";
             // 
@@ -231,9 +240,10 @@
             cmbDepart.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbDepart.FormattingEnabled = true;
             cmbDepart.Items.AddRange(new object[] { "Ar1", "A2", "A3", "A4", "A5", "A6", "A7" });
-            cmbDepart.Location = new Point(17, 92);
+            cmbDepart.Location = new Point(11, 61);
+            cmbDepart.Margin = new Padding(2);
             cmbDepart.Name = "cmbDepart";
-            cmbDepart.Size = new Size(244, 33);
+            cmbDepart.Size = new Size(164, 23);
             cmbDepart.TabIndex = 1;
             // 
             // lblTitre
@@ -241,9 +251,10 @@
             lblTitre.Anchor = AnchorStyles.Top;
             lblTitre.AutoSize = true;
             lblTitre.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTitre.Location = new Point(14, 9);
+            lblTitre.Location = new Point(46, 6);
+            lblTitre.Margin = new Padding(2, 0, 2, 0);
             lblTitre.Name = "lblTitre";
-            lblTitre.Size = new Size(330, 38);
+            lblTitre.Size = new Size(224, 25);
             lblTitre.TabIndex = 0;
             lblTitre.Text = "Rechercher un itinéraire";
             lblTitre.TextAlign = ContentAlignment.MiddleCenter;
@@ -261,10 +272,9 @@
             pnlItineraire1.Controls.Add(pnlLigneAPrendre1);
             pnlItineraire1.Controls.Add(lblItineraire1Head);
             pnlItineraire1.Controls.Add(lblItineraire1);
-            pnlItineraire1.Location = new Point(595, 234);
-            pnlItineraire1.Margin = new Padding(4, 5, 4, 5);
+            pnlItineraire1.Location = new Point(397, 156);
             pnlItineraire1.Name = "pnlItineraire1";
-            pnlItineraire1.Size = new Size(431, 685);
+            pnlItineraire1.Size = new Size(288, 457);
             pnlItineraire1.TabIndex = 18;
             // 
             // pnlChgmtLigne1
@@ -273,19 +283,17 @@
             pnlChgmtLigne1.Controls.Add(pictureBox1);
             pnlChgmtLigne1.Controls.Add(lblChgmtLigne1Head);
             pnlChgmtLigne1.Controls.Add(lblChgmtLigne1);
-            pnlChgmtLigne1.Location = new Point(36, 318);
-            pnlChgmtLigne1.Margin = new Padding(4, 5, 4, 5);
+            pnlChgmtLigne1.Location = new Point(24, 212);
             pnlChgmtLigne1.Name = "pnlChgmtLigne1";
-            pnlChgmtLigne1.Size = new Size(293, 97);
+            pnlChgmtLigne1.Size = new Size(195, 65);
             pnlChgmtLigne1.TabIndex = 12;
             // 
             // pictureBox1
             // 
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(4, 15);
-            pictureBox1.Margin = new Padding(4, 5, 4, 5);
+            pictureBox1.Location = new Point(3, 10);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(26, 30);
+            pictureBox1.Size = new Size(17, 20);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 10;
             pictureBox1.TabStop = false;
@@ -294,20 +302,18 @@
             // 
             lblChgmtLigne1Head.AutoSize = true;
             lblChgmtLigne1Head.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblChgmtLigne1Head.Location = new Point(39, 15);
-            lblChgmtLigne1Head.Margin = new Padding(4, 0, 4, 0);
+            lblChgmtLigne1Head.Location = new Point(26, 10);
             lblChgmtLigne1Head.Name = "lblChgmtLigne1Head";
-            lblChgmtLigne1Head.Size = new Size(123, 28);
+            lblChgmtLigne1Head.Size = new Size(83, 17);
             lblChgmtLigne1Head.TabIndex = 7;
             lblChgmtLigne1Head.Text = "Arrêt *nom*";
             // 
             // lblChgmtLigne1
             // 
             lblChgmtLigne1.AutoSize = true;
-            lblChgmtLigne1.Location = new Point(39, 55);
-            lblChgmtLigne1.Margin = new Padding(4, 0, 4, 0);
+            lblChgmtLigne1.Location = new Point(26, 37);
             lblChgmtLigne1.Name = "lblChgmtLigne1";
-            lblChgmtLigne1.Size = new Size(218, 25);
+            lblChgmtLigne1.Size = new Size(143, 15);
             lblChgmtLigne1.TabIndex = 8;
             lblChgmtLigne1.Text = "Descendre à *destination*";
             // 
@@ -317,19 +323,17 @@
             pnlPremLigne1.Controls.Add(picIconEdit6);
             pnlPremLigne1.Controls.Add(lblArretDepart1);
             pnlPremLigne1.Controls.Add(lblArret1);
-            pnlPremLigne1.Location = new Point(36, 204);
-            pnlPremLigne1.Margin = new Padding(4, 5, 4, 5);
+            pnlPremLigne1.Location = new Point(24, 136);
             pnlPremLigne1.Name = "pnlPremLigne1";
-            pnlPremLigne1.Size = new Size(293, 97);
+            pnlPremLigne1.Size = new Size(195, 65);
             pnlPremLigne1.TabIndex = 11;
             // 
             // picIconEdit6
             // 
             picIconEdit6.Image = (Image)resources.GetObject("picIconEdit6.Image");
-            picIconEdit6.Location = new Point(4, 15);
-            picIconEdit6.Margin = new Padding(4, 5, 4, 5);
+            picIconEdit6.Location = new Point(3, 10);
             picIconEdit6.Name = "picIconEdit6";
-            picIconEdit6.Size = new Size(26, 30);
+            picIconEdit6.Size = new Size(17, 20);
             picIconEdit6.SizeMode = PictureBoxSizeMode.Zoom;
             picIconEdit6.TabIndex = 10;
             picIconEdit6.TabStop = false;
@@ -338,30 +342,27 @@
             // 
             lblArretDepart1.AutoSize = true;
             lblArretDepart1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblArretDepart1.Location = new Point(39, 15);
-            lblArretDepart1.Margin = new Padding(4, 0, 4, 0);
+            lblArretDepart1.Location = new Point(26, 10);
             lblArretDepart1.Name = "lblArretDepart1";
-            lblArretDepart1.Size = new Size(189, 28);
+            lblArretDepart1.Size = new Size(127, 17);
             lblArretDepart1.TabIndex = 7;
             lblArretDepart1.Text = "Arrêt *nom depart*";
             // 
             // lblArret1
             // 
             lblArret1.AutoSize = true;
-            lblArret1.Location = new Point(39, 55);
-            lblArret1.Margin = new Padding(4, 0, 4, 0);
+            lblArret1.Location = new Point(26, 37);
             lblArret1.Name = "lblArret1";
-            lblArret1.Size = new Size(167, 25);
+            lblArret1.Size = new Size(109, 15);
             lblArret1.TabIndex = 8;
             lblArret1.Text = "Descendre à *nom*";
             // 
             // pnlSep1
             // 
             pnlSep1.BackColor = Color.DimGray;
-            pnlSep1.Location = new Point(47, 434);
-            pnlSep1.Margin = new Padding(4, 5, 4, 5);
+            pnlSep1.Location = new Point(31, 289);
             pnlSep1.Name = "pnlSep1";
-            pnlSep1.Size = new Size(336, 2);
+            pnlSep1.Size = new Size(224, 1);
             pnlSep1.TabIndex = 12;
             // 
             // pnlHoraireDepart1
@@ -370,19 +371,17 @@
             pnlHoraireDepart1.Controls.Add(picIconEdit9);
             pnlHoraireDepart1.Controls.Add(lblHoraireDepart1Head);
             pnlHoraireDepart1.Controls.Add(lblHoraireDepart1);
-            pnlHoraireDepart1.Location = new Point(36, 565);
-            pnlHoraireDepart1.Margin = new Padding(4, 5, 4, 5);
+            pnlHoraireDepart1.Location = new Point(24, 377);
             pnlHoraireDepart1.Name = "pnlHoraireDepart1";
-            pnlHoraireDepart1.Size = new Size(293, 97);
+            pnlHoraireDepart1.Size = new Size(195, 65);
             pnlHoraireDepart1.TabIndex = 11;
             // 
             // picIconEdit9
             // 
             picIconEdit9.Image = (Image)resources.GetObject("picIconEdit9.Image");
-            picIconEdit9.Location = new Point(4, 15);
-            picIconEdit9.Margin = new Padding(4, 5, 4, 5);
+            picIconEdit9.Location = new Point(3, 10);
             picIconEdit9.Name = "picIconEdit9";
-            picIconEdit9.Size = new Size(26, 30);
+            picIconEdit9.Size = new Size(17, 20);
             picIconEdit9.SizeMode = PictureBoxSizeMode.Zoom;
             picIconEdit9.TabIndex = 10;
             picIconEdit9.TabStop = false;
@@ -391,30 +390,27 @@
             // 
             lblHoraireDepart1Head.AutoSize = true;
             lblHoraireDepart1Head.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblHoraireDepart1Head.Location = new Point(39, 15);
-            lblHoraireDepart1Head.Margin = new Padding(4, 0, 4, 0);
+            lblHoraireDepart1Head.Location = new Point(26, 10);
             lblHoraireDepart1Head.Name = "lblHoraireDepart1Head";
-            lblHoraireDepart1Head.Size = new Size(185, 28);
+            lblHoraireDepart1Head.Size = new Size(123, 17);
             lblHoraireDepart1Head.TabIndex = 7;
             lblHoraireDepart1Head.Text = "Horaire de départ :";
             // 
             // lblHoraireDepart1
             // 
             lblHoraireDepart1.AutoSize = true;
-            lblHoraireDepart1.Location = new Point(39, 55);
-            lblHoraireDepart1.Margin = new Padding(4, 0, 4, 0);
+            lblHoraireDepart1.Location = new Point(26, 37);
             lblHoraireDepart1.Name = "lblHoraireDepart1";
-            lblHoraireDepart1.Size = new Size(176, 25);
+            lblHoraireDepart1.Size = new Size(113, 15);
             lblHoraireDepart1.TabIndex = 8;
             lblHoraireDepart1.Text = "xx:xx à *arrêt départ*";
             // 
             // pnlSep2
             // 
             pnlSep2.BackColor = Color.DimGray;
-            pnlSep2.Location = new Point(41, 82);
-            pnlSep2.Margin = new Padding(4, 5, 4, 5);
+            pnlSep2.Location = new Point(27, 55);
             pnlSep2.Name = "pnlSep2";
-            pnlSep2.Size = new Size(336, 2);
+            pnlSep2.Size = new Size(224, 1);
             pnlSep2.TabIndex = 11;
             // 
             // pnlTempsEstime1
@@ -423,19 +419,17 @@
             pnlTempsEstime1.Controls.Add(picIconEdit8);
             pnlTempsEstime1.Controls.Add(lblTempsEstime1Head);
             pnlTempsEstime1.Controls.Add(lblTempsEstime1);
-            pnlTempsEstime1.Location = new Point(36, 457);
-            pnlTempsEstime1.Margin = new Padding(4, 5, 4, 5);
+            pnlTempsEstime1.Location = new Point(24, 305);
             pnlTempsEstime1.Name = "pnlTempsEstime1";
-            pnlTempsEstime1.Size = new Size(293, 97);
+            pnlTempsEstime1.Size = new Size(195, 65);
             pnlTempsEstime1.TabIndex = 10;
             // 
             // picIconEdit8
             // 
             picIconEdit8.Image = (Image)resources.GetObject("picIconEdit8.Image");
-            picIconEdit8.Location = new Point(4, 15);
-            picIconEdit8.Margin = new Padding(4, 5, 4, 5);
+            picIconEdit8.Location = new Point(3, 10);
             picIconEdit8.Name = "picIconEdit8";
-            picIconEdit8.Size = new Size(26, 30);
+            picIconEdit8.Size = new Size(17, 20);
             picIconEdit8.SizeMode = PictureBoxSizeMode.Zoom;
             picIconEdit8.TabIndex = 10;
             picIconEdit8.TabStop = false;
@@ -444,20 +438,18 @@
             // 
             lblTempsEstime1Head.AutoSize = true;
             lblTempsEstime1Head.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTempsEstime1Head.Location = new Point(39, 15);
-            lblTempsEstime1Head.Margin = new Padding(4, 0, 4, 0);
+            lblTempsEstime1Head.Location = new Point(26, 10);
             lblTempsEstime1Head.Name = "lblTempsEstime1Head";
-            lblTempsEstime1Head.Size = new Size(149, 28);
+            lblTempsEstime1Head.Size = new Size(98, 17);
             lblTempsEstime1Head.TabIndex = 7;
             lblTempsEstime1Head.Text = "Temps estimé :";
             // 
             // lblTempsEstime1
             // 
             lblTempsEstime1.AutoSize = true;
-            lblTempsEstime1.Location = new Point(39, 55);
-            lblTempsEstime1.Margin = new Padding(4, 0, 4, 0);
+            lblTempsEstime1.Location = new Point(26, 37);
             lblTempsEstime1.Name = "lblTempsEstime1";
-            lblTempsEstime1.Size = new Size(96, 25);
+            lblTempsEstime1.Size = new Size(62, 15);
             lblTempsEstime1.TabIndex = 8;
             lblTempsEstime1.Text = "*le temps*";
             // 
@@ -466,19 +458,17 @@
             pnlLigneAPrendre1.BackColor = Color.Transparent;
             pnlLigneAPrendre1.Controls.Add(picIconEdit5);
             pnlLigneAPrendre1.Controls.Add(lblLigneAPrendre1);
-            pnlLigneAPrendre1.Location = new Point(36, 114);
-            pnlLigneAPrendre1.Margin = new Padding(4, 5, 4, 5);
+            pnlLigneAPrendre1.Location = new Point(24, 76);
             pnlLigneAPrendre1.Name = "pnlLigneAPrendre1";
-            pnlLigneAPrendre1.Size = new Size(293, 67);
+            pnlLigneAPrendre1.Size = new Size(195, 45);
             pnlLigneAPrendre1.TabIndex = 8;
             // 
             // picIconEdit5
             // 
             picIconEdit5.Image = (Image)resources.GetObject("picIconEdit5.Image");
-            picIconEdit5.Location = new Point(4, 15);
-            picIconEdit5.Margin = new Padding(4, 5, 4, 5);
+            picIconEdit5.Location = new Point(3, 10);
             picIconEdit5.Name = "picIconEdit5";
-            picIconEdit5.Size = new Size(26, 30);
+            picIconEdit5.Size = new Size(17, 20);
             picIconEdit5.SizeMode = PictureBoxSizeMode.Zoom;
             picIconEdit5.TabIndex = 9;
             picIconEdit5.TabStop = false;
@@ -487,10 +477,9 @@
             // 
             lblLigneAPrendre1.AutoSize = true;
             lblLigneAPrendre1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblLigneAPrendre1.Location = new Point(37, 15);
-            lblLigneAPrendre1.Margin = new Padding(4, 0, 4, 0);
+            lblLigneAPrendre1.Location = new Point(25, 10);
             lblLigneAPrendre1.Name = "lblLigneAPrendre1";
-            lblLigneAPrendre1.Size = new Size(183, 28);
+            lblLigneAPrendre1.Size = new Size(120, 17);
             lblLigneAPrendre1.TabIndex = 7;
             lblLigneAPrendre1.Text = "*ligne(s) à prendre";
             // 
@@ -498,20 +487,18 @@
             // 
             lblItineraire1Head.AutoSize = true;
             lblItineraire1Head.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblItineraire1Head.Location = new Point(4, 48);
-            lblItineraire1Head.Margin = new Padding(4, 0, 4, 0);
+            lblItineraire1Head.Location = new Point(3, 32);
             lblItineraire1Head.Name = "lblItineraire1Head";
-            lblItineraire1Head.Size = new Size(275, 28);
+            lblItineraire1Head.Size = new Size(182, 17);
             lblItineraire1Head.TabIndex = 1;
             lblItineraire1Head.Text = "Vers *nom de la destination*";
             // 
             // lblItineraire1
             // 
             lblItineraire1.AutoSize = true;
-            lblItineraire1.Location = new Point(4, 23);
-            lblItineraire1.Margin = new Padding(4, 0, 4, 0);
+            lblItineraire1.Location = new Point(3, 15);
             lblItineraire1.Name = "lblItineraire1";
-            lblItineraire1.Size = new Size(191, 25);
+            lblItineraire1.Size = new Size(126, 15);
             lblItineraire1.TabIndex = 0;
             lblItineraire1.Text = "Itinéraire le plus rapide";
             // 
@@ -528,10 +515,9 @@
             pnlItineraire2.Controls.Add(pnlLigneAPrendre2);
             pnlItineraire2.Controls.Add(lblItineraire2Head);
             pnlItineraire2.Controls.Add(lblItineraire2);
-            pnlItineraire2.Location = new Point(1129, 234);
-            pnlItineraire2.Margin = new Padding(4, 5, 4, 5);
+            pnlItineraire2.Location = new Point(753, 156);
             pnlItineraire2.Name = "pnlItineraire2";
-            pnlItineraire2.Size = new Size(431, 685);
+            pnlItineraire2.Size = new Size(288, 457);
             pnlItineraire2.TabIndex = 19;
             // 
             // pnlChgmtLigne2
@@ -540,19 +526,17 @@
             pnlChgmtLigne2.Controls.Add(pictureBox2);
             pnlChgmtLigne2.Controls.Add(lblChgmtLigne2Head);
             pnlChgmtLigne2.Controls.Add(lblChgmtLigne2);
-            pnlChgmtLigne2.Location = new Point(36, 318);
-            pnlChgmtLigne2.Margin = new Padding(4, 5, 4, 5);
+            pnlChgmtLigne2.Location = new Point(24, 212);
             pnlChgmtLigne2.Name = "pnlChgmtLigne2";
-            pnlChgmtLigne2.Size = new Size(293, 97);
+            pnlChgmtLigne2.Size = new Size(195, 65);
             pnlChgmtLigne2.TabIndex = 12;
             // 
             // pictureBox2
             // 
             pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(4, 15);
-            pictureBox2.Margin = new Padding(4, 5, 4, 5);
+            pictureBox2.Location = new Point(3, 10);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(26, 30);
+            pictureBox2.Size = new Size(17, 20);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 10;
             pictureBox2.TabStop = false;
@@ -561,20 +545,18 @@
             // 
             lblChgmtLigne2Head.AutoSize = true;
             lblChgmtLigne2Head.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblChgmtLigne2Head.Location = new Point(39, 15);
-            lblChgmtLigne2Head.Margin = new Padding(4, 0, 4, 0);
+            lblChgmtLigne2Head.Location = new Point(26, 10);
             lblChgmtLigne2Head.Name = "lblChgmtLigne2Head";
-            lblChgmtLigne2Head.Size = new Size(123, 28);
+            lblChgmtLigne2Head.Size = new Size(83, 17);
             lblChgmtLigne2Head.TabIndex = 7;
             lblChgmtLigne2Head.Text = "Arrêt *nom*";
             // 
             // lblChgmtLigne2
             // 
             lblChgmtLigne2.AutoSize = true;
-            lblChgmtLigne2.Location = new Point(39, 55);
-            lblChgmtLigne2.Margin = new Padding(4, 0, 4, 0);
+            lblChgmtLigne2.Location = new Point(26, 37);
             lblChgmtLigne2.Name = "lblChgmtLigne2";
-            lblChgmtLigne2.Size = new Size(218, 25);
+            lblChgmtLigne2.Size = new Size(143, 15);
             lblChgmtLigne2.TabIndex = 8;
             lblChgmtLigne2.Text = "Descendre à *destination*";
             // 
@@ -584,19 +566,17 @@
             pnlPremLigne2.Controls.Add(pictureBox3);
             pnlPremLigne2.Controls.Add(lblArretDepart2);
             pnlPremLigne2.Controls.Add(lblArret2);
-            pnlPremLigne2.Location = new Point(36, 204);
-            pnlPremLigne2.Margin = new Padding(4, 5, 4, 5);
+            pnlPremLigne2.Location = new Point(24, 136);
             pnlPremLigne2.Name = "pnlPremLigne2";
-            pnlPremLigne2.Size = new Size(293, 97);
+            pnlPremLigne2.Size = new Size(195, 65);
             pnlPremLigne2.TabIndex = 11;
             // 
             // pictureBox3
             // 
             pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
-            pictureBox3.Location = new Point(4, 15);
-            pictureBox3.Margin = new Padding(4, 5, 4, 5);
+            pictureBox3.Location = new Point(3, 10);
             pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(26, 30);
+            pictureBox3.Size = new Size(17, 20);
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox3.TabIndex = 10;
             pictureBox3.TabStop = false;
@@ -605,30 +585,27 @@
             // 
             lblArretDepart2.AutoSize = true;
             lblArretDepart2.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblArretDepart2.Location = new Point(39, 15);
-            lblArretDepart2.Margin = new Padding(4, 0, 4, 0);
+            lblArretDepart2.Location = new Point(26, 10);
             lblArretDepart2.Name = "lblArretDepart2";
-            lblArretDepart2.Size = new Size(189, 28);
+            lblArretDepart2.Size = new Size(127, 17);
             lblArretDepart2.TabIndex = 7;
             lblArretDepart2.Text = "Arrêt *nom depart*";
             // 
             // lblArret2
             // 
             lblArret2.AutoSize = true;
-            lblArret2.Location = new Point(39, 55);
-            lblArret2.Margin = new Padding(4, 0, 4, 0);
+            lblArret2.Location = new Point(26, 37);
             lblArret2.Name = "lblArret2";
-            lblArret2.Size = new Size(167, 25);
+            lblArret2.Size = new Size(109, 15);
             lblArret2.TabIndex = 8;
             lblArret2.Text = "Descendre à *nom*";
             // 
             // pnlSep3
             // 
             pnlSep3.BackColor = Color.DimGray;
-            pnlSep3.Location = new Point(47, 434);
-            pnlSep3.Margin = new Padding(4, 5, 4, 5);
+            pnlSep3.Location = new Point(31, 289);
             pnlSep3.Name = "pnlSep3";
-            pnlSep3.Size = new Size(336, 2);
+            pnlSep3.Size = new Size(224, 1);
             pnlSep3.TabIndex = 12;
             // 
             // pnlHoraireDepart2
@@ -637,19 +614,17 @@
             pnlHoraireDepart2.Controls.Add(pictureBox4);
             pnlHoraireDepart2.Controls.Add(lblHoraireDepart2Head);
             pnlHoraireDepart2.Controls.Add(lblHoraireDepart2);
-            pnlHoraireDepart2.Location = new Point(36, 565);
-            pnlHoraireDepart2.Margin = new Padding(4, 5, 4, 5);
+            pnlHoraireDepart2.Location = new Point(24, 377);
             pnlHoraireDepart2.Name = "pnlHoraireDepart2";
-            pnlHoraireDepart2.Size = new Size(293, 97);
+            pnlHoraireDepart2.Size = new Size(195, 65);
             pnlHoraireDepart2.TabIndex = 11;
             // 
             // pictureBox4
             // 
             pictureBox4.Image = (Image)resources.GetObject("pictureBox4.Image");
-            pictureBox4.Location = new Point(4, 15);
-            pictureBox4.Margin = new Padding(4, 5, 4, 5);
+            pictureBox4.Location = new Point(3, 10);
             pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(26, 30);
+            pictureBox4.Size = new Size(17, 20);
             pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox4.TabIndex = 10;
             pictureBox4.TabStop = false;
@@ -658,30 +633,27 @@
             // 
             lblHoraireDepart2Head.AutoSize = true;
             lblHoraireDepart2Head.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblHoraireDepart2Head.Location = new Point(39, 15);
-            lblHoraireDepart2Head.Margin = new Padding(4, 0, 4, 0);
+            lblHoraireDepart2Head.Location = new Point(26, 10);
             lblHoraireDepart2Head.Name = "lblHoraireDepart2Head";
-            lblHoraireDepart2Head.Size = new Size(185, 28);
+            lblHoraireDepart2Head.Size = new Size(123, 17);
             lblHoraireDepart2Head.TabIndex = 7;
             lblHoraireDepart2Head.Text = "Horaire de départ :";
             // 
             // lblHoraireDepart2
             // 
             lblHoraireDepart2.AutoSize = true;
-            lblHoraireDepart2.Location = new Point(39, 55);
-            lblHoraireDepart2.Margin = new Padding(4, 0, 4, 0);
+            lblHoraireDepart2.Location = new Point(26, 37);
             lblHoraireDepart2.Name = "lblHoraireDepart2";
-            lblHoraireDepart2.Size = new Size(176, 25);
+            lblHoraireDepart2.Size = new Size(113, 15);
             lblHoraireDepart2.TabIndex = 8;
             lblHoraireDepart2.Text = "xx:xx à *arrêt départ*";
             // 
             // pnlSep4
             // 
             pnlSep4.BackColor = Color.DimGray;
-            pnlSep4.Location = new Point(41, 82);
-            pnlSep4.Margin = new Padding(4, 5, 4, 5);
+            pnlSep4.Location = new Point(27, 55);
             pnlSep4.Name = "pnlSep4";
-            pnlSep4.Size = new Size(336, 2);
+            pnlSep4.Size = new Size(224, 1);
             pnlSep4.TabIndex = 11;
             // 
             // pnlTempsEstime2
@@ -690,19 +662,17 @@
             pnlTempsEstime2.Controls.Add(pictureBox5);
             pnlTempsEstime2.Controls.Add(lblTempsEstime2Head);
             pnlTempsEstime2.Controls.Add(lblTempsEstime2);
-            pnlTempsEstime2.Location = new Point(36, 457);
-            pnlTempsEstime2.Margin = new Padding(4, 5, 4, 5);
+            pnlTempsEstime2.Location = new Point(24, 305);
             pnlTempsEstime2.Name = "pnlTempsEstime2";
-            pnlTempsEstime2.Size = new Size(293, 97);
+            pnlTempsEstime2.Size = new Size(195, 65);
             pnlTempsEstime2.TabIndex = 10;
             // 
             // pictureBox5
             // 
             pictureBox5.Image = (Image)resources.GetObject("pictureBox5.Image");
-            pictureBox5.Location = new Point(4, 15);
-            pictureBox5.Margin = new Padding(4, 5, 4, 5);
+            pictureBox5.Location = new Point(3, 10);
             pictureBox5.Name = "pictureBox5";
-            pictureBox5.Size = new Size(26, 30);
+            pictureBox5.Size = new Size(17, 20);
             pictureBox5.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox5.TabIndex = 10;
             pictureBox5.TabStop = false;
@@ -711,20 +681,18 @@
             // 
             lblTempsEstime2Head.AutoSize = true;
             lblTempsEstime2Head.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTempsEstime2Head.Location = new Point(39, 15);
-            lblTempsEstime2Head.Margin = new Padding(4, 0, 4, 0);
+            lblTempsEstime2Head.Location = new Point(26, 10);
             lblTempsEstime2Head.Name = "lblTempsEstime2Head";
-            lblTempsEstime2Head.Size = new Size(149, 28);
+            lblTempsEstime2Head.Size = new Size(98, 17);
             lblTempsEstime2Head.TabIndex = 7;
             lblTempsEstime2Head.Text = "Temps estimé :";
             // 
             // lblTempsEstime2
             // 
             lblTempsEstime2.AutoSize = true;
-            lblTempsEstime2.Location = new Point(39, 55);
-            lblTempsEstime2.Margin = new Padding(4, 0, 4, 0);
+            lblTempsEstime2.Location = new Point(26, 37);
             lblTempsEstime2.Name = "lblTempsEstime2";
-            lblTempsEstime2.Size = new Size(96, 25);
+            lblTempsEstime2.Size = new Size(62, 15);
             lblTempsEstime2.TabIndex = 8;
             lblTempsEstime2.Text = "*le temps*";
             // 
@@ -733,19 +701,17 @@
             pnlLigneAPrendre2.BackColor = Color.Transparent;
             pnlLigneAPrendre2.Controls.Add(pictureBox6);
             pnlLigneAPrendre2.Controls.Add(lblLigneAPrendre2);
-            pnlLigneAPrendre2.Location = new Point(36, 114);
-            pnlLigneAPrendre2.Margin = new Padding(4, 5, 4, 5);
+            pnlLigneAPrendre2.Location = new Point(24, 76);
             pnlLigneAPrendre2.Name = "pnlLigneAPrendre2";
-            pnlLigneAPrendre2.Size = new Size(293, 67);
+            pnlLigneAPrendre2.Size = new Size(195, 45);
             pnlLigneAPrendre2.TabIndex = 8;
             // 
             // pictureBox6
             // 
             pictureBox6.Image = (Image)resources.GetObject("pictureBox6.Image");
-            pictureBox6.Location = new Point(4, 15);
-            pictureBox6.Margin = new Padding(4, 5, 4, 5);
+            pictureBox6.Location = new Point(3, 10);
             pictureBox6.Name = "pictureBox6";
-            pictureBox6.Size = new Size(26, 30);
+            pictureBox6.Size = new Size(17, 20);
             pictureBox6.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox6.TabIndex = 9;
             pictureBox6.TabStop = false;
@@ -754,10 +720,9 @@
             // 
             lblLigneAPrendre2.AutoSize = true;
             lblLigneAPrendre2.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblLigneAPrendre2.Location = new Point(37, 15);
-            lblLigneAPrendre2.Margin = new Padding(4, 0, 4, 0);
+            lblLigneAPrendre2.Location = new Point(25, 10);
             lblLigneAPrendre2.Name = "lblLigneAPrendre2";
-            lblLigneAPrendre2.Size = new Size(183, 28);
+            lblLigneAPrendre2.Size = new Size(120, 17);
             lblLigneAPrendre2.TabIndex = 7;
             lblLigneAPrendre2.Text = "*ligne(s) à prendre";
             // 
@@ -765,32 +730,31 @@
             // 
             lblItineraire2Head.AutoSize = true;
             lblItineraire2Head.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblItineraire2Head.Location = new Point(4, 48);
-            lblItineraire2Head.Margin = new Padding(4, 0, 4, 0);
+            lblItineraire2Head.Location = new Point(3, 32);
             lblItineraire2Head.Name = "lblItineraire2Head";
-            lblItineraire2Head.Size = new Size(275, 28);
+            lblItineraire2Head.Size = new Size(182, 17);
             lblItineraire2Head.TabIndex = 1;
             lblItineraire2Head.Text = "Vers *nom de la destination*";
             // 
             // lblItineraire2
             // 
             lblItineraire2.AutoSize = true;
-            lblItineraire2.Location = new Point(4, 23);
-            lblItineraire2.Margin = new Padding(4, 0, 4, 0);
+            lblItineraire2.Location = new Point(3, 15);
             lblItineraire2.Name = "lblItineraire2";
-            lblItineraire2.Size = new Size(154, 25);
+            lblItineraire2.Size = new Size(103, 15);
             lblItineraire2.TabIndex = 0;
             lblItineraire2.Text = "Itinéraire alternatif";
             lblItineraire2.Click += label11_Click;
             // 
             // PageItineraire
             // 
-            AutoScaleDimensions = new SizeF(144F, 144F);
+            AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(1806, 1235);
+            ClientSize = new Size(1204, 707);
             Controls.Add(pnlItineraire2);
             Controls.Add(pnlItineraire1);
             Controls.Add(pnlRecherche);
+            Margin = new Padding(2);
             Name = "PageItineraire";
             Text = "Corolis";
             Load += PageItineraire_Load;

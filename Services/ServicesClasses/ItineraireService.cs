@@ -1,6 +1,6 @@
 ﻿using BiblioSysteme;
 
-namespace Services
+namespace Services.ServicesClasses
 {
     /// <summary>
     /// Services pour la gestion des étapes dans les itinéraires

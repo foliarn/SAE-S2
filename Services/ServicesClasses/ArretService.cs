@@ -1,7 +1,7 @@
 ﻿using BiblioSysteme;
 using BiblioBDD;
 
-namespace Services
+namespace Services.ServicesClasses
 {
     public class ArretService
     {

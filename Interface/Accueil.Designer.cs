@@ -1,4 +1,6 @@
-﻿namespace Interface
+﻿using Interface.Classes;
+
+namespace Interface
 {
     partial class Accueil
     {
@@ -70,7 +72,7 @@
             pnlRecherche.Controls.Add(lblDepart);
             pnlRecherche.Controls.Add(cmbDepart);
             pnlRecherche.Controls.Add(lblTitre);
-            pnlRecherche.Location = new Point(30, 261);
+            pnlRecherche.Location = new Point(30, 283);
             pnlRecherche.Margin = new Padding(7, 6, 7, 6);
             pnlRecherche.Name = "pnlRecherche";
             pnlRecherche.Padding = new Padding(2);
@@ -293,7 +295,6 @@
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 8;
-            button1.Text = "button1";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
@@ -301,7 +302,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1264, 637);
+            ClientSize = new Size(1264, 681);
             Controls.Add(button1);
             Controls.Add(picLogo);
             Controls.Add(lblPlan);

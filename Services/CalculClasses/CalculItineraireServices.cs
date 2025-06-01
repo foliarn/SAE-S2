@@ -1,11 +1,12 @@
 ﻿using BiblioSysteme;
+using Services.ServicesClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services
+namespace Services.CalculClasses
 {
     public static class CalculItineraireServices
     {

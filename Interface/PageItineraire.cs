@@ -3,6 +3,7 @@ using BiblioBDD;
 using BiblioSysteme;
 using Interface.Classes;
 using Services;
+using Services.CalculClasses;
 using System.Data;
 
 namespace Interface

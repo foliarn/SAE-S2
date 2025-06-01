@@ -1,6 +1,6 @@
 ﻿using BiblioSysteme;
 
-namespace Services
+namespace Services.CalculClasses
 {
     /// <summary>
     /// Classe pour comparer les nœuds dans la file de priorité (évite O(n²))

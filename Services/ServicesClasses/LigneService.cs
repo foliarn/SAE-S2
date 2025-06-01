@@ -1,7 +1,7 @@
 ﻿using BiblioSysteme;
 using BiblioBDD;
 
-namespace Services;
+namespace Services.ServicesClasses;
 
 /// <summary>
 /// Service contenant toute la logique métier pour les lignes de transport
@@ -42,15 +42,28 @@ public class LigneService
     /// <returns>True si la ligne a été retirée avec succès, False sinon</returns>
     public static bool RetirerLigne(int idLigne)
     {
-        try  
+        try
         {
             var ligne = Init.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idLigne);
-            if (ModifBDD.RetirerLigne(idLigne))
+            if (ligne?.NomLigne.EndsWith("R") == true)
+                return false; // Pas de suppression directe des lignes retour
+
+            // Supprimer la ligne principale
+            if (!ModifBDD.RetirerLigne(idLigne))
+                return false;
+
+            // Supprimer la ligne retour si elle existe
+            var ligneRetour = Init.toutesLesLignes.FirstOrDefault(l => l.NomLigne == ligne.NomLigne + "R");
+            if (ligneRetour != null)
             {
-                Init.toutesLesLignes.Remove(ligne);
-                return true;
+                ModifBDD.RetirerLigne(ligneRetour.IdLigne);
             }
-            throw new Exception("Échec du retrait de la ligne en base de données.");
+
+            Init.toutesLesLignes.Remove(ligne);
+            if (ligneRetour != null)
+                Init.toutesLesLignes.Remove(ligneRetour);
+
+            return true;
         }
         catch (Exception ex)
         {
@@ -215,6 +228,50 @@ public class LigneService
         {
             System.Diagnostics.Debug.WriteLine($"Erreur GetLignesParArret : {ex.Message}");
             return new List<Ligne>();
+        }
+    }
+}
+
+public static class SynchronisationLignes
+{
+    /// <summary>
+    /// Trouve la ligne retour correspondante
+    /// </summary>
+    public static Ligne TrouverLigneRetour(Ligne ligneOriginale)
+    {
+        if (ligneOriginale?.NomLigne.EndsWith("R") == true)
+            return null; // C'est déjà une ligne retour
+
+        return Init.toutesLesLignes?.FirstOrDefault(l => l.NomLigne == ligneOriginale.NomLigne + "R");
+    }
+
+    /// <summary>
+    /// Synchronise toutes les modifications
+    /// </summary>
+    public static bool SynchroniserModification(int idLigneOriginale, Action<int> actionModification)
+    {
+        try
+        {
+            var ligneOriginale = Init.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idLigneOriginale);
+            if (ligneOriginale?.NomLigne.EndsWith("R") == true)
+                return false; // Pas de modification directe des lignes retour
+
+            // Appliquer la modification à la ligne originale
+            actionModification(idLigneOriginale);
+
+            // Appliquer à la ligne retour si elle existe
+            var ligneRetour = TrouverLigneRetour(ligneOriginale);
+            if (ligneRetour != null)
+            {
+                actionModification(ligneRetour.IdLigne);
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Erreur synchronisation : {ex.Message}");
+            return false;
         }
     }
 }

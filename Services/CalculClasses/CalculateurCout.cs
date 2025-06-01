@@ -1,6 +1,6 @@
 ﻿using BiblioSysteme;
 
-namespace Services
+namespace Services.CalculClasses
 {
     
     public class CalculateurCout

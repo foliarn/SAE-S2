@@ -2,28 +2,30 @@
 using BiblioSysteme;
 using Interface.Classes;
 using Services;
+using Services.ServicesClasses;
 
 namespace Interface
 {
-
     public partial class Accueil : Form
     {
-        public ProfilForm profilForm;
+        public ProfilForm profilForm; // Formulaire de profil
 
+        // paramètres du plan
         private bool estElargi = false;
         private Size tailleOG;
         private Point LocationOG;
         public Accueil()
         {
             InitializeComponent();
-            this.AutoScaleMode = AutoScaleMode.Dpi;
-            Init.Initialiser();
+            Init.Initialiser(); // Connexion et chargement des données
+
+            profilForm = new ProfilForm(); // Initialisation du formulaire de profil
 
             // Remplir les comboBox avec les arrêts
             Utils.RemplirComboBox(cmbDepart, Init.tousLesArrets, "NomArret", "IdArret");
             Utils.RemplirComboBox(cmbDest, Init.tousLesArrets, "NomArret", "IdArret");
 
-            // Positionner le plan d'abord
+            // Positionner le plan
             pnlPlan.Top = (ClientSize.Height - pnlPlan.Height) / 2;
             pnlPlan.Left = ClientSize.Width - pnlPlan.Width - 50;
 
@@ -35,16 +37,14 @@ namespace Interface
             lblTitre.Left = (pnlRecherche.ClientSize.Width - lblTitre.Width) / 2;
             btnTrouver.Left = (pnlRecherche.ClientSize.Width - btnTrouver.Width) / 2;
 
-            // Autres éléments
+            // Positionner les autres éléments
             btnLigne.Location = new Point(pnlPlan.Left + (pnlPlan.Width - btnLigne.Width) / 2, pnlPlan.Bottom + 10);
             lblPlan.Location = new Point(pnlPlan.Left + (pnlPlan.Width - lblPlan.Width) / 2, pnlPlan.Top - 50);
             picLogo.Location = new Point(pnlRecherche.Left + (pnlRecherche.Width - picLogo.Width) / 2, pnlRecherche.Top - 130);
             picLogin.Location = new Point(this.ClientSize.Width - 56, 8);
-
-            profilForm = new ProfilForm();
-
         }
 
+        // panel recherche
         private void chkHeure_CheckedChanged(object sender, EventArgs e)
         {
             if (chkHeure.Checked)
@@ -108,7 +108,10 @@ namespace Interface
                 }
 
                 // On crée les paramètres de recherche
-                var parametres = ParametresHelper.CreerDepuisInterface(chkHeure, dtpHeure, rdoDepart, rdoArrive);
+                TimeSpan heure = chkHeure.Checked ?
+                    TimeSpan.FromHours(DateTime.Now.Hour).Add(TimeSpan.FromMinutes(DateTime.Now.Minute)) :
+                    dtpHeure.Value.TimeOfDay;
+                var parametres = ParametreRechercheService.PourRechercheRapide(heure);
 
                 // On ouvre la page d'itinéraire !
                 PageItineraire pageItineraire = new PageItineraire(this, arretDepart, arretDestination, parametres);
@@ -123,6 +126,7 @@ namespace Interface
             }
         }
 
+        // Plan
         private void picLogin_Click(object sender, EventArgs e)
         {
   
@@ -178,6 +182,7 @@ namespace Interface
             picPlan.Cursor = Cursors.Hand;
         }
 
+        // Bouton pour consulter les lignes
         private void btnLigne_Click(object sender, EventArgs e)
         {
             this.Hide();
@@ -192,7 +197,5 @@ namespace Interface
             MenuAdmin menuAdmin = new MenuAdmin(this);
             menuAdmin.ShowDialog();
         }
-
-        
     }
 }

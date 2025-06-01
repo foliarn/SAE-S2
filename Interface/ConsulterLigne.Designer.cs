@@ -157,7 +157,6 @@
             Controls.Add(pnlChoixLigne);
             Name = "ConsulterLigne";
             Text = "Corolis";
-            Load += ConsulterLigne_Load;
             pnlChoixLigne.ResumeLayout(false);
             pnlChoixLigne.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)class1BindingSource).EndInit();

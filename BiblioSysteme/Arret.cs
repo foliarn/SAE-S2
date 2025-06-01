@@ -7,11 +7,11 @@ namespace BiblioSysteme
 {
     public class Arret
     {
-        // Propriétés correspondant à la table Arrets
+        // Colonnes de la table Arrets
         public int IdArret { get; set; }
         public string NomArret { get; set; }
 
-        // Liste des lignes qui passent par cet arrêt (relation Many-to-Many)
+        // Liste des lignes qui passent par cet arrêt
         public List<Ligne> Lignes { get; set; }
 
         // Constructeurs
@@ -22,7 +22,6 @@ namespace BiblioSysteme
 
         public Arret(int idArret, string nomArret)
         {
-            // Validation des paramètres
             if (idArret <= 0)
             {
                 throw new ArgumentException("L'ID de l'arrêt doit être positif", nameof(idArret));
@@ -40,17 +39,16 @@ namespace BiblioSysteme
     }
 
     /// <summary>
-    /// Représente un arrêt dans une ligne de transport (avec son ordre et les temps de départ bidirectionnels).
+    /// Représente un arrêt dans une ligne de transport (avec son ordre et les temps de départs).
     /// </summary>
     public class ArretLigne
     {
         public Arret Arret { get; set; }
-        public int Ordre { get; set; } // Ordre de l'arrêt dans la ligne (commence à 1 pour le premier arrêt)
-
-        // NOUVEAU : Temps bidirectionnels
+        public int Ordre { get; set; }
         public int TempsDepuisDebut { get; set; } // Temps en minutes depuis le premier arrêt de la ligne
-        public int TempsDepuisFin { get; set; }   // Temps en minutes depuis le dernier arrêt de la ligne
+        public int TempsDepuisFin { get; set; }   // idem mais depuis le dernier arrêt de la ligne
 
+        // Constructeurs
         public ArretLigne()
         {
             Arret = new Arret();

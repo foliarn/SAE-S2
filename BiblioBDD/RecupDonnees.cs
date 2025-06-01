@@ -17,7 +17,6 @@ namespace BiblioBDD
                     FROM Lignes l
                     LEFT JOIN Horaires_Lignes h ON l.id_ligne = h.id_ligne";
 
-        // Récupération des nouvelles colonnes bidirectionnelles
         private static string requeteGetArretsParLigne = @"
                     SELECT a.id_arret, a.nom_arret, la.ordre, 
                            la.temps_depuis_debut, la.temps_depuis_fin
@@ -50,7 +49,7 @@ namespace BiblioBDD
 
                 var lignes = new List<Ligne>();
 
-                // Étape 1 : Charger toutes les lignes sans appeler GetArretsParLigne
+                // On charge d'abord les lignes sans leurs arrêts pour éviter d'avoir deux readers ouverts en même temps
                 using (var cmd = new MySqlCommand(requeteGetToutesLesLignes, Connexion.conn))
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -62,7 +61,6 @@ namespace BiblioBDD
                             reader.IsDBNull("description") ? "" : reader.GetString("description")
                         );
 
-                        // Ne PAS charger les arrêts ici
                         if (!reader.IsDBNull("premier_depart"))
                         {
                             ligne.PremierDepart = reader.GetTimeSpan("premier_depart");
@@ -74,7 +72,7 @@ namespace BiblioBDD
                     }
                 }
 
-                // Étape 2 : Charger les arrêts pour chaque ligne, maintenant que le reader est fermé
+                // Puis on charge les arrêts pour chaque ligne (reader séparés)
                 foreach (var ligne in lignes)
                 {
                     ligne.Arrets = GetArretsParLigne(ligne.IdLigne);
@@ -185,7 +183,7 @@ namespace BiblioBDD
         }
 
         /// <summary>
-        /// Récupère les arrêts d'une ligne (avec leur ordre et temps de départ bidirectionnels)
+        /// Récupère les arrêts d'une ligne (avec leur ordre et temps de départs)
         /// </summary>
         /// <param name="idLigne">ID de la ligne</param>
         /// <returns>Liste des arrêts (ArretLigne)</returns>
@@ -230,41 +228,6 @@ namespace BiblioBDD
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des arrêts de la ligne : {ex.Message}");
-                return [];
-            }
-        }
-
-        /// <summary>
-        /// Récupère toutes les lignes avec leurs arrêts
-        /// </summary>
-        /// <returns>Liste des lignes complètes ou liste vide en cas d'erreur</returns>
-        public static List<Ligne> GetToutesLesLignesCompletes()
-        {
-            try
-            {
-                var lignes = GetToutesLesLignes();
-                if (lignes == null)
-                {
-                    return [];
-                }
-
-                foreach (var ligne in lignes)
-                {
-                    var arrets = GetArretsParLigne(ligne.IdLigne);
-                    if (arrets != null)
-                    {
-                        foreach (var arret in arrets)
-                        {
-                            ligne.Arrets.Add(arret);
-                        }
-                    }
-                }
-
-                return lignes;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des lignes complètes : {ex.Message}");
                 return [];
             }
         }

@@ -25,7 +25,6 @@ namespace BiblioSysteme
 
         // Cache pour les horaires par arrêt
         public Dictionary<Arret, List<TimeSpan>> HorairesCache { get; set; }
-        public int VersionCache { get; set; } // Version du cache pour la gestion des modifications (savoir quand le recharger)
 
         // Constructeur par défaut
         public Ligne()

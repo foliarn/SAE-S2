@@ -21,8 +21,11 @@ namespace Interface
         }
 
         public static bool estConnecte = false; // Indique si l'utilisateur est connecté ou non (admin)
+        // Identifiants (en clair car c'est pour la SAE !!!)
         public static string username = "admin";
         public static string password = "admin";
+
+        // On utilise load ici car on a accès à login depuis plusieurs forms
         private void Login_Load(object sender, EventArgs e)
         {
             Utils.CentrerControle(pnlLogin);
@@ -67,8 +70,6 @@ namespace Interface
         {
             this.Dispose();
         }
-
-        
 
         private void btnConnexion_Click(object sender, EventArgs e)
         {

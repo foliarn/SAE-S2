@@ -21,7 +21,7 @@ namespace BiblioBDD
             ORDER BY ordre;";
 
         /// <summary>
-        /// Exécute une requête SQL avec des paramètres.
+        /// Exécute une requête SQL avec des paramètres. -- non utilisé pour les SELECT (reader), mais pour INSERT, UPDATE, DELETE 
         /// </summary>
         /// <param name="requete">La requête SQL à exécuter</param>
         /// <param name="retournerId">Booléen indiquant si on souhaite récupérer l'ID généré (par exemple, après INSERT)</param>
@@ -203,7 +203,6 @@ namespace BiblioBDD
 
         /// <summary>
         /// Ajoute un arrêt d'une ligne dans la BDD
-        /// MODIFIÉ : Utilise les nouvelles colonnes bidirectionnelles
         /// </summary>
         /// <param name="idArret">L'ID de l'arrêt à ajouter</param>
         /// <param name="idLigne">L'ID de la ligne</param>
@@ -221,24 +220,25 @@ namespace BiblioBDD
 
                 if (arretsExistants.Count > 0)
                 {
+                    // Si on insère en première position
                     if (ordre == 1)
                     {
-                        // Si on insère en première position
                         tempsDepuisDebut = 0;
                         // Calculer le temps depuis la fin = temps max + délai
                         var tempsMaxDebut = arretsExistants.Max(a => a.TempsDepuisDebut);
                         tempsDepuisFin = tempsMaxDebut + new Random().Next(2, 5);
                     }
+                    // Si on ajoute à la fin
                     else if (ordre > arretsExistants.Count)
                     {
-                        // Si on ajoute à la fin
                         var dernierArret = arretsExistants.OrderBy(a => a.Ordre).LastOrDefault();
                         tempsDepuisDebut = dernierArret.TempsDepuisDebut + new Random().Next(2, 5);
                         tempsDepuisFin = 0;
                     }
+                    // Si on insère au milieu
                     else
                     {
-                        // Si on insère au milieu, prendre la moyenne des temps voisins
+                        // On prend la moyenne des temps voisins
                         var arretPrecedent = arretsExistants.Where(a => a.Ordre < ordre).OrderBy(a => a.Ordre).LastOrDefault();
                         var arretSuivant = arretsExistants.Where(a => a.Ordre >= ordre).OrderBy(a => a.Ordre).FirstOrDefault();
 
@@ -262,8 +262,6 @@ namespace BiblioBDD
                         }
                     }
                 }
-
-                // Requête avec les colonnes bidirectionnelles
                 string requeteInsert = @"
                     INSERT INTO Lignes_Arrets (id_ligne, id_arret, ordre, temps_depuis_debut, temps_depuis_fin)
                     VALUES (@idLigne, @idArret, @ordre, @tempsDepuisDebut, @tempsDepuisFin);";
@@ -295,17 +293,14 @@ namespace BiblioBDD
             }
         }
 
-
-
         /// <summary>
-        /// Retire un arrêt spécifique d'une ligne, sans affecter les autres.
-        /// MODIFIÉ : Utilise la logique bidirectionnelle
+        /// Retire un arrêt spécifique d'une ligne.
         /// </summary>
         /// <param name="idArret">L'ID de l'arrêt à retirer</param>
         /// <param name="idLigne">L'ID de la ligne</param>
-        /// <param name="ordre">L'ordre de l'arrêt dans la ligne (pour compatibilité, peut être ignoré)</param>
+        /// <param name="ordre">L'ordre de l'arrêt dans la ligne</param>
         /// <returns>True si l'opération a réussi, False sinon</returns>
-        public static bool RetirerArretDeLigne(int idArret, int idLigne, int ordre)
+        public static bool RetirerArretDeLigne(int idArret, int idLigne)
         {
             try
             {
@@ -315,10 +310,8 @@ namespace BiblioBDD
                     new MySqlParameter("@idLigne", idLigne),
                     new MySqlParameter("@idArret", idArret));
 
-                // Réordonner les arrêts restants
+                // Réordonner les arrêts restants et recalculer tous les temps bidirectionnels
                 ReordonnerArretsLigne(idLigne);
-
-                // Recalculer tous les temps bidirectionnels pour la ligne
                 RecalculerTempsBidirectionnels(idLigne);
 
                 return true;
@@ -375,7 +368,11 @@ namespace BiblioBDD
                 return false;
             }
         }
-
+        /// <summary>
+        /// Réordonne les arrêts d'une ligne dans la BDD (utilisé après insertion ou suppression d'un arrêt)
+        /// </summary>
+        /// <param name="idLigne"></param>
+        /// <returns>True si l'opération a réussi, false sinon</returns>
         public static bool ReordonnerArretsLigne(int idLigne)
         {
             if (Connexion.conn.State != ConnectionState.Open)
@@ -385,7 +382,7 @@ namespace BiblioBDD
             }
             try
             {
-                // A. On récupère tous les arrêts de la ligne dans l'ordre 
+                //On récupère tous les arrêts de la ligne dans l'ordre 
                 using (var cmdSelect = new MySqlCommand(requeteSelectMAJ, Connexion.conn))
                 {
                     cmdSelect.Parameters.AddWithValue("@idLigne", idLigne);
@@ -404,10 +401,10 @@ namespace BiblioBDD
                         if (arrets.Count == 0)
                         {
                             System.Diagnostics.Debug.WriteLine("Aucun arrêt trouvé pour cette ligne.");
-                            return true; // Pas d'erreur, juste rien à faire
+                            return true;
                         }
 
-                        // B. Réécrire les ordres proprement (1, 2, 3...)
+                        // Puis on réécrit les ordres proprement depuis le début
                         string updateQuery = @"
                             UPDATE Lignes_Arrets 
                             SET ordre = @ordre 
@@ -460,7 +457,7 @@ namespace BiblioBDD
                     }
                     else
                     {
-                        tempsAccumuleDebut += random.Next(1, 4); // 1-3 minutes entre arrêts
+                        tempsAccumuleDebut += random.Next(1, 4); // 1-3 minutes entre arrêts -- non fixe car plus simple
                     }
 
                     // Mettre à jour temps_depuis_debut
@@ -484,7 +481,7 @@ namespace BiblioBDD
                     }
                     else
                     {
-                        tempsAccumuleFin += random.Next(1, 4); // 1-3 minutes entre arrêts
+                        tempsAccumuleFin += random.Next(1, 4);
                     }
 
                     // Mettre à jour temps_depuis_fin

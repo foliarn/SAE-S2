@@ -611,7 +611,6 @@
             lblItineraire2.Size = new Size(103, 15);
             lblItineraire2.TabIndex = 0;
             lblItineraire2.Text = "Itinéraire alternatif";
-            lblItineraire2.Click += label11_Click;
             // 
             // picProfil
             // 
@@ -799,7 +798,6 @@
             Margin = new Padding(2);
             Name = "PageItineraire";
             Text = "Corolis";
-            Load += PageItineraire_Load;
             pnlItineraire1.ResumeLayout(false);
             pnlItineraire1.PerformLayout();
             pnlChgmtLigne1.ResumeLayout(false);

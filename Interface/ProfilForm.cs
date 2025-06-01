@@ -1,10 +1,12 @@
-﻿// ProfilForm.cs
-using System;
+﻿using System;
 using System.Windows.Forms;
 using BiblioSysteme;
 
 namespace Interface
 {
+    /// <summary>
+    /// C'est la fenêtre de profil utilisateur.
+    /// </summary>
     public partial class ProfilForm : Form
     {
         public event EventHandler SeDeconnecter;
@@ -39,20 +41,20 @@ namespace Interface
 
                 if (rdoModeVitesse.Checked)
                 {
-                    parametresUser.CoefficientTempsTransport = 3.0;
-                    parametresUser.CoefficientAttente = 1.0;
+                    parametresUser.CoefficientTempsTrajet = 3.0;
+                    parametresUser.CoefficientTempsAttente = 1.0;
                     parametresUser.CoefficientCorrespondance = 1.0;
                 }
                 else if (rdoModeNoAttente.Checked)
                 {
-                    parametresUser.CoefficientTempsTransport = 1.0;
-                    parametresUser.CoefficientAttente = 3.0;
+                    parametresUser.CoefficientTempsTrajet = 1.0;
+                    parametresUser.CoefficientTempsAttente = 3.0;
                     parametresUser.CoefficientCorrespondance = 1.0;
                 }
                 else
                 {
-                    parametresUser.CoefficientTempsTransport = 1.0;
-                    parametresUser.CoefficientAttente = 1.0;
+                    parametresUser.CoefficientTempsTrajet = 1.0;
+                    parametresUser.CoefficientTempsAttente = 1.0;
                     parametresUser.CoefficientCorrespondance = 3.0;
                 }
 
@@ -87,8 +89,6 @@ namespace Interface
             MenuAdmin menuAdmin = new MenuAdmin();
             menuAdmin.FormClosed += (s, args) =>
             {
-                // Quand MenuAdmin se ferme, la page de base reste cachée
-                // L'utilisateur devra cliquer sur login/profil pour revenir
             };
             menuAdmin.ShowDialog();
         }

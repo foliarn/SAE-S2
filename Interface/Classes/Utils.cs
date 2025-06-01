@@ -101,7 +101,7 @@ namespace Interface.Classes
             }
         }
         /// <summary>
-        /// Remplit une ComboBox avec les lignes selon qu'elles passent ou non par un arrêt (pour appartenance)
+        /// Remplit une ComboBox avec les lignes selon qu'elles passent ou non par un arrêt (pour modifarret -> appartenance)
         /// </summary>
         /// <param name="comboBox">La ComboBox à remplir</param>
         /// <param name="idArret">L'arrêt de référence</param>
@@ -154,7 +154,7 @@ namespace Interface.Classes
         }
 
         /// <summary>
-        /// Récupère uniquement les arrêts d'une ligne (sans ordre ni temps)
+        /// Récupère uniquement les arrêts d'une ligne (sans ordre ni temps) - pour la combobox retirer un arrêt d'une ligne.
         /// </summary>
         /// <param name="idLigne">ID de la ligne</param>
         /// <returns>Liste des Arret</returns>

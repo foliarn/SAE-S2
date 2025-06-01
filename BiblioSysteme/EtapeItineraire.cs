@@ -25,10 +25,7 @@ namespace BiblioSysteme
         public bool EstCorrespondance { get; set; }
         public TimeSpan? TempsAttente { get; set; }  // Temps d'attente avant cette étape
         public int NumeroEtape { get; set; }         // Position dans l'itinéraire
-
-        // Propriétés calculées
         public TimeSpan DureeTrajet => HeureArrivee - HeureDepart;
-        //public int NombreArrets => CalculerNombreArrets();
 
         // Constructeurs
         public EtapeItineraire()

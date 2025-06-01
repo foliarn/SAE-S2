@@ -45,24 +45,12 @@ public class LigneService
         try
         {
             var ligne = Init.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idLigne);
-            if (ligne?.NomLigne.EndsWith("R") == true)
-                return false; // Pas de suppression directe des lignes retour
 
             // Supprimer la ligne principale
             if (!ModifBDD.RetirerLigne(idLigne))
                 return false;
 
-            // Supprimer la ligne retour si elle existe
-            var ligneRetour = Init.toutesLesLignes.FirstOrDefault(l => l.NomLigne == ligne.NomLigne + "R");
-            if (ligneRetour != null)
-            {
-                ModifBDD.RetirerLigne(ligneRetour.IdLigne);
-            }
-
             Init.toutesLesLignes.Remove(ligne);
-            if (ligneRetour != null)
-                Init.toutesLesLignes.Remove(ligneRetour);
-
             return true;
         }
         catch (Exception ex)
@@ -118,169 +106,103 @@ public class LigneService
         return true;
     }
 
-    public static TimeSpan ObtenirTempsDepuisDepartInitial(Ligne ligne, Arret arret, bool sensNormal = true)
+    /// <summary>
+    /// Vérifie qu'un arrêt appartient à une ligne
+    /// </summary>
+    /// <param name="ligne">La ligne</param>
+    /// <param name="arret">L'arrêt à vérifier</param>
+    /// <returns>True si l'arrêt appartient à la ligne</returns>
+    public static bool ContientArret(Ligne ligne, Arret arret)
     {
         if (ligne?.Arrets == null || arret == null)
-            return TimeSpan.Zero;
+            return false;
 
-        ArretLigne arretLigne = ligne.Arrets.FirstOrDefault(al => al.Arret.IdArret == arret.IdArret);
-
-        if (arretLigne == null)
-        {
-            throw new ArgumentException("L'arrêt spécifié n'appartient pas à la ligne.");
-        }
-
-        // Utiliser la nouvelle logique bidirectionnelle
-        int temps = ArretService.ObtenirTempsSelon(arretLigne, sensNormal);
-        return TimeSpan.FromMinutes(temps);
-    }
-
-    // Version surchargée pour compatibilité (utilise le sens normal par défaut)
-    public static TimeSpan ObtenirTempsDepuisDepartInitial(Ligne ligne, Arret arret)
-    {
-        return ObtenirTempsDepuisDepartInitial(ligne, arret, true);
+        return ligne.Arrets.Any(a => a.Arret.IdArret == arret.IdArret);
     }
 
     /// <summary>
-    /// Valide une ligne
+    /// Obtient l'ArretLigne pour un arrêt donné dans une ligne
     /// </summary>
-    /// <param name="Ligne">La ligne à vérifier</param>
-    /// <returns>True si la ligne est valide, False sinon</returns>
-    public static bool EstValide(Ligne ligne)
+    /// <param name="ligne">La ligne</param>
+    /// <param name="arret">L'arrêt recherché</param>
+    /// <returns>ArretLigne ou null si non trouvé</returns>
+    public static ArretLigne ObtenirArretLigne(Ligne ligne, Arret arret)
     {
-        if (ligne == null)
-        {
-            System.Diagnostics.Debug.WriteLine("Erreur : La ligne est null.");
-            return false;
-        }
-        if (string.IsNullOrWhiteSpace(ligne.NomLigne) || ligne.NomLigne.Length > 3)
-        {
-            System.Diagnostics.Debug.WriteLine("Erreur : Le nom de la ligne est invalide.");
-            return false;
-        }
-        if (ligne.Arrets == null || !ligne.Arrets.Any())
-        {
-            System.Diagnostics.Debug.WriteLine("Erreur : La ligne n'a pas d'arrêts définis.");
-            return false;
-        }
+        if (ligne?.Arrets == null || arret == null)
+            return null;
 
-        // Vérifier que les horaires sont cohérents
-        if (ligne.PremierDepart >= ligne.DernierDepart)
-        {
-            System.Diagnostics.Debug.WriteLine("Erreur : Le premier départ doit être avant le dernier départ.");
-            return false;
-        }
-        if (ligne.IntervalleMinutes <= 0)
-        {
-            System.Diagnostics.Debug.WriteLine("Erreur : L'intervalle entre les départs doit être positif.");
-            return false;
-        }
-        return true;
-    }
-
-
-    /// <summary>
-    /// Valide les paramètres de création d'une ligne
-    /// </summary>
-    /// <param name="idLigne">ID de la ligne</param>
-    /// <param name="nomLigne">Nom de la ligne</param>
-    /// <param name="description">Description optionnelle</param>
-    /// <returns>True si valide, False sinon</returns>
-    /// <exception cref="ArgumentException">Lancée si les paramètres sont invalides</exception>
-    public static bool ValiderParametresLigne(int idLigne, string nomLigne, string description = "")
-    {
-        if (string.IsNullOrWhiteSpace(nomLigne))
-        {
-            throw new ArgumentException("Le nom de la ligne ne peut pas être vide", nameof(nomLigne));
-        }
-
-        if (nomLigne.Length > 3)
-        {
-            throw new ArgumentException("Le nom de la ligne ne peut pas dépasser 3 caractères", nameof(nomLigne));
-        }
-
-        if (!string.IsNullOrEmpty(description) && description.Length > 50)
-        {
-            throw new ArgumentException("La description ne peut pas dépasser 50 caractères", nameof(description));
-        }
-
-        if (Init.toutesLesLignes?.Any(l => l.NomLigne.Equals(nomLigne, StringComparison.OrdinalIgnoreCase)) == true)
-        {
-            throw new ArgumentException("Une ligne avec ce nom existe déjà.", nameof(nomLigne));
-        }
-
-        return true;
+        return ligne.Arrets.FirstOrDefault(a => a.Arret.IdArret == arret.IdArret);
     }
 
     /// <summary>
-    /// Récupère toutes les lignes qui passent par un arrêt spécifique
+    /// Détermine le sens de circulation entre 2 arrêts d'une ligne
     /// </summary>
-    /// <param name="arret">L'arrêt pour lequel chercher les lignes</param>
+    /// <param name="ligne">La ligne</param>
+    /// <param name="arretDepart">Arrêt de départ</param>
+    /// <param name="arretArrivee">Arrêt d'arrivée</param>
+    /// <returns>True si sens normal (ordre croissant), False si sens inverse</returns>
+    public static bool EstSensNormal(Ligne ligne, Arret arretDepart, Arret arretArrivee)
+    {
+        if (ligne?.Arrets == null)
+            throw new ArgumentNullException(nameof(ligne));
+
+        var arretLigneDepart = ObtenirArretLigne(ligne, arretDepart);
+        var arretLigneArrivee = ObtenirArretLigne(ligne, arretArrivee);
+
+        if (arretLigneDepart == null || arretLigneArrivee == null)
+            throw new ArgumentException("Un des arrêts n'appartient pas à cette ligne");
+
+        // Sens normal = ordre croissant
+        return arretLigneDepart.Ordre < arretLigneArrivee.Ordre;
+    }
+
+    /// <summary>
+    /// Obtient toutes les lignes qui passent par un arrêt
+    /// </summary>
+    /// <param name="arret">L'arrêt</param>
+    /// <param name="toutesLesLignes">Liste de toutes les lignes disponibles</param>
     /// <returns>Liste des lignes qui passent par cet arrêt</returns>
-    public static List<Ligne> GetLignesParArret(int idArret)
+    public static List<Ligne> ObtenirLignesParArret(Arret arret, List<Ligne> toutesLesLignes)
     {
-        try
-        {
-            if (idArret == 0)
-            {
-                System.Diagnostics.Debug.WriteLine("Erreur : arrêt null");
-                return new List<Ligne>();
-            }
-
-            // Filtrer et retourner les lignes
-            return Init.toutesLesLignes
-                .Where(ligne => ligne.Arrets != null &&
-                               ligne.Arrets.Any(arretLigne => arretLigne.Arret.IdArret == idArret))
-                .ToList();
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Erreur GetLignesParArret : {ex.Message}");
+        if (arret == null || toutesLesLignes == null)
             return new List<Ligne>();
-        }
-    }
-}
 
-public static class SynchronisationLignes
-{
-    /// <summary>
-    /// Trouve la ligne retour correspondante
-    /// </summary>
-    public static Ligne TrouverLigneRetour(Ligne ligneOriginale)
-    {
-        if (ligneOriginale?.NomLigne.EndsWith("R") == true)
-            return null; // C'est déjà une ligne retour
-
-        return Init.toutesLesLignes?.FirstOrDefault(l => l.NomLigne == ligneOriginale.NomLigne + "R");
+        return toutesLesLignes.Where(ligne => ContientArret(ligne, arret)).ToList();
     }
 
     /// <summary>
-    /// Synchronise toutes les modifications
+    /// Vérifie qu'une ligne est valide pour la recherche d'itinéraire
     /// </summary>
-    public static bool SynchroniserModification(int idLigneOriginale, Action<int> actionModification)
+    /// <param name="ligne">La ligne à valider</param>
+    /// <returns>True si la ligne est utilisable</returns>
+    public static bool EstLigneValide(Ligne ligne)
     {
-        try
+        if (ligne == null) return false;
+        if (ligne.Arrets == null || ligne.Arrets.Count < 2) return false;
+        if (ligne.IntervalleMinutes <= 0) return false;
+        if (ligne.PremierDepart >= ligne.DernierDepart) return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Obtient le temps total de parcours d'une ligne dans un sens
+    /// </summary>
+    /// <param name="ligne">La ligne</param>
+    /// <param name="sensNormal">Sens de circulation</param>
+    /// <returns>Temps total en minutes</returns>
+    public static int ObtenirTempsTotalParcours(Ligne ligne, bool sensNormal)
+    {
+        if (ligne?.Arrets == null || ligne.Arrets.Count == 0)
+            return 0;
+
+        if (sensNormal)
         {
-            var ligneOriginale = Init.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idLigneOriginale);
-            if (ligneOriginale?.NomLigne.EndsWith("R") == true)
-                return false; // Pas de modification directe des lignes retour
-
-            // Appliquer la modification à la ligne originale
-            actionModification(idLigneOriginale);
-
-            // Appliquer à la ligne retour si elle existe
-            var ligneRetour = TrouverLigneRetour(ligneOriginale);
-            if (ligneRetour != null)
-            {
-                actionModification(ligneRetour.IdLigne);
-            }
-
-            return true;
+            return ligne.Arrets.Max(a => a.TempsDepuisDebut);
         }
-        catch (Exception ex)
+        else
         {
-            System.Diagnostics.Debug.WriteLine($"Erreur synchronisation : {ex.Message}");
-            return false;
+            return ligne.Arrets.Max(a => a.TempsDepuisFin);
         }
     }
 }

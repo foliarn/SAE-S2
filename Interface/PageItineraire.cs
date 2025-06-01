@@ -4,6 +4,7 @@ using BiblioSysteme;
 using Interface.Classes;
 using Services;
 using Services.CalculClasses;
+using Services.ServicesClasses;
 using System.Data;
 
 namespace Interface
@@ -19,15 +20,7 @@ namespace Interface
         //private CalculateurItineraire calculateur;
         private List<Itineraire> itinerairesCalcules;
 
-        // Constructeur existant (pour compatibilité)
-        public PageItineraire(Accueil accueil)
-        {
-            InitializeComponent();
-            this.accueil = accueil;
-            InitialiserInterface();
-        }
-
-        // Constructeur avec transfert automatique
+        // Constructeur avec transfert automatique des paramètres
         public PageItineraire(Accueil accueil, Arret depart, Arret destination, ParametresRecherche parametres)
         {
             InitializeComponent();
@@ -79,23 +72,23 @@ namespace Interface
             }
         }
 
+        // Méthodes pour la recherche d'itinéraires
         private void ConfigurerHeures()
         {
             try
             {
-                if (parametresRecherche.HeureSouhaitee == TimeSpan.FromHours(DateTime.Now.Hour).Add(TimeSpan.FromMinutes(DateTime.Now.Minute)))
+                if (parametresRecherche.HeureDepart == TimeSpan.FromHours(DateTime.Now.Hour).Add(TimeSpan.FromMinutes(DateTime.Now.Minute)))
                 {
                     chkHeure.Checked = true;
                 }
                 else
                 {
                     chkHeure.Checked = false;
-                    dtpHeure.Value = DateTime.Today.Add(parametresRecherche.HeureSouhaitee);
+                    dtpHeure.Value = DateTime.Today.Add(parametresRecherche.HeureDepart);
 
-                    if (parametresRecherche.EstHeureDepart)
-                        rdoDepart.Checked = true;
-                    else
-                        rdoArrive.Checked = true;
+                    // Par défaut, considérer comme heure de départ
+                    rdoDepart.Checked = true;
+                    rdoArrive.Checked = false;
                 }
             }
             catch (Exception ex)
@@ -127,8 +120,11 @@ namespace Interface
                     return;
                 }
 
-                // Mettre à jour les paramètres avec ParametresHelper
-                parametresRecherche = ParametresHelper.CreerDepuisInterface(chkHeure, dtpHeure, rdoDepart, rdoArrive);
+                // Recréer les paramètres à chaque recherche
+                TimeSpan heure = chkHeure.Checked ?
+                    TimeSpan.FromHours(DateTime.Now.Hour).Add(TimeSpan.FromMinutes(DateTime.Now.Minute)) :
+                    dtpHeure.Value.TimeOfDay;
+                parametresRecherche = ParametreRechercheService.PourRechercheRapide(heure);
 
                 // Lancer la recherche
                 ChargerItineraires();
@@ -160,7 +156,7 @@ namespace Interface
                     estHeureDepart = rdoDepart.Checked;
                 }
 
-                return new ParametresRecherche(heureSouhaitee, estHeureDepart);
+                return ParametreRechercheService.PourRechercheRapide(heureSouhaitee);
             }
             catch (Exception ex)
             {
@@ -184,7 +180,7 @@ namespace Interface
                 // Calculer les itinéraires de manière asynchrone
                 await Task.Run(() =>
                 {
-                    itinerairesCalcules = CalculateurItineraire.CalculerItineraires(arretDepart, arretDestination, parametresRecherche);
+                    itinerairesCalcules = RechercheMultiItineraires.TrouverDeuxItineraires(arretDepart, arretDestination, parametresRecherche.HeureDepart);
                 });
 
                 // Restaurer le bouton
@@ -205,6 +201,9 @@ namespace Interface
             }
         }
 
+        /// <summary>
+        /// Affiche les résultats des itinéraires calculés.
+        /// </summary>
         private void AfficherResultats()
         {
             try
@@ -240,6 +239,9 @@ namespace Interface
             }
         }
 
+        /// <summary>
+        /// Affiche les itinéraires dans les panneaux correspondants. ça pique les yeux désolé
+        /// </summary>
         private void AfficherItineraire(Itineraire itineraire, int numeroItineraire)
         {
             try
@@ -315,21 +317,7 @@ namespace Interface
             }
         }
 
-        private void PageItineraire_Load(object sender, EventArgs e)
-        {
-            // Si on a des données, lancer automatiquement la recherche
-            if (arretDepart != null && arretDestination != null && parametresRecherche != null)
-            {
-                // La recherche est déjà lancée dans le constructeur
-            }
-        }
-
-        private void label11_Click(object sender, EventArgs e)
-        {
-            // Événement existant - peut rester vide ou être utilisé pour d'autres fonctionnalités
-        }
-
-        // Ajoutez cette méthode pour gérer le retour à l'accueil
+        // gérer le retour à l'accueil (bugs relous)
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
@@ -339,12 +327,7 @@ namespace Interface
             }
         }
 
-        // Méthode pour gérer la fermeture avec le bouton de retour (si vous l'ajoutez)
-        private void BtnRetour_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
+        // Gérer le changement de taille du panel de recherche
         private void chkHeure_CheckedChanged(object sender, EventArgs e)
         {
             if (chkHeure.Checked)
@@ -374,6 +357,7 @@ namespace Interface
             Utils.CentrerControle(pnlRecherche, false, true);
         }
 
+        // Gérer le clic sur le logo pour ouvrir le profil
         private void picProfil_Click(object sender, EventArgs e)
         {
             if (Login.estConnecte == true)
@@ -391,6 +375,7 @@ namespace Interface
             }
         }
 
+        // ça c'est le bouton pour revenir à l'accueil
         private void btnMenu_Click(object sender, EventArgs e)
         {
             accueil.Show();

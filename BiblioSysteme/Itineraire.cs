@@ -19,7 +19,7 @@ namespace BiblioSysteme
         public TimeSpan HeureDepart { get; set; }
         public TimeSpan HeureArrivee { get; set; }
 
-        // Informations calculées (propriétés en lecture seule)
+        // Informations calculées
         public TimeSpan TempsTotal => HeureArrivee - HeureDepart;
         public int NombreCorrespondances => Etapes?.Count(e => e.EstCorrespondance) ?? 0;
         public List<Ligne> LignesUtilisees => Etapes?.Where(e => e.LigneUtilisee != null)
@@ -28,20 +28,9 @@ namespace BiblioSysteme
                                                     .ToList() ?? new List<Ligne>();
 
         // Métadonnées
-        public string TypeItineraire { get; set; }      // "Rapide", "Direct", "Économique", etc.
+        public string TypeItineraire { get; set; }      // Vitesse, moins d'attente ou moins de correspondances
 
-        // Statistiques détaillées
-        public TimeSpan TempsTransport { get; set; }    // Temps effectif en transport
-        public TimeSpan TempsAttenteTotale { get; set; } // Temps d'attente/correspondances
-        public int NombreArrets { get; set; }           // Nombre total d'arrêts traversés
-
-        // Constructeurs
-        public Itineraire()
-        {
-            Etapes = new List<EtapeItineraire>();
-            TypeItineraire = "Standard";
-        }
-
+        // Constructeur
         public Itineraire(Arret arretDepart, Arret arretDestination)
         {
             ArretDepart = arretDepart ?? throw new ArgumentNullException(nameof(arretDepart));
@@ -52,19 +41,6 @@ namespace BiblioSysteme
 
             Etapes = new List<EtapeItineraire>();
             TypeItineraire = "Standard";
-        }
-
-        public Itineraire(Arret arretDepart, Arret arretDestination, List<EtapeItineraire> etapes)
-            : this(arretDepart, arretDestination)
-        {
-            Etapes = etapes ?? new List<EtapeItineraire>();
-
-            // Calculer automatiquement les horaires globaux si des étapes existent
-            if (Etapes.Count > 0)
-            {
-                HeureDepart = Etapes.First().HeureDepart;
-                HeureArrivee = Etapes.Last().HeureArrivee;
-            }
         }
     }
 }

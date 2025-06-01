@@ -50,6 +50,7 @@ namespace BiblioSysteme
         public int Poids { get; set; } // Temps en minutes
         public bool EstCorrespondance { get; set; }
 
+        // Constructeur
         public Arete(Noeud depart, Noeud arrivee, Ligne ligne, int poids, bool estCorrespondance = false)
         {
             NoeudDepart = depart;
@@ -61,7 +62,7 @@ namespace BiblioSysteme
     }
 
     /// <summary>
-    /// Graphe de transport en commun - Structure de données pure
+    /// Graphe de transport en commun
     /// </summary>
     public class Graphe
     {

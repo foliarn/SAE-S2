@@ -9,7 +9,7 @@ namespace Interface.Classes
 {
     public static class Affichage
     {
-        public class ArretHoraire // ??
+        public class ArretHoraire // Classe pour représenter un arrêt et ses horaires (faciliter l'affichage dans DataGridView)
         {
             public string NomArret { get; set; }
             public string Horaires { get; set; } // Format texte pour affichage
@@ -20,7 +20,7 @@ namespace Interface.Classes
             // Récupérer la ligne
             Ligne ligne = RecupDonnees.GetLigneParId(idLigne);
 
-            if (ligne == null || !LigneService.EstValide(ligne)) // Remplacer par la bonne condition si nécessaire
+            if (ligne == null)
             {
                 dgv.DataSource = null;
                 dgv.Rows.Clear();
@@ -33,9 +33,9 @@ namespace Interface.Classes
             {
                 Arret arret = arretLigne.Arret;
 
-                // Récupère TOUS les horaires de la journée en passant un horaire très bas
-                TimeSpan horaireDebutJournee = new TimeSpan(0, 0, 0); // 00:00
-                List<TimeSpan> horaires = ArretService.GetHorairesPassage(arret, ligne, horaireDebutJournee);
+                // Récupère TOUS les horaires de la journée en passant un horaire bas
+                TimeSpan horaireDebutJournee = new TimeSpan(5, 0, 0); // 05:00 (avant le début de service)
+                List<TimeSpan> horaires = ArretService.ObtenirHorairesPassage(ligne, arret, true); // true = sens normal
 
                 string horairesStr = string.Join(" - ", horaires.Select(h => h.ToString(@"hh\:mm")));
 

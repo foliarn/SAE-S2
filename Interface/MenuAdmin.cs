@@ -19,10 +19,37 @@ namespace Interface
         public MenuAdmin(Accueil formAccueil)
         {
             InitializeComponent();
+            // Centrer les panels dans le formulaire
+            Utils.CentrerControle(pnlCreation);
+            Utils.CentrerControle(pnlModifChoix);
+            Utils.CentrerControle(pnlModifArretChoisi, false, true);
+            Utils.CentrerControle(pnlSupprVerif, false, true);
+            Utils.CentrerControle(pnlArretChangeNom, false, true);
+            Utils.CentrerControle(pnlArretModifLigne, false, true);
+            Utils.CentrerControle(pnlModifLigneChoisie, false, true);
+            Utils.CentrerControle(pnlLigneAjoutArret, false, true);
+            Utils.CentrerControle(pnlRetirerArret, false, true);
+            Utils.CentrerControle(pnlModifHoraire, false, true);
+            Utils.CentrerControle(pnlMenuCreation, false, true);
+            Utils.CentrerControle(pnlMenuModif, false, true);
+            Utils.CentrerControle(pnlTitre, true, false);
+
+
+
+            // Remplir les ComboBox avec les arrêts
+            Utils.RemplirComboBox(cmbChoix,
+            isLigne ? Init.toutesLesLignes.Cast<object>().ToList() : Init.tousLesArrets.Cast<object>().ToList(),
+            isLigne ? "NomLigne" : "NomArret",
+            isLigne ? "IdLigne" : "IdArret");
+
+            Utils.RemplirComboBox(cmbArretModifLigneChoixAdd, Init.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : Ajouter un élément "Aucun" pour éviter les erreurs si aucune ligne n'est sélectionnée
+            Utils.RemplirComboBox(cmbArretModifLigneChoixSuppr, Init.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : idem
+
             // Initialiser le formulaire de profil
             this.accueil = formAccueil;
             accueil.profilForm = new ProfilForm();
             accueil.profilForm.SeDeconnecter += (s, e) => this.Close();
+
         }
 
         public MenuAdmin()
@@ -550,35 +577,6 @@ namespace Interface
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-        }
-
-        private void MenuAdmin_Load(object sender, EventArgs e)
-        {
-            // Centrer les panels dans le formulaire
-            Utils.CentrerControle(pnlCreation);
-            Utils.CentrerControle(pnlModifChoix);
-            Utils.CentrerControle(pnlModifArretChoisi, false, true);
-            Utils.CentrerControle(pnlSupprVerif, false, true);
-            Utils.CentrerControle(pnlArretChangeNom, false, true);
-            Utils.CentrerControle(pnlArretModifLigne, false, true);
-            Utils.CentrerControle(pnlModifLigneChoisie, false, true);
-            Utils.CentrerControle(pnlLigneAjoutArret, false, true);
-            Utils.CentrerControle(pnlRetirerArret, false, true);
-            Utils.CentrerControle(pnlModifHoraire, false, true);
-            Utils.CentrerControle(pnlMenuCreation, false, true);
-            Utils.CentrerControle(pnlMenuModif, false, true);
-            Utils.CentrerControle(pnlTitre, true, false);
-
-
-
-            // Remplir les ComboBox avec les arrêts
-            Utils.RemplirComboBox(cmbChoix,
-            isLigne ? Init.toutesLesLignes.Cast<object>().ToList() : Init.tousLesArrets.Cast<object>().ToList(),
-            isLigne ? "NomLigne" : "NomArret",
-            isLigne ? "IdLigne" : "IdArret");
-
-            Utils.RemplirComboBox(cmbArretModifLigneChoixAdd, Init.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : Ajouter un élément "Aucun" pour éviter les erreurs si aucune ligne n'est sélectionnée
-            Utils.RemplirComboBox(cmbArretModifLigneChoixSuppr, Init.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : idem
         }
     }
 }

@@ -100,7 +100,8 @@ public class LigneService
         ArretLigne arretLigne = new ArretLigne
         {
             Arret = arret,
-            TempsDepart = 0 // Initialiser à 0, sera mis à jour plus tard
+            TempsDepuisDebut = 0, // Initialiser à 0, sera mis à jour plus tard
+            TempsDepuisFin = 0
         };
 
         ligne.Arrets.Add(arretLigne);
@@ -117,7 +118,7 @@ public class LigneService
         return true;
     }
 
-    public static TimeSpan ObtenirTempsDepuisDepartInitial(Ligne ligne, Arret arret)
+    public static TimeSpan ObtenirTempsDepuisDepartInitial(Ligne ligne, Arret arret, bool sensNormal = true)
     {
         if (ligne?.Arrets == null || arret == null)
             return TimeSpan.Zero;
@@ -129,7 +130,15 @@ public class LigneService
             throw new ArgumentException("L'arrêt spécifié n'appartient pas à la ligne.");
         }
 
-        return TimeSpan.FromMinutes(arretLigne.TempsDepart);
+        // Utiliser la nouvelle logique bidirectionnelle
+        int temps = ArretService.ObtenirTempsSelon(arretLigne, sensNormal);
+        return TimeSpan.FromMinutes(temps);
+    }
+
+    // Version surchargée pour compatibilité (utilise le sens normal par défaut)
+    public static TimeSpan ObtenirTempsDepuisDepartInitial(Ligne ligne, Arret arret)
+    {
+        return ObtenirTempsDepuisDepartInitial(ligne, arret, true);
     }
 
     /// <summary>

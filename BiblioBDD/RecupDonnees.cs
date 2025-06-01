@@ -17,8 +17,10 @@ namespace BiblioBDD
                     FROM Lignes l
                     LEFT JOIN Horaires_Lignes h ON l.id_ligne = h.id_ligne";
 
+        // Récupération des nouvelles colonnes bidirectionnelles
         private static string requeteGetArretsParLigne = @"
-                    SELECT a.id_arret, a.nom_arret, la.ordre, la.temps_depart
+                    SELECT a.id_arret, a.nom_arret, la.ordre, 
+                           la.temps_depuis_debut, la.temps_depuis_fin
                     FROM Arrets a
                     INNER JOIN Lignes_Arrets la ON a.id_arret = la.id_arret
                     WHERE la.id_ligne = @idLigne
@@ -183,7 +185,8 @@ namespace BiblioBDD
         }
 
         /// <summary>
-        /// Récupère les arrêts d'une ligne (avec leur ordre et temps de départ)
+        /// Récupère les arrêts d'une ligne (avec leur ordre et temps de départ bidirectionnels)
+        /// MODIFIÉ : Prend en charge les nouvelles colonnes bidirectionnelles
         /// </summary>
         /// <param name="idLigne">ID de la ligne</param>
         /// <returns>Liste des arrêts (ArretLigne)</returns>
@@ -215,7 +218,8 @@ namespace BiblioBDD
                             var arretLigne = new ArretLigne(
                                 arret,
                                 reader.GetInt32("ordre"),
-                                reader.GetInt32("temps_depart")
+                                reader.GetInt32("temps_depuis_debut"),
+                                reader.GetInt32("temps_depuis_fin")
                             );
                             arretsLigne.Add(arretLigne);
                         }
@@ -265,27 +269,5 @@ namespace BiblioBDD
                 return [];
             }
         }
-        // Méthodes pour actualiser chaque type de données (au cas où une desynchronisation arriverait)
-/*        public static void ActualiserLignes()
-        {
-            if (Connexion.conn != null && Connexion.conn.State == System.Data.ConnectionState.Open)
-            {
-                Connexion.toutesLesLignes = RecupDonnees.GetToutesLesLignes() ?? new List<Ligne>();
-            }
-        }
-
-        public static void ActualiserArrets()
-        {
-            if (Connexion.conn != null && Connexion.conn.State == System.Data.ConnectionState.Open)
-            {
-                tousLesArrets = RecupDonnees.GetTousLesArrets() ?? new List<Arret>();
-            }
-        }
-
-        public static void ActualiserTout()
-        {
-            ActualiserLignes();
-            ActualiserArrets();
-        }*/
     }
 }

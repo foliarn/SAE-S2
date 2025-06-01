@@ -40,27 +40,39 @@ namespace BiblioSysteme
     }
 
     /// <summary>
-    /// Réprésente un arrêt dans une ligne de transport (avec son ordre et le temps de départ).
+    /// Représente un arrêt dans une ligne de transport (avec son ordre et les temps de départ bidirectionnels).
     /// </summary>
     public class ArretLigne
     {
         public Arret Arret { get; set; }
         public int Ordre { get; set; } // Ordre de l'arrêt dans la ligne (commence à 1 pour le premier arrêt)
-        public int TempsDepart { get; set; } // Temps en minutes depuis le départ du premier arrêt de la ligne
+
+        // NOUVEAU : Temps bidirectionnels
+        public int TempsDepuisDebut { get; set; } // Temps en minutes depuis le premier arrêt de la ligne
+        public int TempsDepuisFin { get; set; }   // Temps en minutes depuis le dernier arrêt de la ligne
 
         public ArretLigne()
         {
             Arret = new Arret();
             Ordre = 0;
-            TempsDepart = 0;
+            TempsDepuisDebut = 0;
+            TempsDepuisFin = 0;
         }
 
-        public ArretLigne(Arret arret, int ordre, int tempsDepart)
+        public ArretLigne(Arret arret, int ordre, int tempsDepuisDebut)
         {
             Arret = arret;
             Ordre = ordre;
-            TempsDepart = tempsDepart;
+            TempsDepuisDebut = tempsDepuisDebut;
+            TempsDepuisFin = 0;
+        }
+
+        public ArretLigne(Arret arret, int ordre, int tempsDepuisDebut, int tempsDepuisFin)
+        {
+            Arret = arret;
+            Ordre = ordre;
+            TempsDepuisDebut = tempsDepuisDebut;
+            TempsDepuisFin = tempsDepuisFin;
         }
     }
 }
-   

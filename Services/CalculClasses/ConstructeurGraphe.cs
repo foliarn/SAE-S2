@@ -1,4 +1,5 @@
 ﻿using BiblioSysteme;
+using Services.ServicesClasses;
 
 namespace Services.CalculClasses
 {
@@ -82,7 +83,8 @@ namespace Services.CalculClasses
         }
 
         /// <summary>
-        /// Crée les arêtes pour une ligne donnée (connexions entre arrêts consécutifs)
+        /// Crée les arêtes pour une ligne donnée (connexions bidirectionnelles entre arrêts)
+        /// MODIFIÉ : Utilise les nouveaux temps bidirectionnels
         /// </summary>
         private static void CreerAretesLigne(Graphe graphe, Ligne ligne)
         {
@@ -108,8 +110,8 @@ namespace Services.CalculClasses
                         !graphe.Noeuds.TryGetValue(arretArrivee.Arret.IdArret, out var noeudArrivee))
                         continue;
 
-                    // Temps = différence absolue
-                    int tempsTrajet = Math.Abs(arretArrivee.TempsDepart - arretDepart.TempsDepart);
+                    // NOUVEAU : Calcul bidirectionnel du temps de trajet
+                    int tempsTrajet = CalculerTempsTrajetBidirectionnel(arretDepart, arretArrivee);
 
                     var arete = new Arete(noeudDepart, noeudArrivee, ligne, tempsTrajet);
                     noeudDepart.AretesSortantes.Add(arete);
@@ -118,7 +120,21 @@ namespace Services.CalculClasses
                 }
             }
 
-            //System.Diagnostics.Debug.WriteLine($"Ligne {ligne.NomLigne} : {aretesCreees} arêtes créées");
+            System.Diagnostics.Debug.WriteLine($"Ligne {ligne.NomLigne} : {aretesCreees} arêtes bidirectionnelles créées");
+        }
+
+        /// <summary>
+        /// NOUVEAU : Calcule le temps de trajet bidirectionnel entre deux arrêts
+        /// </summary>
+        /// <param name="arretDepart">Arrêt de départ</param>
+        /// <param name="arretArrivee">Arrêt d'arrivée</param>
+        /// <returns>Temps de trajet en minutes</returns>
+        private static int CalculerTempsTrajetBidirectionnel(ArretLigne arretDepart, ArretLigne arretArrivee)
+        {
+            // Déterminer le sens du trajet
+            bool sensNormal = arretDepart.Ordre < arretArrivee.Ordre;
+
+            return ArretService.ObtenirTempsSelon(arretArrivee, sensNormal) - ArretService.ObtenirTempsSelon(arretDepart, sensNormal);
         }
 
         /// <summary>
@@ -126,7 +142,7 @@ namespace Services.CalculClasses
         /// </summary>
         private static void CreerCorrespondances(Graphe graphe)
         {
-            const int TEMPS_CORRESPONDANCE = 0; // 5 minutes pour changer de ligne
+            const int TEMPS_CORRESPONDANCE = 0; // 0 minutes pour changer de ligne
 
             // Pour chaque arrêt, regarder quelles lignes y passent
             var arretsParLigne = new Dictionary<int, List<Ligne>>();
@@ -168,13 +184,10 @@ namespace Services.CalculClasses
                                 var areteCorrespondance = new Arete(noeud, noeud, lignes[j], TEMPS_CORRESPONDANCE, true);
                                 noeud.AretesSortantes.Add(areteCorrespondance);
                                 graphe.Aretes.Add(areteCorrespondance);
-                                //System.Diagnostics.Debug.WriteLine($"Correspondance : {noeud.ArretNoeud.NomArret} ligne {lignes[i].NomLigne} → ligne {lignes[j].NomLigne}");
                                 correspondancesCreees++;
                             }
                         }
                     }
-
-                    //System.Diagnostics.Debug.WriteLine($"Arrêt {noeud.ArretNoeud.NomArret} : {lignes.Count} lignes, {lignes.Count * (lignes.Count - 1)} correspondances");
                 }
             }
 

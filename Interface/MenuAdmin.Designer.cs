@@ -164,7 +164,6 @@
             lblMenuModifHoraire = new Label();
             lblTitreModifLigneChoisie = new Label();
             lblSSTitreModifLigneChoisie = new Label();
-            btnDeconnecter = new Button();
             pnlTitre.SuspendLayout();
             pnlMenuCreation.SuspendLayout();
             pnlCreerArret.SuspendLayout();
@@ -985,7 +984,7 @@
             pnlArretModifLigne.Controls.Add(lblArretModifLigneAdd);
             pnlArretModifLigne.Controls.Add(pnlSep8);
             pnlArretModifLigne.Controls.Add(lblArretModifLigneHead);
-            pnlArretModifLigne.Location = new Point(1025, 32);
+            pnlArretModifLigne.Location = new Point(770, 156);
             pnlArretModifLigne.Name = "pnlArretModifLigne";
             pnlArretModifLigne.Size = new Size(240, 270);
             pnlArretModifLigne.TabIndex = 16;
@@ -1694,24 +1693,11 @@
             lblSSTitreModifLigneChoisie.TabIndex = 0;
             lblSSTitreModifLigneChoisie.Text = "Menu de modification";
             // 
-            // btnDeconnecter
-            // 
-            btnDeconnecter.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btnDeconnecter.AutoSize = true;
-            btnDeconnecter.Location = new Point(1145, 644);
-            btnDeconnecter.Name = "btnDeconnecter";
-            btnDeconnecter.Size = new Size(107, 25);
-            btnDeconnecter.TabIndex = 19;
-            btnDeconnecter.Text = "Se déconnecter";
-            btnDeconnecter.UseVisualStyleBackColor = true;
-            btnDeconnecter.Click += btnDeconnecter_Click;
-            // 
             // MenuAdmin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 681);
-            Controls.Add(btnDeconnecter);
             Controls.Add(pnlModifLigneChoisie);
             Controls.Add(pnlModifChoix);
             Controls.Add(pnlLigneAjoutArret);
@@ -1728,6 +1714,7 @@
             Controls.Add(pnlTitre);
             Name = "MenuAdmin";
             Text = "Form1";
+            Load += MenuAdmin_Load;
             pnlTitre.ResumeLayout(false);
             pnlTitre.PerformLayout();
             pnlMenuCreation.ResumeLayout(false);
@@ -1932,7 +1919,6 @@
         private Label lblChoixPlace;
         private Label lblZero;
         private CheckBox chkNePasChanger;
-        private Button btnDeconnecter;
         private CheckBox chkNePasAjouterUneLigne;
         private CheckBox chkNePasRetirerLigne;
     }

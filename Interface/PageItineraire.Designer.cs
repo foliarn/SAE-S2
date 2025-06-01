@@ -88,6 +88,7 @@
             lblLigneAPrendre2 = new Label();
             lblItineraire2Head = new Label();
             lblItineraire2 = new Label();
+            picProfil = new PictureBox();
             pnlRecherche.SuspendLayout();
             pnlItineraire1.SuspendLayout();
             pnlChgmtLigne1.SuspendLayout();
@@ -111,6 +112,7 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
             pnlLigneAPrendre2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox6).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picProfil).BeginInit();
             SuspendLayout();
             // 
             // pnlRecherche
@@ -746,11 +748,25 @@
             lblItineraire2.Text = "Itinéraire alternatif";
             lblItineraire2.Click += label11_Click;
             // 
+            // picProfil
+            // 
+            picProfil.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            picProfil.Cursor = Cursors.Hand;
+            picProfil.Image = Properties.Resources.icon_login;
+            picProfil.Location = new Point(1144, 12);
+            picProfil.Name = "picProfil";
+            picProfil.Size = new Size(48, 48);
+            picProfil.SizeMode = PictureBoxSizeMode.StretchImage;
+            picProfil.TabIndex = 21;
+            picProfil.TabStop = false;
+            picProfil.Click += picProfil_Click;
+            // 
             // PageItineraire
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(1204, 707);
+            Controls.Add(picProfil);
             Controls.Add(pnlItineraire2);
             Controls.Add(pnlItineraire1);
             Controls.Add(pnlRecherche);
@@ -794,6 +810,7 @@
             pnlLigneAPrendre2.ResumeLayout(false);
             pnlLigneAPrendre2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox6).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picProfil).EndInit();
             ResumeLayout(false);
         }
 
@@ -862,5 +879,6 @@
         private Label lblLigneAPrendre2;
         private Label lblItineraire2Head;
         private Label lblItineraire2;
+        private PictureBox picProfil;
     }
 }

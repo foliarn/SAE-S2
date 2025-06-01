@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            pnlTitre = new Panel();
-            lblTitre = new Label();
             pnlChoixLigne = new Panel();
             btnValiderChoix = new Button();
             cmbChoixLigne = new ComboBox();
@@ -40,31 +38,11 @@
             btnMenu = new Button();
             class1BindingSource = new BindingSource(components);
             dgvLigne = new DataGridView();
-            pnlTitre.SuspendLayout();
+            lblTitreDgv = new Label();
             pnlChoixLigne.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)class1BindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvLigne).BeginInit();
             SuspendLayout();
-            // 
-            // pnlTitre
-            // 
-            pnlTitre.BackColor = Color.White;
-            pnlTitre.Controls.Add(lblTitre);
-            pnlTitre.Location = new Point(1215, 168);
-            pnlTitre.Name = "pnlTitre";
-            pnlTitre.Size = new Size(508, 100);
-            pnlTitre.TabIndex = 1;
-            // 
-            // lblTitre
-            // 
-            lblTitre.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
-            lblTitre.AutoSize = true;
-            lblTitre.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTitre.Location = new Point(24, 35);
-            lblTitre.Name = "lblTitre";
-            lblTitre.Size = new Size(463, 32);
-            lblTitre.TabIndex = 0;
-            lblTitre.Text = "Quelle ligne souhaitez-vous consulter ?";
             // 
             // pnlChoixLigne
             // 
@@ -75,7 +53,7 @@
             pnlChoixLigne.Controls.Add(lblChoixLigne);
             pnlChoixLigne.Controls.Add(panel3);
             pnlChoixLigne.Controls.Add(lblChoixLigneHead);
-            pnlChoixLigne.Location = new Point(12, 12);
+            pnlChoixLigne.Location = new Point(34, 12);
             pnlChoixLigne.Name = "pnlChoixLigne";
             pnlChoixLigne.Size = new Size(240, 150);
             pnlChoixLigne.TabIndex = 16;
@@ -151,27 +129,35 @@
             dgvLigne.AllowUserToResizeRows = false;
             dgvLigne.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvLigne.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvLigne.Location = new Point(258, 31);
+            dgvLigne.Location = new Point(325, 75);
             dgvLigne.Name = "dgvLigne";
             dgvLigne.ReadOnly = true;
             dgvLigne.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvLigne.Size = new Size(820, 542);
             dgvLigne.TabIndex = 18;
             // 
+            // lblTitreDgv
+            // 
+            lblTitreDgv.AutoSize = true;
+            lblTitreDgv.Font = new Font("Segoe UI", 24F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTitreDgv.Location = new Point(531, 23);
+            lblTitreDgv.Name = "lblTitreDgv";
+            lblTitreDgv.Size = new Size(74, 45);
+            lblTitreDgv.TabIndex = 19;
+            lblTitreDgv.Text = "xxx";
+            // 
             // ConsulterLigne
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 681);
+            Controls.Add(lblTitreDgv);
             Controls.Add(dgvLigne);
             Controls.Add(btnMenu);
             Controls.Add(pnlChoixLigne);
-            Controls.Add(pnlTitre);
             Name = "ConsulterLigne";
             Text = "Corolis";
             Load += ConsulterLigne_Load;
-            pnlTitre.ResumeLayout(false);
-            pnlTitre.PerformLayout();
             pnlChoixLigne.ResumeLayout(false);
             pnlChoixLigne.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)class1BindingSource).EndInit();
@@ -181,9 +167,6 @@
         }
 
         #endregion
-
-        private Panel pnlTitre;
-        private Label lblTitre;
         private Panel pnlChoixLigne;
         private Button btnValiderChoix;
         private ComboBox cmbChoixLigne;
@@ -193,5 +176,6 @@
         private Button btnMenu;
         private BindingSource class1BindingSource;
         private DataGridView dgvLigne;
+        private Label lblTitreDgv;
     }
 }

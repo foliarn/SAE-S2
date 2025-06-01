@@ -1,17 +1,58 @@
 ﻿using BiblioBDD;
 using BiblioSysteme;
 using Interface.Classes;
+using Services;
 
 namespace Interface
 {
+
     public partial class Accueil : Form
     {
+        public ProfilForm profilForm;
+
+        private bool estElargi = false;
+        private Size tailleOG;
+        private Point LocationOG;
+        public Accueil()
+        {
+            InitializeComponent();
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+            Init.Initialiser();
+
+            // Remplir les comboBox avec les arrêts
+            Utils.RemplirComboBox(cmbDepart, Init.tousLesArrets, "NomArret", "IdArret");
+            Utils.RemplirComboBox(cmbDest, Init.tousLesArrets, "NomArret", "IdArret");
+
+            // Initialiser avec checkbox non cochée (panel petit)
+            chkHeure.Checked = false;
+
+            // Positionner le plan d'abord
+            pnlPlan.Top = (ClientSize.Height - pnlPlan.Height) / 2;
+            pnlPlan.Left = ClientSize.Width - pnlPlan.Width - 50;
+
+            // Centrer le panel de recherche dans l'espace disponible à gauche
+            pnlRecherche.Left = (pnlPlan.Left - pnlRecherche.Width) / 2;
+            pnlRecherche.Top = (ClientSize.Height - pnlRecherche.Height) / 2;
+
+            // Centrer les éléments dans le panel de recherche
+            lblTitre.Left = (pnlRecherche.ClientSize.Width - lblTitre.Width) / 2;
+            btnTrouver.Left = (pnlRecherche.ClientSize.Width - btnTrouver.Width) / 2;
+
+            // Autres éléments
+            btnLigne.Location = new Point(pnlPlan.Left + (pnlPlan.Width - btnLigne.Width) / 2, pnlPlan.Bottom + 10);
+            lblPlan.Location = new Point(pnlPlan.Left + (pnlPlan.Width - lblPlan.Width) / 2, pnlPlan.Top - 50);
+            picLogo.Location = new Point(pnlRecherche.Left + (pnlRecherche.Width - picLogo.Width) / 2, pnlRecherche.Top - 130);
+            picLogin.Location = new Point(this.ClientSize.Width - 56, 8);
+
+            profilForm = new ProfilForm();
+
+        }
 
         private void chkHeure_CheckedChanged(object sender, EventArgs e)
         {
             if (chkHeure.Checked)
             {
-                pnlRecherche.Size = new Size(250, 300);
+                pnlRecherche.Size = new Size(250, 200);
 
                 rdoDepart.Visible = false;
                 rdoArrive.Visible = false;
@@ -20,7 +61,7 @@ namespace Interface
 
             else
             {
-                pnlRecherche.Size = new Size(250, 350);
+                pnlRecherche.Size = new Size(250, 275);
 
                 rdoDepart.Top = chkHeure.Bottom + 10;
                 rdoArrive.Top = chkHeure.Bottom + 10;
@@ -37,38 +78,78 @@ namespace Interface
 
             Utils.CentrerControle(pnlRecherche, false, true);
         }
-        public Accueil()
+
+        private void btnTrouver_Click(object sender, EventArgs e)
         {
-            InitializeComponent();
-            this.AutoScaleMode = AutoScaleMode.Dpi;
-            BDD.OuvrirConnexion(); // Ouvre la connexion à la base de données
-            RecupDonnees.tousLesArrets = RecupDonnees.GetTousLesArrets(); // Charge tous les arrêts depuis la base de données
-            RecupDonnees.toutesLesLignes = RecupDonnees.GetToutesLesLignes(); // Charge toutes les lignes depuis la base de données
+            try
+            {
+                // Validation des sélections
+                if (cmbDepart.SelectedItem == null || cmbDest.SelectedItem == null)
+                {
+                    MessageBox.Show("Veuillez sélectionner un arrêt de départ et de destination.",
+                        "Sélection requise", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-            // Remplir les comboBox avec les arrêts
-            Utils.RemplirComboBox(cmbDepart, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
-            Utils.RemplirComboBox(cmbDest, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
+                // On récupère les arrêts sélectionnés 
+                var arretDepart = cmbDepart.SelectedItem as Arret;
+                var arretDestination = cmbDest.SelectedItem as Arret;
 
-            Utils.CentrerControle(pnlRecherche, false, true);
-            // Pour centrer les éléments dans le panel de recherche
-            lblTitre.Left = (pnlRecherche.ClientSize.Width - lblTitre.Width) / 2;
-            btnTrouver.Left = (pnlRecherche.ClientSize.Width - btnTrouver.Width) / 2;
-            btnTrouver.Left = (pnlRecherche.ClientSize.Width - btnTrouver.Width) / 2;
+                if (arretDepart == null || arretDestination == null)
+                {
+                    MessageBox.Show("Erreur lors de la récupération des arrêts sélectionnés.",
+                        "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-            // Pour centrer le plan puis l'ancrer à droite
-            pnlPlan.Top = (ClientSize.Height - pnlPlan.Height) / 2;
-            pnlPlan.Left = ClientSize.Width - pnlPlan.Width - 50;
-            btnLigne.Location = new Point(pnlPlan.Left + (pnlPlan.Width - btnLigne.Width) / 2, pnlPlan.Bottom + 10);
-            lblPlan.Location = new Point(pnlPlan.Left + (pnlPlan.Width - lblPlan.Width) / 2, pnlPlan.Top - 50);
-            picLogo.Location = new Point(pnlRecherche.Left + (pnlRecherche.Width - picLogo.Width) / 2 + 15, pnlRecherche.Top - 185);
+                // On vérifie que les arrêts sont différents
+                if (arretDepart.IdArret == arretDestination.IdArret)
+                {
+                    MessageBox.Show("L'arrêt de départ et de destination doivent être différents.",
+                        "Erreur de sélection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
+                // On crée les paramètres de recherche
+                var parametres = ParametresHelper.CreerDepuisInterface(chkHeure, dtpHeure, rdoDepart, rdoArrive);
 
-            picLogin.Location = new Point(this.ClientSize.Width - 56, 8);
-
+                // On ouvre la page d'itinéraire !
+                PageItineraire pageItineraire = new PageItineraire(this, arretDepart, arretDestination, parametres);
+                pageItineraire.Show();
+                this.Hide();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de la recherche d'itinéraire : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Diagnostics.Debug.WriteLine($"Erreur btnTrouver_Click (Accueil) : {ex.Message}");
+            }
         }
-        private bool estElargi = false;
-        private Size tailleOG;
-        private Point LocationOG;
+
+        private void picLogin_Click(object sender, EventArgs e)
+        {
+  
+
+            // Créer et afficher le formulaire de login
+            if (Login.estConnecte == true)
+            {
+                // Positionner au centre du MenuAdmin
+                profilForm.Location = new Point(
+                    this.Location.X + (this.Width - profilForm.Width) / 2,
+                    this.Location.Y + (this.Height - profilForm.Height) / 2
+                );
+
+                profilForm.Show();
+            }
+            else
+            {
+                this.Hide();
+                Login login = new Login(this);
+                login.ShowDialog();
+                // Une fois le formulaire de login fermé, on revient à l'accueil
+                this.Show();
+            }
+        }
 
         private void pnlPlan_Click(object sender, EventArgs e)
         {
@@ -100,92 +181,21 @@ namespace Interface
             picPlan.Cursor = Cursors.Hand;
         }
 
-        private void picLogin_Click(object sender, EventArgs e)
-        {
-            this.Hide();
-
-            // Créer et afficher le formulaire de login
-            if (Login.estConnecte == true)
-            {
-                // Si l'utilisateur est déjà connecté, on ouvre le menu admin
-                MenuAdmin menuAdmin = new MenuAdmin();
-                menuAdmin.ShowDialog();
-                this.Show(); // On revient à l'accueil après la fermeture du menu admin
-                return;
-            }
-            else
-            {
-                Login login = new Login();
-                login.ShowDialog();
-            }
-
-
-            // Une fois le formulaire de login fermé, on revient à l'accueil
-            this.Show();
-        }
-
         private void btnLigne_Click(object sender, EventArgs e)
         {
-
+            this.Hide();
             // Ouvre le formulaire ConsulterLigne
             ConsulterLigne consulterLigne = new ConsulterLigne(this);
-            consulterLigne.Show();
-
-            // Ferme le formulaire actuel
-            this.Hide();
+            consulterLigne.ShowDialog();
+            this.Show();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MenuAdmin menuAdmin = new MenuAdmin();
+            MenuAdmin menuAdmin = new MenuAdmin(this);
             menuAdmin.ShowDialog();
         }
 
-        private void btnTrouver_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                // === VALIDATION DES SÉLECTIONS ===
-                if (cmbDepart.SelectedItem == null || cmbDest.SelectedItem == null)
-                {
-                    MessageBox.Show("Veuillez sélectionner un arrêt de départ et de destination.",
-                        "Sélection requise", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                // === RÉCUPÉRATION DES ARRÊTS ===  
-                var arretDepart = cmbDepart.SelectedItem as Arret;
-                var arretDestination = cmbDest.SelectedItem as Arret;
-
-                if (arretDepart == null || arretDestination == null)
-                {
-                    MessageBox.Show("Erreur lors de la récupération des arrêts sélectionnés.",
-                        "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                // === VALIDATION DÉPART ≠ DESTINATION ===
-                if (arretDepart.IdArret == arretDestination.IdArret)
-                {
-                    MessageBox.Show("L'arrêt de départ et de destination doivent être différents.",
-                        "Erreur de sélection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                // === CRÉATION DES PARAMÈTRES AVEC TRANSFERT ===
-                var parametres = ParametresHelper.CreerDepuisInterface(chkHeure, dtpHeure, rdoDepart, rdoArrive);
-
-                // === OUVERTURE DE LA PAGE ITINÉRAIRE AVEC TRANSFERT ===
-                PageItineraire pageItineraire = new PageItineraire(this, arretDepart, arretDestination, parametres);
-                pageItineraire.Show();
-                this.Hide();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Erreur lors de la recherche d'itinéraire : {ex.Message}",
-                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                System.Diagnostics.Debug.WriteLine($"Erreur btnTrouver_Click (Accueil) : {ex.Message}");
-            }
-        }
+        
     }
 }

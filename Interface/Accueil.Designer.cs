@@ -73,7 +73,7 @@
             pnlRecherche.Location = new Point(30, 261);
             pnlRecherche.Margin = new Padding(7, 6, 7, 6);
             pnlRecherche.Name = "pnlRecherche";
-            pnlRecherche.Padding = new Padding(2, 2, 2, 2);
+            pnlRecherche.Padding = new Padding(2);
             pnlRecherche.Size = new Size(250, 200);
             pnlRecherche.TabIndex = 0;
             // 
@@ -82,7 +82,7 @@
             rdoArrive.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             rdoArrive.AutoSize = true;
             rdoArrive.Location = new Point(150, 138);
-            rdoArrive.Margin = new Padding(2, 2, 2, 2);
+            rdoArrive.Margin = new Padding(2);
             rdoArrive.Name = "rdoArrive";
             rdoArrive.Size = new Size(105, 19);
             rdoArrive.TabIndex = 2;
@@ -96,7 +96,7 @@
             btnTrouver.AutoSize = true;
             btnTrouver.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnTrouver.Location = new Point(57, 159);
-            btnTrouver.Margin = new Padding(2, 2, 2, 2);
+            btnTrouver.Margin = new Padding(2);
             btnTrouver.Name = "btnTrouver";
             btnTrouver.Size = new Size(194, 35);
             btnTrouver.TabIndex = 8;
@@ -109,8 +109,8 @@
             rdoDepart.Anchor = AnchorStyles.None;
             rdoDepart.AutoSize = true;
             rdoDepart.Checked = true;
-            rdoDepart.Location = new Point(14, 137);
-            rdoDepart.Margin = new Padding(2, 2, 2, 2);
+            rdoDepart.Location = new Point(10, 137);
+            rdoDepart.Margin = new Padding(2);
             rdoDepart.Name = "rdoDepart";
             rdoDepart.Size = new Size(110, 19);
             rdoDepart.TabIndex = 1;
@@ -124,7 +124,7 @@
             dtpHeure.CustomFormat = "HH:mm";
             dtpHeure.Format = DateTimePickerFormat.Custom;
             dtpHeure.Location = new Point(10, 159);
-            dtpHeure.Margin = new Padding(2, 2, 2, 2);
+            dtpHeure.Margin = new Padding(2);
             dtpHeure.Name = "dtpHeure";
             dtpHeure.ShowUpDown = true;
             dtpHeure.Size = new Size(73, 23);
@@ -137,8 +137,8 @@
             chkHeure.AutoSize = true;
             chkHeure.Checked = true;
             chkHeure.CheckState = CheckState.Checked;
-            chkHeure.Location = new Point(12, 131);
-            chkHeure.Margin = new Padding(2, 2, 2, 2);
+            chkHeure.Location = new Point(10, 131);
+            chkHeure.Margin = new Padding(2);
             chkHeure.Name = "chkHeure";
             chkHeure.Size = new Size(126, 19);
             chkHeure.TabIndex = 7;
@@ -163,7 +163,7 @@
             cmbDest.FormattingEnabled = true;
             cmbDest.Items.AddRange(new object[] { "Ar1", "A2", "A3", "A4", "A5", "A6", "A7" });
             cmbDest.Location = new Point(10, 103);
-            cmbDest.Margin = new Padding(2, 2, 2, 2);
+            cmbDest.Margin = new Padding(2);
             cmbDest.Name = "cmbDest";
             cmbDest.Size = new Size(172, 23);
             cmbDest.TabIndex = 2;
@@ -184,8 +184,8 @@
             cmbDepart.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbDepart.FormattingEnabled = true;
             cmbDepart.Items.AddRange(new object[] { "Ar1", "A2", "A3", "A4", "A5", "A6", "A7" });
-            cmbDepart.Location = new Point(12, 55);
-            cmbDepart.Margin = new Padding(2, 2, 2, 2);
+            cmbDepart.Location = new Point(10, 55);
+            cmbDepart.Margin = new Padding(2);
             cmbDepart.Name = "cmbDepart";
             cmbDepart.Size = new Size(172, 23);
             cmbDepart.TabIndex = 1;
@@ -309,7 +309,7 @@
             Controls.Add(picLogin);
             Controls.Add(pnlPlan);
             Controls.Add(pnlRecherche);
-            Margin = new Padding(2, 2, 2, 2);
+            Margin = new Padding(2);
             Name = "Accueil";
             Text = "Corolis";
             pnlRecherche.ResumeLayout(false);

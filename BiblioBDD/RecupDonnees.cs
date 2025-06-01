@@ -10,10 +10,6 @@ namespace BiblioBDD
 {
     public static class RecupDonnees
     {
-        // Propriétés statiques pour stocker les données récupérées (pour éviter de les charger plusieurs fois)
-        public static List<Arret> tousLesArrets { get; set; }
-        public static List<Ligne> toutesLesLignes { get; set; }
-
         // Déclaration des requêtes multi-lignes afin d'améliorer la lisibilité
         private static string requeteGetToutesLesLignes = @"
                     SELECT l.id_ligne, l.nom_ligne, l.description, 
@@ -44,7 +40,7 @@ namespace BiblioBDD
         {
             try
             {
-                if (BDD.conn == null || BDD.conn.State != ConnectionState.Open)
+                if (Connexion.conn == null || Connexion.conn.State != ConnectionState.Open)
                 {
                     System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
                     return [];
@@ -53,7 +49,7 @@ namespace BiblioBDD
                 var lignes = new List<Ligne>();
 
                 // Étape 1 : Charger toutes les lignes sans appeler GetArretsParLigne
-                using (var cmd = new MySqlCommand(requeteGetToutesLesLignes, BDD.conn))
+                using (var cmd = new MySqlCommand(requeteGetToutesLesLignes, Connexion.conn))
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -100,7 +96,7 @@ namespace BiblioBDD
         {
             try
             {
-                if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
+                if (Connexion.conn == null || Connexion.conn.State != System.Data.ConnectionState.Open)
                 {
                     System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
                     return new Ligne();
@@ -109,7 +105,7 @@ namespace BiblioBDD
                 // On charge d'abord les arrêts de la ligne pour éviter d'avoir deux readers ouverts en même temps
                 var listeArrets = GetArretsParLigne(idLigne);
 
-                using (var cmd = new MySqlCommand(requeteGetLigneParId, BDD.conn))
+                using (var cmd = new MySqlCommand(requeteGetLigneParId, Connexion.conn))
                 {
                     cmd.Parameters.AddWithValue("@idLigne", idLigne);
 
@@ -155,7 +151,7 @@ namespace BiblioBDD
         {
             try
             {
-                if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
+                if (Connexion.conn == null || Connexion.conn.State != System.Data.ConnectionState.Open)
                 {
                     System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
                     return [];
@@ -164,7 +160,7 @@ namespace BiblioBDD
                 var arrets = new List<Arret>();
                 string requete = "SELECT id_arret, nom_arret FROM Arrets ORDER BY nom_arret";
 
-                using (var cmd = new MySqlCommand(requete, BDD.conn))
+                using (var cmd = new MySqlCommand(requete, Connexion.conn))
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -195,7 +191,7 @@ namespace BiblioBDD
         {
             try
             {
-                if (BDD.conn == null || BDD.conn.State != System.Data.ConnectionState.Open)
+                if (Connexion.conn == null || Connexion.conn.State != System.Data.ConnectionState.Open)
                 {
                     System.Diagnostics.Debug.WriteLine("Connexion à la base de données fermée");
                     return [];
@@ -203,7 +199,7 @@ namespace BiblioBDD
 
                 var arretsLigne = new List<ArretLigne>();
 
-                using (var cmd = new MySqlCommand(requeteGetArretsParLigne, BDD.conn))
+                using (var cmd = new MySqlCommand(requeteGetArretsParLigne, Connexion.conn))
                 {
                     cmd.Parameters.AddWithValue("@idLigne", idLigne);
 
@@ -270,19 +266,18 @@ namespace BiblioBDD
                 return [];
             }
         }
-
         // Méthodes pour actualiser chaque type de données (au cas où une desynchronisation arriverait)
-        public static void ActualiserLignes()
+/*        public static void ActualiserLignes()
         {
-            if (BDD.conn != null && BDD.conn.State == System.Data.ConnectionState.Open)
+            if (Connexion.conn != null && Connexion.conn.State == System.Data.ConnectionState.Open)
             {
-                toutesLesLignes = RecupDonnees.GetToutesLesLignes() ?? new List<Ligne>();
+                Connexion.toutesLesLignes = RecupDonnees.GetToutesLesLignes() ?? new List<Ligne>();
             }
         }
 
         public static void ActualiserArrets()
         {
-            if (BDD.conn != null && BDD.conn.State == System.Data.ConnectionState.Open)
+            if (Connexion.conn != null && Connexion.conn.State == System.Data.ConnectionState.Open)
             {
                 tousLesArrets = RecupDonnees.GetTousLesArrets() ?? new List<Arret>();
             }
@@ -292,6 +287,6 @@ namespace BiblioBDD
         {
             ActualiserLignes();
             ActualiserArrets();
-        }
+        }*/
     }
 }

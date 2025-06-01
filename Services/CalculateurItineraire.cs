@@ -41,13 +41,13 @@ namespace Services
                 // 🔥🔥🔥 VERIFIER QUE TOUTESLESLIGNES EST ACTUALISÉ AVANT DE CONTINUER 🔥🔥🔥
                 // 🔥🔥🔥 VERIFIER QUE TOUTESLESLIGNES EST ACTUALISÉ AVANT DE CONTINUER 🔥🔥🔥
 
-                if (RecupDonnees.toutesLesLignes == null || RecupDonnees.toutesLesLignes.Count == 0)
+                if (Init.toutesLesLignes == null || Init.toutesLesLignes.Count == 0)
                 {
                     System.Diagnostics.Debug.WriteLine("Erreur : Aucune ligne disponible");
                     return new List<Itineraire>();
                 }
 
-                ConstructeurGraphe.ConstruireGraphe(graphe, RecupDonnees.toutesLesLignes);
+                ConstructeurGraphe.ConstruireGraphe(graphe, Init.toutesLesLignes);
 
                 ConstructeurGraphe.DebugGrapheBidirectionnel(graphe, arretDepart.IdArret, arretDestination.IdArret);
 

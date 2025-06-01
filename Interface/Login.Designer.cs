@@ -36,7 +36,10 @@
             lblMdp = new Label();
             lblUsername = new Label();
             btnMenu = new Button();
+            pnlTitre = new Panel();
+            lblTitre = new Label();
             pnlLogin.SuspendLayout();
+            pnlTitre.SuspendLayout();
             SuspendLayout();
             // 
             // pnlLogin
@@ -124,11 +127,32 @@
             btnMenu.UseVisualStyleBackColor = true;
             btnMenu.Click += btnMenu_Click;
             // 
+            // pnlTitre
+            // 
+            pnlTitre.BackColor = Color.White;
+            pnlTitre.Controls.Add(lblTitre);
+            pnlTitre.Location = new Point(347, 37);
+            pnlTitre.Name = "pnlTitre";
+            pnlTitre.Size = new Size(508, 100);
+            pnlTitre.TabIndex = 2;
+            // 
+            // lblTitre
+            // 
+            lblTitre.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lblTitre.AutoSize = true;
+            lblTitre.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTitre.Location = new Point(91, 32);
+            lblTitre.Name = "lblTitre";
+            lblTitre.Size = new Size(330, 32);
+            lblTitre.TabIndex = 0;
+            lblTitre.Text = "Se connecter (mode admin)";
+            // 
             // Login
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 681);
+            Controls.Add(pnlTitre);
             Controls.Add(btnMenu);
             Controls.Add(pnlLogin);
             Name = "Login";
@@ -136,6 +160,8 @@
             Load += Login_Load;
             pnlLogin.ResumeLayout(false);
             pnlLogin.PerformLayout();
+            pnlTitre.ResumeLayout(false);
+            pnlTitre.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -150,5 +176,7 @@
         private Label lblUsername;
         private CheckBox chkAfficherMdp;
         private Button btnMenu;
+        private Panel pnlTitre;
+        private Label lblTitre;
     }
 }

@@ -7,13 +7,16 @@ using Services;
 
 namespace Interface
 {
+    
     public partial class MenuAdmin : Form
     {
+        private Accueil accueil;
+
         private bool isLigne; // true si on modifie une ligne, false si on modifie un arrêt
         private bool inMenu; // true si on est dans le menu de création/modification, false si on est sur le menu principal
         private int idChoixMain; // Id de l'arrêt ou de la ligne choisie pour modification
 
-        public MenuAdmin()
+        public MenuAdmin(Accueil formAccueil)
         {
             InitializeComponent();
             // Centrer les panels dans le formulaire
@@ -34,16 +37,27 @@ namespace Interface
 
             // Remplir les ComboBox avec les arrêts
             Utils.RemplirComboBox(cmbChoix,
-            isLigne ? RecupDonnees.toutesLesLignes.Cast<object>().ToList() : RecupDonnees.tousLesArrets.Cast<object>().ToList(),
+            isLigne ? Init.toutesLesLignes.Cast<object>().ToList() : Init.tousLesArrets.Cast<object>().ToList(),
             isLigne ? "NomLigne" : "NomArret",
             isLigne ? "IdLigne" : "IdArret");
 
             Utils.RemplirComboBox(cmbLigneAjoutArret, Utils.ChargerTousLesArretsSaufLigne(idChoixMain), "NomArret", "IdArret");
             Utils.RemplirComboBox(cmbLigneRetraitArret, RecupDonnees.GetArretsParLigne(idChoixMain), "Arret.NomArret", "Arret.IdArret");
-            Utils.RemplirComboBox(cmbArretModifLigneChoixAdd, RecupDonnees.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : Ajouter un élément "Aucun" pour éviter les erreurs si aucune ligne n'est sélectionnée
-            Utils.RemplirComboBox(cmbArretModifLigneChoixSuppr, RecupDonnees.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : idem
+            Utils.RemplirComboBox(cmbArretModifLigneChoixAdd, Init.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : Ajouter un élément "Aucun" pour éviter les erreurs si aucune ligne n'est sélectionnée
+            Utils.RemplirComboBox(cmbArretModifLigneChoixSuppr, Init.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : idem
+
+            // Initialiser le formulaire de profil
+            this.accueil = formAccueil;
+            accueil.profilForm = new ProfilForm();
+            accueil.profilForm.SeDeconnecter += (s, e) => this.Close();
 
         }
+
+        public MenuAdmin()
+        {
+            InitializeComponent();
+        }
+
         private void pnlCreerLigne_Click(object sender, EventArgs e)
         {
             isLigne = true;
@@ -63,7 +77,7 @@ namespace Interface
 
             lblSaisirNomHead.Text = "Saisir le nom du nouvel arrêt";
 
-            Utils.RemplirComboBox(cmbChoix, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
+            Utils.RemplirComboBox(cmbChoix, Init.tousLesArrets, "NomArret", "IdArret");
         }
 
         private void pnlModifLigne_Click(object sender, EventArgs e)
@@ -75,7 +89,7 @@ namespace Interface
             lblModifHead.Text = "Choisir une ligne";
             lblModif.Text = "Choisissez une ligne à modifier :";
 
-            Utils.RemplirComboBox(cmbChoix, RecupDonnees.toutesLesLignes, "NomLigne", "IdLigne");
+            Utils.RemplirComboBox(cmbChoix, Init.toutesLesLignes, "NomLigne", "IdLigne");
         }
 
         private void pnlModifArret_Click(object sender, EventArgs e)
@@ -87,7 +101,7 @@ namespace Interface
             lblModifHead.Text = "Choisir un arrêt";
             lblModif.Text = "Choisissez un arrêt à modifier :";
 
-            Utils.RemplirComboBox(cmbChoix, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
+            Utils.RemplirComboBox(cmbChoix, Init.tousLesArrets, "NomArret", "IdArret");
         }
 
 
@@ -130,7 +144,7 @@ namespace Interface
             if (isLigne)
             {
                 // Récupérer les informations de la ligne choisie
-                var ligneChoisie = RecupDonnees.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idChoixMain);
+                var ligneChoisie = Init.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idChoixMain);
                 if (ligneChoisie != null)
                 {
                     lblTitreModifLigneChoisie.Text = $"Ligne sélectionnée : {ligneChoisie.NomLigne}";
@@ -140,7 +154,7 @@ namespace Interface
             else
             {
                 // Récupérer les informations de l'arrêt choisi
-                var arretChoisi = RecupDonnees.tousLesArrets.FirstOrDefault(a => a.IdArret == idChoixMain);
+                var arretChoisi = Init.tousLesArrets.FirstOrDefault(a => a.IdArret == idChoixMain);
                 if (arretChoisi != null)
                 {
                     lblTitreModifArretChoisi.Text = $"Arrêt sélectionné : {arretChoisi.NomArret}";
@@ -273,7 +287,7 @@ namespace Interface
             try
             {
                 int idArret = (int)cmbLigneRetraitArret.SelectedValue;
-                Ligne ligne = RecupDonnees.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idChoixMain);
+                Ligne ligne = Init.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idChoixMain);
                 int ordre = ligne.Arrets.FirstOrDefault(a => a.Arret.IdArret == idArret)?.Ordre ?? -1;
 
                 ModifBDD.RetirerArretDeLigne(idArret, idChoixMain, ordre);
@@ -299,38 +313,60 @@ namespace Interface
         {
             if (string.IsNullOrWhiteSpace(txtSaisirNom.Text))
             {
-                MessageBox.Show("Veuillez saisir un nom valide.");
+                MessageBox.Show("Veuillez saisir un nom valide.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if (!isLigne)
+
+            string nom = txtSaisirNom.Text.Trim();
+
+            try
             {
-                // Créer un nouvel arrêt avec le nom saisi
-
-                Arret nouvelArret = new Arret
+                if (!isLigne)
                 {
-                    NomArret = txtSaisirNom.Text.Trim()
-                };
-                ArretService.AjouterArret(nouvelArret);
+                    Arret nouvelArret = new Arret { NomArret = nom };
+
+                    if (!ArretService.EstValide(nouvelArret))
+                    {
+                        MessageBox.Show("L'arrêt n'est pas valide.", "Erreur",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (!ArretService.AjouterArret(nouvelArret))
+                    {
+                        MessageBox.Show("Erreur lors de la création de l'arrêt.", "Erreur",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+                else
+                {
+                    LigneService.ValiderParametresLigne(0, nom.ToUpper());
+
+                    Ligne nouvelleLigne = new Ligne
+                    {
+                        NomLigne = nom.ToUpper(),
+                        Description = "Ligne " + nom.ToUpper()
+                    };
+
+                    if (!LigneService.AjouterLigne(nouvelleLigne))
+                    {
+                        MessageBox.Show("Erreur lors de la création de la ligne.", "Erreur",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+
+                txtSaisirNom.Clear();
+                MessageBox.Show("Création réussie.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Utils.AfficherUniquement(this, pnlMenuModif, pnlMenuCreation);
+                inMenu = true;
             }
-            else
+            catch (ArgumentException ex)
             {
-                // Créer une nouvelle ligne avec le nom saisi
-                Ligne nouvelleLigne = new Ligne
-                {
-                    NomLigne = txtSaisirNom.Text.Trim()
-                };
-                LigneService.AjouterLigne(nouvelleLigne);
+                MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            // Réinitialiser le champ de saisie
-            txtSaisirNom.Clear();
-
-            MessageBox.Show("Création réussie.", "Succès",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            //ActualiserComboBoxes();
-
-            Utils.AfficherUniquement(this, pnlMenuModif, pnlMenuCreation);
-            inMenu = true; // On est de retour dans le menu principal
         }
 
         private void btnValidSuppr_Click(object sender, EventArgs e)

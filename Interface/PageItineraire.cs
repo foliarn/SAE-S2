@@ -9,7 +9,9 @@ namespace Interface
 {
     public partial class PageItineraire : Form
     {
-        private Accueil formAccueil;
+
+        private Accueil accueil;
+        private ProfilForm profilForm;
         private Arret arretDepart;
         private Arret arretDestination;
         private ParametresRecherche parametresRecherche;
@@ -20,7 +22,7 @@ namespace Interface
         public PageItineraire(Accueil accueil)
         {
             InitializeComponent();
-            formAccueil = accueil;
+            this.accueil = accueil;
             InitialiserInterface();
         }
 
@@ -28,7 +30,7 @@ namespace Interface
         public PageItineraire(Accueil accueil, Arret depart, Arret destination, ParametresRecherche parametres)
         {
             InitializeComponent();
-            formAccueil = accueil;
+            this.accueil = accueil;
             arretDepart = depart;
             arretDestination = destination;
             parametresRecherche = parametres;
@@ -47,14 +49,14 @@ namespace Interface
             try
             {
                 // Charger les données
-                if (RecupDonnees.tousLesArrets == null || RecupDonnees.tousLesArrets.Count == 0)
+                if (Init.tousLesArrets == null || Init.tousLesArrets.Count == 0)
                 {
-                    RecupDonnees.tousLesArrets = RecupDonnees.GetTousLesArrets();
+                    Init.tousLesArrets = RecupDonnees.GetTousLesArrets();
                 }
 
                 // Remplir les comboBox
-                Utils.RemplirComboBox(cmbDepart, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
-                Utils.RemplirComboBox(cmbDest, RecupDonnees.tousLesArrets, "NomArret", "IdArret");
+                Utils.RemplirComboBox(cmbDepart, Init.tousLesArrets, "NomArret", "IdArret");
+                Utils.RemplirComboBox(cmbDest, Init.tousLesArrets, "NomArret", "IdArret");
 
                 // AJOUTER L'ÉVÉNEMENT ICI
                 btnTrouver.Click += BtnTrouver_Click;
@@ -339,9 +341,9 @@ namespace Interface
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
-            if (formAccueil != null && !formAccueil.IsDisposed)
+            if (accueil != null && !accueil.IsDisposed)
             {
-                formAccueil.Show();
+                accueil.Show();
             }
         }
 
@@ -380,6 +382,23 @@ namespace Interface
             }
 
             Utils.CentrerControle(pnlRecherche, false, true);
+        }
+
+        private void picProfil_Click(object sender, EventArgs e)
+        {
+            if (Login.estConnecte == true)
+            {
+                accueil.profilForm.Location = new Point(
+                    this.Location.X + (this.Width - accueil.profilForm.Width) / 2,
+                    this.Location.Y + (this.Height - accueil.profilForm.Height) / 2
+                );
+                accueil.profilForm.Show();
+            }
+            else
+            {
+                Login login = new Login(accueil);
+                login.ShowDialog();
+            }
         }
     }
 }

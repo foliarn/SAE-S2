@@ -13,12 +13,21 @@ namespace Interface
 {
     public partial class Login : Form
     {
+        private readonly Accueil formAccueil;
+        public Login(Accueil accueil)
+        {
+            InitializeComponent();
+            formAccueil = accueil;
+        }
+
         public static bool estConnecte = false; // Indique si l'utilisateur est connecté ou non (admin)
-        string username = "admin";
-        string password = "admin";
+        public static string username = "admin";
+        public static string password = "admin";
         private void Login_Load(object sender, EventArgs e)
         {
             Utils.CentrerControle(pnlLogin);
+            Utils.CentrerControle(pnlTitre, true, false);
+            Utils.CentrerControle(lblTitre);
         }
 
         private void txtMdp_TextChanged(object sender, EventArgs e)
@@ -59,10 +68,7 @@ namespace Interface
             this.Dispose();
         }
 
-        public Login()
-        {
-            InitializeComponent();
-        }
+        
 
         private void btnConnexion_Click(object sender, EventArgs e)
         {

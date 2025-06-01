@@ -28,7 +28,7 @@ namespace Services
             }
 
             arret.IdArret = idInsere;
-            RecupDonnees.tousLesArrets.Add(arret);
+            Init.tousLesArrets.Add(arret);
 
             return true;
         }
@@ -42,7 +42,7 @@ namespace Services
         {             
             try
             {
-                var arret = RecupDonnees.tousLesArrets.FirstOrDefault(a => a.IdArret == idArret);
+                var arret = Init.tousLesArrets.FirstOrDefault(a => a.IdArret == idArret);
                 if (arret == null || arret.IdArret <= 0)
                 {
                     throw new ArgumentException("L'arrêt à retirer n'est pas valide.");
@@ -50,7 +50,7 @@ namespace Services
 
                 if (ModifBDD.RetirerArret(arret.IdArret))
                 {
-                    RecupDonnees.tousLesArrets.Remove(arret);
+                    Init.tousLesArrets.Remove(arret);
                     return true;
                 }
 
@@ -144,17 +144,27 @@ namespace Services
         /// <returns>True si valide, False sinon</returns>
         public static bool EstValide(Arret arret)
         {
-            try
+            if (arret == null)
             {
-                return arret.IdArret > 0 &&
-                       !string.IsNullOrWhiteSpace(arret.NomArret) &&
-                       arret.NomArret.Length <= 30;
+                throw new ArgumentException("L'arrêt ne peut pas être null", nameof(arret));
             }
-            catch (Exception ex)
+
+            if (string.IsNullOrWhiteSpace(arret.NomArret))
             {
-                System.Diagnostics.Debug.WriteLine($"Erreur lors de la validation : {ex.Message}");
-                return false;
+                throw new ArgumentException("Le nom de l'arrêt ne peut pas être vide", nameof(arret.NomArret));
             }
+
+            if (arret.NomArret.Length > 30)
+            {
+                throw new ArgumentException("Le nom de l'arrêt ne peut pas dépasser 30 caractères", nameof(arret.NomArret));
+            }
+
+            if (Init.tousLesArrets?.Any(a => a.NomArret.Equals(arret.NomArret, StringComparison.OrdinalIgnoreCase)) == true)
+            {
+                throw new ArgumentException("Un arrêt avec ce nom existe déjà.", nameof(arret.NomArret));
+            }
+
+            return true;
         }
     }
 }

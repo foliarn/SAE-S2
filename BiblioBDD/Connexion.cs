@@ -2,7 +2,7 @@
 
 namespace BiblioBDD
 {
-    public class BDD
+    public class Connexion
     {
         public static MySql.Data.MySqlClient.MySqlConnection conn;
 

@@ -30,7 +30,7 @@ public class LigneService
         }
 
         ligne.IdLigne = idInsere;
-        RecupDonnees.toutesLesLignes.Add(ligne);
+        Init.toutesLesLignes.Add(ligne);
 
         return true;
     }
@@ -44,10 +44,10 @@ public class LigneService
     {
         try  
         {
-            var ligne = RecupDonnees.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idLigne);
+            var ligne = Init.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idLigne);
             if (ModifBDD.RetirerLigne(idLigne))
             {
-                RecupDonnees.toutesLesLignes.Remove(ligne);
+                Init.toutesLesLignes.Remove(ligne);
                 return true;
             }
             throw new Exception("Échec du retrait de la ligne en base de données.");
@@ -167,11 +167,6 @@ public class LigneService
     /// <exception cref="ArgumentException">Lancée si les paramètres sont invalides</exception>
     public static bool ValiderParametresLigne(int idLigne, string nomLigne, string description = "")
     {
-        if (idLigne <= 0)
-        {
-            throw new ArgumentException("L'ID de la ligne doit être positif", nameof(idLigne));
-        }
-
         if (string.IsNullOrWhiteSpace(nomLigne))
         {
             throw new ArgumentException("Le nom de la ligne ne peut pas être vide", nameof(nomLigne));
@@ -185,6 +180,11 @@ public class LigneService
         if (!string.IsNullOrEmpty(description) && description.Length > 50)
         {
             throw new ArgumentException("La description ne peut pas dépasser 50 caractères", nameof(description));
+        }
+
+        if (Init.toutesLesLignes?.Any(l => l.NomLigne.Equals(nomLigne, StringComparison.OrdinalIgnoreCase)) == true)
+        {
+            throw new ArgumentException("Une ligne avec ce nom existe déjà.", nameof(nomLigne));
         }
 
         return true;

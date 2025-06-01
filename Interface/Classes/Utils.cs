@@ -2,6 +2,7 @@
 using System.Data;
 using BiblioBDD;
 using BiblioSysteme;
+using Services;
 
 namespace Interface.Classes
 {
@@ -40,13 +41,20 @@ namespace Interface.Classes
             // On récupère les arrêts de la ligne spécifiée
             List<ArretLigne> arretsDeLaLigne = RecupDonnees.GetArretsParLigne(idLigne);
             // On filtre les arrêts pour ne garder que ceux qui ne sont pas dans la ligne spécifiée
-            List<Arret> arretsFiltres = RecupDonnees.tousLesArrets
+            List<Arret> arretsFiltres = Init.tousLesArrets
                 .Where(a => !arretsDeLaLigne.Any(al => al.Arret.IdArret == a.IdArret))
                 .ToList();
             return arretsFiltres;
         }
 
-
+        /// <summary>
+        /// Remplis un ComboBox avec une liste d'objets de type Type.
+        /// </summary>
+        /// <typeparam name="Type">Le type de source</typeparam>
+        /// <param name="comboBox">La comboBox à remplir</param>
+        /// <param name="liste">La liste de contenu (source)</param>
+        /// <param name="displayMember">Ce qui sera affiché dans la comboBox</param>
+        /// <param name="valueMember">L'index de ce qui est affiché</param>
         public static void RemplirComboBox<Type>(ComboBox comboBox, List<Type> liste, string displayMember, string valueMember)
         {
             if (comboBox == null || liste == null) return;

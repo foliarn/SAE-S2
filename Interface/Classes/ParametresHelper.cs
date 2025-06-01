@@ -94,29 +94,6 @@ namespace Interface.Classes
         }
 
         /// <summary>
-        /// Version simplifiée pour une heure personnalisée
-        /// Pratique pour les tests ou les appels programmatiques
-        /// </summary>
-        /// <param name="heure">Heure souhaitée (format TimeSpan)</param>
-        /// <param name="estDepart">true si c'est une heure de départ, false pour une heure d'arrivée</param>
-        /// <returns>ParametresRecherche configuré</returns>
-        public static ParametresRecherche CreerPersonnalise(TimeSpan heure, bool estDepart = true)
-        {
-            try
-            {
-                string typeHeure = estDepart ? "départ" : "arrivée";
-                System.Diagnostics.Debug.WriteLine($"Paramètres personnalisés : Heure de {typeHeure} à {heure}");
-
-                return new ParametresRecherche(heure, estDepart);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Erreur création paramètres personnalisés : {ex.Message}");
-                return CreerMaintenant();
-            }
-        }
-
-        /// <summary>
         /// Valide que les contrôles de l'interface sont correctement configurés
         /// Utile pour le débogage
         /// </summary>
@@ -172,28 +149,6 @@ namespace Interface.Classes
             {
                 System.Diagnostics.Debug.WriteLine($"Erreur validation contrôles : {ex.Message}");
                 return false;
-            }
-        }
-
-        /// <summary>
-        /// Obtient une description textuelle des paramètres pour le débogage
-        /// </summary>
-        /// <param name="parametres">Les paramètres à décrire</param>
-        /// <returns>Description lisible des paramètres</returns>
-        public static string DecrireParametres(ParametresRecherche parametres)
-        {
-            if (parametres == null)
-                return "Paramètres null";
-
-            try
-            {
-                string typeHeure = parametres.EstHeureDepart ? "départ" : "arrivée";
-                return $"Heure de {typeHeure} : {parametres.HeureSouhaitee:hh\\:mm}, " +
-                       $"Temps min correspondance : {parametres.TempsCorrespondanceMin.TotalMinutes}min";
-            }
-            catch (Exception ex)
-            {
-                return $"Erreur description paramètres : {ex.Message}";
             }
         }
     }

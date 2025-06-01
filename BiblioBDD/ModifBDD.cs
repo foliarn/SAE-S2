@@ -37,13 +37,13 @@ namespace BiblioBDD
             try
             {
                 // Vérifie que la connexion est ouverte
-                if (BDD.conn == null || BDD.conn.State != ConnectionState.Open)
+                if (Connexion.conn == null || Connexion.conn.State != ConnectionState.Open)
                 {
                     System.Diagnostics.Debug.WriteLine("Erreur : Connexion à la base non établie.");
                     return -1;
                 }
 
-                using (var cmd = new MySqlCommand(requete, BDD.conn))
+                using (var cmd = new MySqlCommand(requete, Connexion.conn))
                 {
                     // Ajout des paramètres s'ils sont présents
                     if (parametres != null && parametres.Length > 0)
@@ -324,7 +324,7 @@ namespace BiblioBDD
 
         public static bool ReordonnerArretsLigne(int idLigne)
         {
-            if (BDD.conn.State != ConnectionState.Open)
+            if (Connexion.conn.State != ConnectionState.Open)
             {
                 System.Diagnostics.Debug.WriteLine("Erreur : Connexion non ouverte.");
                 return false;
@@ -332,7 +332,7 @@ namespace BiblioBDD
             try
             {
                 // A. On récupère tous les arrêts de la ligne dans l'ordre 
-                using (var cmdSelect = new MySqlCommand(requeteSelectMAJ, BDD.conn))
+                using (var cmdSelect = new MySqlCommand(requeteSelectMAJ, Connexion.conn))
                 {
                     cmdSelect.Parameters.AddWithValue("@idLigne", idLigne);
 
@@ -386,7 +386,7 @@ namespace BiblioBDD
         /// <returns>True si l'opération a réussi, False sinon</returns>
         public static bool MAJTempsDepart(int idLigne, int ordre, bool ajout = true)
         {
-            if (BDD.conn.State != ConnectionState.Open)
+            if (Connexion.conn.State != ConnectionState.Open)
             {
                 System.Diagnostics.Debug.WriteLine("Erreur : Connexion non ouverte.");
                 return false;

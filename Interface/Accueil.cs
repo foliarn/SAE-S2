@@ -23,9 +23,6 @@ namespace Interface
             Utils.RemplirComboBox(cmbDepart, Init.tousLesArrets, "NomArret", "IdArret");
             Utils.RemplirComboBox(cmbDest, Init.tousLesArrets, "NomArret", "IdArret");
 
-            // Initialiser avec checkbox non cochée (panel petit)
-            chkHeure.Checked = false;
-
             // Positionner le plan d'abord
             pnlPlan.Top = (ClientSize.Height - pnlPlan.Height) / 2;
             pnlPlan.Left = ClientSize.Width - pnlPlan.Width - 50;

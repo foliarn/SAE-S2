@@ -189,4 +189,32 @@ public class LigneService
 
         return true;
     }
+
+    /// <summary>
+    /// Récupère toutes les lignes qui passent par un arrêt spécifique
+    /// </summary>
+    /// <param name="arret">L'arrêt pour lequel chercher les lignes</param>
+    /// <returns>Liste des lignes qui passent par cet arrêt</returns>
+    public static List<Ligne> GetLignesParArret(int idArret)
+    {
+        try
+        {
+            if (idArret == 0)
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur : arrêt null");
+                return new List<Ligne>();
+            }
+
+            // Filtrer et retourner les lignes
+            return Init.toutesLesLignes
+                .Where(ligne => ligne.Arrets != null &&
+                               ligne.Arrets.Any(arretLigne => arretLigne.Arret.IdArret == idArret))
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Erreur GetLignesParArret : {ex.Message}");
+            return new List<Ligne>();
+        }
+    }
 }

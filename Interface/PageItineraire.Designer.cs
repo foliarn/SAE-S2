@@ -29,17 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PageItineraire));
-            pnlRecherche = new Panel();
-            rdoArrive = new RadioButton();
-            btnTrouver = new Button();
-            rdoDepart = new RadioButton();
-            dtpHeure = new DateTimePicker();
-            chkHeure = new CheckBox();
-            lblDest = new Label();
-            cmbDest = new ComboBox();
-            lblDepart = new Label();
-            cmbDepart = new ComboBox();
-            lblTitre = new Label();
             pnlItineraire1 = new Panel();
             pnlChgmtLigne1 = new Panel();
             pictureBox1 = new PictureBox();
@@ -51,12 +40,12 @@
             lblArret1 = new Label();
             pnlSep1 = new Panel();
             pnlHoraireDepart1 = new Panel();
-            picIconEdit9 = new PictureBox();
+            picIconTime2 = new PictureBox();
             lblHoraireDepart1Head = new Label();
             lblHoraireDepart1 = new Label();
             pnlSep2 = new Panel();
             pnlTempsEstime1 = new Panel();
-            picIconEdit8 = new PictureBox();
+            picIconTime = new PictureBox();
             lblTempsEstime1Head = new Label();
             lblTempsEstime1 = new Label();
             pnlLigneAPrendre1 = new Panel();
@@ -75,12 +64,12 @@
             lblArret2 = new Label();
             pnlSep3 = new Panel();
             pnlHoraireDepart2 = new Panel();
-            pictureBox4 = new PictureBox();
+            picIconTime4 = new PictureBox();
             lblHoraireDepart2Head = new Label();
             lblHoraireDepart2 = new Label();
             pnlSep4 = new Panel();
             pnlTempsEstime2 = new Panel();
-            pictureBox5 = new PictureBox();
+            picIconTime3 = new PictureBox();
             lblTempsEstime2Head = new Label();
             lblTempsEstime2 = new Label();
             pnlLigneAPrendre2 = new Panel();
@@ -89,16 +78,27 @@
             lblItineraire2Head = new Label();
             lblItineraire2 = new Label();
             picProfil = new PictureBox();
-            pnlRecherche.SuspendLayout();
+            btnMenu = new Button();
+            pnlRecherche = new Panel();
+            rdoArrive = new RadioButton();
+            btnTrouver = new Button();
+            rdoDepart = new RadioButton();
+            dtpHeure = new DateTimePicker();
+            chkHeure = new CheckBox();
+            lblDest = new Label();
+            cmbDest = new ComboBox();
+            lblDepart = new Label();
+            cmbDepart = new ComboBox();
+            lblTitre = new Label();
             pnlItineraire1.SuspendLayout();
             pnlChgmtLigne1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             pnlPremLigne1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picIconEdit6).BeginInit();
             pnlHoraireDepart1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)picIconEdit9).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picIconTime2).BeginInit();
             pnlTempsEstime1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)picIconEdit8).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picIconTime).BeginInit();
             pnlLigneAPrendre1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picIconEdit5).BeginInit();
             pnlItineraire2.SuspendLayout();
@@ -107,159 +107,14 @@
             pnlPremLigne2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
             pnlHoraireDepart2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picIconTime4).BeginInit();
             pnlTempsEstime2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picIconTime3).BeginInit();
             pnlLigneAPrendre2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox6).BeginInit();
             ((System.ComponentModel.ISupportInitialize)picProfil).BeginInit();
+            pnlRecherche.SuspendLayout();
             SuspendLayout();
-            // 
-            // pnlRecherche
-            // 
-            pnlRecherche.Anchor = AnchorStyles.None;
-            pnlRecherche.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            pnlRecherche.BorderStyle = BorderStyle.FixedSingle;
-            pnlRecherche.Controls.Add(rdoArrive);
-            pnlRecherche.Controls.Add(btnTrouver);
-            pnlRecherche.Controls.Add(rdoDepart);
-            pnlRecherche.Controls.Add(dtpHeure);
-            pnlRecherche.Controls.Add(chkHeure);
-            pnlRecherche.Controls.Add(lblDest);
-            pnlRecherche.Controls.Add(cmbDest);
-            pnlRecherche.Controls.Add(lblDepart);
-            pnlRecherche.Controls.Add(cmbDepart);
-            pnlRecherche.Controls.Add(lblTitre);
-            pnlRecherche.Location = new Point(23, 84);
-            pnlRecherche.Margin = new Padding(7);
-            pnlRecherche.Name = "pnlRecherche";
-            pnlRecherche.Padding = new Padding(2);
-            pnlRecherche.Size = new Size(313, 434);
-            pnlRecherche.TabIndex = 1;
-            // 
-            // rdoArrive
-            // 
-            rdoArrive.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            rdoArrive.AutoSize = true;
-            rdoArrive.Location = new Point(132, 208);
-            rdoArrive.Margin = new Padding(2);
-            rdoArrive.Name = "rdoArrive";
-            rdoArrive.Size = new Size(105, 19);
-            rdoArrive.TabIndex = 2;
-            rdoArrive.TabStop = true;
-            rdoArrive.Text = "Heure d'arrivée";
-            rdoArrive.UseVisualStyleBackColor = true;
-            rdoArrive.Visible = false;
-            // 
-            // btnTrouver
-            // 
-            btnTrouver.Anchor = AnchorStyles.Bottom;
-            btnTrouver.AutoSize = true;
-            btnTrouver.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnTrouver.Location = new Point(66, 368);
-            btnTrouver.Margin = new Padding(2);
-            btnTrouver.Name = "btnTrouver";
-            btnTrouver.Size = new Size(185, 39);
-            btnTrouver.TabIndex = 8;
-            btnTrouver.Text = "Trouver un itinéraire";
-            btnTrouver.UseVisualStyleBackColor = true;
-            // 
-            // rdoDepart
-            // 
-            rdoDepart.Anchor = AnchorStyles.None;
-            rdoDepart.AutoSize = true;
-            rdoDepart.Location = new Point(9, 208);
-            rdoDepart.Margin = new Padding(2);
-            rdoDepart.Name = "rdoDepart";
-            rdoDepart.Size = new Size(110, 19);
-            rdoDepart.TabIndex = 1;
-            rdoDepart.TabStop = true;
-            rdoDepart.Text = "Heure de départ";
-            rdoDepart.UseVisualStyleBackColor = true;
-            rdoDepart.Visible = false;
-            // 
-            // dtpHeure
-            // 
-            dtpHeure.CustomFormat = "HH:mm";
-            dtpHeure.Format = DateTimePickerFormat.Custom;
-            dtpHeure.Location = new Point(9, 177);
-            dtpHeure.Margin = new Padding(2);
-            dtpHeure.Name = "dtpHeure";
-            dtpHeure.ShowUpDown = true;
-            dtpHeure.Size = new Size(70, 23);
-            dtpHeure.TabIndex = 5;
-            dtpHeure.Visible = false;
-            // 
-            // chkHeure
-            // 
-            chkHeure.AutoSize = true;
-            chkHeure.Checked = true;
-            chkHeure.CheckState = CheckState.Checked;
-            chkHeure.Location = new Point(13, 147);
-            chkHeure.Margin = new Padding(2);
-            chkHeure.Name = "chkHeure";
-            chkHeure.Size = new Size(126, 19);
-            chkHeure.TabIndex = 7;
-            chkHeure.Text = "Partir maintenant ?";
-            chkHeure.UseVisualStyleBackColor = true;
-            chkHeure.CheckedChanged += chkHeure_CheckedChanged;
-            // 
-            // lblDest
-            // 
-            lblDest.AutoSize = true;
-            lblDest.Location = new Point(13, 97);
-            lblDest.Margin = new Padding(2, 0, 2, 0);
-            lblDest.Name = "lblDest";
-            lblDest.Size = new Size(67, 15);
-            lblDest.TabIndex = 3;
-            lblDest.Text = "Destination";
-            // 
-            // cmbDest
-            // 
-            cmbDest.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cmbDest.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cmbDest.FormattingEnabled = true;
-            cmbDest.Items.AddRange(new object[] { "Ar1", "A2", "A3", "A4", "A5", "A6", "A7" });
-            cmbDest.Location = new Point(9, 115);
-            cmbDest.Margin = new Padding(2);
-            cmbDest.Name = "cmbDest";
-            cmbDest.Size = new Size(164, 23);
-            cmbDest.TabIndex = 2;
-            // 
-            // lblDepart
-            // 
-            lblDepart.AutoSize = true;
-            lblDepart.Location = new Point(13, 44);
-            lblDepart.Margin = new Padding(2, 0, 2, 0);
-            lblDepart.Name = "lblDepart";
-            lblDepart.Size = new Size(42, 15);
-            lblDepart.TabIndex = 2;
-            lblDepart.Text = "Départ";
-            // 
-            // cmbDepart
-            // 
-            cmbDepart.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cmbDepart.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cmbDepart.FormattingEnabled = true;
-            cmbDepart.Items.AddRange(new object[] { "Ar1", "A2", "A3", "A4", "A5", "A6", "A7" });
-            cmbDepart.Location = new Point(11, 61);
-            cmbDepart.Margin = new Padding(2);
-            cmbDepart.Name = "cmbDepart";
-            cmbDepart.Size = new Size(164, 23);
-            cmbDepart.TabIndex = 1;
-            // 
-            // lblTitre
-            // 
-            lblTitre.Anchor = AnchorStyles.Top;
-            lblTitre.AutoSize = true;
-            lblTitre.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTitre.Location = new Point(46, 6);
-            lblTitre.Margin = new Padding(2, 0, 2, 0);
-            lblTitre.Name = "lblTitre";
-            lblTitre.Size = new Size(224, 25);
-            lblTitre.TabIndex = 0;
-            lblTitre.Text = "Rechercher un itinéraire";
-            lblTitre.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlItineraire1
             // 
@@ -282,6 +137,7 @@
             // pnlChgmtLigne1
             // 
             pnlChgmtLigne1.BackColor = Color.Transparent;
+            pnlChgmtLigne1.BorderStyle = BorderStyle.FixedSingle;
             pnlChgmtLigne1.Controls.Add(pictureBox1);
             pnlChgmtLigne1.Controls.Add(lblChgmtLigne1Head);
             pnlChgmtLigne1.Controls.Add(lblChgmtLigne1);
@@ -292,10 +148,10 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(3, 10);
+            pictureBox1.Image = Properties.Resources.star_outline_256x244;
+            pictureBox1.Location = new Point(1, 8);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(17, 20);
+            pictureBox1.Size = new Size(21, 20);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 10;
             pictureBox1.TabStop = false;
@@ -322,6 +178,7 @@
             // pnlPremLigne1
             // 
             pnlPremLigne1.BackColor = Color.Transparent;
+            pnlPremLigne1.BorderStyle = BorderStyle.FixedSingle;
             pnlPremLigne1.Controls.Add(picIconEdit6);
             pnlPremLigne1.Controls.Add(lblArretDepart1);
             pnlPremLigne1.Controls.Add(lblArret1);
@@ -332,10 +189,10 @@
             // 
             // picIconEdit6
             // 
-            picIconEdit6.Image = (Image)resources.GetObject("picIconEdit6.Image");
-            picIconEdit6.Location = new Point(3, 10);
+            picIconEdit6.Image = Properties.Resources.star_outline_256x244;
+            picIconEdit6.Location = new Point(1, 8);
             picIconEdit6.Name = "picIconEdit6";
-            picIconEdit6.Size = new Size(17, 20);
+            picIconEdit6.Size = new Size(21, 20);
             picIconEdit6.SizeMode = PictureBoxSizeMode.Zoom;
             picIconEdit6.TabIndex = 10;
             picIconEdit6.TabStop = false;
@@ -370,7 +227,8 @@
             // pnlHoraireDepart1
             // 
             pnlHoraireDepart1.BackColor = Color.Transparent;
-            pnlHoraireDepart1.Controls.Add(picIconEdit9);
+            pnlHoraireDepart1.BorderStyle = BorderStyle.FixedSingle;
+            pnlHoraireDepart1.Controls.Add(picIconTime2);
             pnlHoraireDepart1.Controls.Add(lblHoraireDepart1Head);
             pnlHoraireDepart1.Controls.Add(lblHoraireDepart1);
             pnlHoraireDepart1.Location = new Point(24, 377);
@@ -378,15 +236,15 @@
             pnlHoraireDepart1.Size = new Size(195, 65);
             pnlHoraireDepart1.TabIndex = 11;
             // 
-            // picIconEdit9
+            // picIconTime2
             // 
-            picIconEdit9.Image = (Image)resources.GetObject("picIconEdit9.Image");
-            picIconEdit9.Location = new Point(3, 10);
-            picIconEdit9.Name = "picIconEdit9";
-            picIconEdit9.Size = new Size(17, 20);
-            picIconEdit9.SizeMode = PictureBoxSizeMode.Zoom;
-            picIconEdit9.TabIndex = 10;
-            picIconEdit9.TabStop = false;
+            picIconTime2.Image = Properties.Resources.clock_256x256;
+            picIconTime2.Location = new Point(1, 8);
+            picIconTime2.Name = "picIconTime2";
+            picIconTime2.Size = new Size(21, 21);
+            picIconTime2.SizeMode = PictureBoxSizeMode.Zoom;
+            picIconTime2.TabIndex = 10;
+            picIconTime2.TabStop = false;
             // 
             // lblHoraireDepart1Head
             // 
@@ -418,7 +276,8 @@
             // pnlTempsEstime1
             // 
             pnlTempsEstime1.BackColor = Color.Transparent;
-            pnlTempsEstime1.Controls.Add(picIconEdit8);
+            pnlTempsEstime1.BorderStyle = BorderStyle.FixedSingle;
+            pnlTempsEstime1.Controls.Add(picIconTime);
             pnlTempsEstime1.Controls.Add(lblTempsEstime1Head);
             pnlTempsEstime1.Controls.Add(lblTempsEstime1);
             pnlTempsEstime1.Location = new Point(24, 305);
@@ -426,15 +285,15 @@
             pnlTempsEstime1.Size = new Size(195, 65);
             pnlTempsEstime1.TabIndex = 10;
             // 
-            // picIconEdit8
+            // picIconTime
             // 
-            picIconEdit8.Image = (Image)resources.GetObject("picIconEdit8.Image");
-            picIconEdit8.Location = new Point(3, 10);
-            picIconEdit8.Name = "picIconEdit8";
-            picIconEdit8.Size = new Size(17, 20);
-            picIconEdit8.SizeMode = PictureBoxSizeMode.Zoom;
-            picIconEdit8.TabIndex = 10;
-            picIconEdit8.TabStop = false;
+            picIconTime.Image = (Image)resources.GetObject("picIconTime.Image");
+            picIconTime.Location = new Point(1, 8);
+            picIconTime.Name = "picIconTime";
+            picIconTime.Size = new Size(21, 21);
+            picIconTime.SizeMode = PictureBoxSizeMode.Zoom;
+            picIconTime.TabIndex = 10;
+            picIconTime.TabStop = false;
             // 
             // lblTempsEstime1Head
             // 
@@ -458,6 +317,7 @@
             // pnlLigneAPrendre1
             // 
             pnlLigneAPrendre1.BackColor = Color.Transparent;
+            pnlLigneAPrendre1.BorderStyle = BorderStyle.FixedSingle;
             pnlLigneAPrendre1.Controls.Add(picIconEdit5);
             pnlLigneAPrendre1.Controls.Add(lblLigneAPrendre1);
             pnlLigneAPrendre1.Location = new Point(24, 76);
@@ -467,10 +327,10 @@
             // 
             // picIconEdit5
             // 
-            picIconEdit5.Image = (Image)resources.GetObject("picIconEdit5.Image");
-            picIconEdit5.Location = new Point(3, 10);
+            picIconEdit5.Image = Properties.Resources.star_outline_256x244;
+            picIconEdit5.Location = new Point(1, 8);
             picIconEdit5.Name = "picIconEdit5";
-            picIconEdit5.Size = new Size(17, 20);
+            picIconEdit5.Size = new Size(21, 20);
             picIconEdit5.SizeMode = PictureBoxSizeMode.Zoom;
             picIconEdit5.TabIndex = 9;
             picIconEdit5.TabStop = false;
@@ -525,6 +385,7 @@
             // pnlChgmtLigne2
             // 
             pnlChgmtLigne2.BackColor = Color.Transparent;
+            pnlChgmtLigne2.BorderStyle = BorderStyle.FixedSingle;
             pnlChgmtLigne2.Controls.Add(pictureBox2);
             pnlChgmtLigne2.Controls.Add(lblChgmtLigne2Head);
             pnlChgmtLigne2.Controls.Add(lblChgmtLigne2);
@@ -535,10 +396,10 @@
             // 
             // pictureBox2
             // 
-            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(3, 10);
+            pictureBox2.Image = Properties.Resources.star_outline_256x244;
+            pictureBox2.Location = new Point(1, 8);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(17, 20);
+            pictureBox2.Size = new Size(21, 20);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 10;
             pictureBox2.TabStop = false;
@@ -565,6 +426,7 @@
             // pnlPremLigne2
             // 
             pnlPremLigne2.BackColor = Color.Transparent;
+            pnlPremLigne2.BorderStyle = BorderStyle.FixedSingle;
             pnlPremLigne2.Controls.Add(pictureBox3);
             pnlPremLigne2.Controls.Add(lblArretDepart2);
             pnlPremLigne2.Controls.Add(lblArret2);
@@ -575,10 +437,10 @@
             // 
             // pictureBox3
             // 
-            pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
-            pictureBox3.Location = new Point(3, 10);
+            pictureBox3.Image = Properties.Resources.star_outline_256x244;
+            pictureBox3.Location = new Point(1, 8);
             pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(17, 20);
+            pictureBox3.Size = new Size(21, 20);
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox3.TabIndex = 10;
             pictureBox3.TabStop = false;
@@ -613,7 +475,8 @@
             // pnlHoraireDepart2
             // 
             pnlHoraireDepart2.BackColor = Color.Transparent;
-            pnlHoraireDepart2.Controls.Add(pictureBox4);
+            pnlHoraireDepart2.BorderStyle = BorderStyle.FixedSingle;
+            pnlHoraireDepart2.Controls.Add(picIconTime4);
             pnlHoraireDepart2.Controls.Add(lblHoraireDepart2Head);
             pnlHoraireDepart2.Controls.Add(lblHoraireDepart2);
             pnlHoraireDepart2.Location = new Point(24, 377);
@@ -621,15 +484,15 @@
             pnlHoraireDepart2.Size = new Size(195, 65);
             pnlHoraireDepart2.TabIndex = 11;
             // 
-            // pictureBox4
+            // picIconTime4
             // 
-            pictureBox4.Image = (Image)resources.GetObject("pictureBox4.Image");
-            pictureBox4.Location = new Point(3, 10);
-            pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(17, 20);
-            pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox4.TabIndex = 10;
-            pictureBox4.TabStop = false;
+            picIconTime4.Image = Properties.Resources.clock_256x256;
+            picIconTime4.Location = new Point(1, 8);
+            picIconTime4.Name = "picIconTime4";
+            picIconTime4.Size = new Size(21, 21);
+            picIconTime4.SizeMode = PictureBoxSizeMode.Zoom;
+            picIconTime4.TabIndex = 10;
+            picIconTime4.TabStop = false;
             // 
             // lblHoraireDepart2Head
             // 
@@ -661,7 +524,8 @@
             // pnlTempsEstime2
             // 
             pnlTempsEstime2.BackColor = Color.Transparent;
-            pnlTempsEstime2.Controls.Add(pictureBox5);
+            pnlTempsEstime2.BorderStyle = BorderStyle.FixedSingle;
+            pnlTempsEstime2.Controls.Add(picIconTime3);
             pnlTempsEstime2.Controls.Add(lblTempsEstime2Head);
             pnlTempsEstime2.Controls.Add(lblTempsEstime2);
             pnlTempsEstime2.Location = new Point(24, 305);
@@ -669,15 +533,15 @@
             pnlTempsEstime2.Size = new Size(195, 65);
             pnlTempsEstime2.TabIndex = 10;
             // 
-            // pictureBox5
+            // picIconTime3
             // 
-            pictureBox5.Image = (Image)resources.GetObject("pictureBox5.Image");
-            pictureBox5.Location = new Point(3, 10);
-            pictureBox5.Name = "pictureBox5";
-            pictureBox5.Size = new Size(17, 20);
-            pictureBox5.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox5.TabIndex = 10;
-            pictureBox5.TabStop = false;
+            picIconTime3.Image = Properties.Resources.clock_256x256;
+            picIconTime3.Location = new Point(1, 8);
+            picIconTime3.Name = "picIconTime3";
+            picIconTime3.Size = new Size(21, 21);
+            picIconTime3.SizeMode = PictureBoxSizeMode.Zoom;
+            picIconTime3.TabIndex = 10;
+            picIconTime3.TabStop = false;
             // 
             // lblTempsEstime2Head
             // 
@@ -701,6 +565,7 @@
             // pnlLigneAPrendre2
             // 
             pnlLigneAPrendre2.BackColor = Color.Transparent;
+            pnlLigneAPrendre2.BorderStyle = BorderStyle.FixedSingle;
             pnlLigneAPrendre2.Controls.Add(pictureBox6);
             pnlLigneAPrendre2.Controls.Add(lblLigneAPrendre2);
             pnlLigneAPrendre2.Location = new Point(24, 76);
@@ -710,10 +575,10 @@
             // 
             // pictureBox6
             // 
-            pictureBox6.Image = (Image)resources.GetObject("pictureBox6.Image");
-            pictureBox6.Location = new Point(3, 10);
+            pictureBox6.Image = Properties.Resources.star_outline_256x244;
+            pictureBox6.Location = new Point(1, 8);
             pictureBox6.Name = "pictureBox6";
-            pictureBox6.Size = new Size(17, 20);
+            pictureBox6.Size = new Size(21, 20);
             pictureBox6.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox6.TabIndex = 9;
             pictureBox6.TabStop = false;
@@ -761,21 +626,180 @@
             picProfil.TabStop = false;
             picProfil.Click += picProfil_Click;
             // 
+            // btnMenu
+            // 
+            btnMenu.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnMenu.AutoSize = true;
+            btnMenu.Location = new Point(8, 670);
+            btnMenu.Name = "btnMenu";
+            btnMenu.Size = new Size(155, 25);
+            btnMenu.TabIndex = 22;
+            btnMenu.Text = "Revenir au menu principal";
+            btnMenu.UseVisualStyleBackColor = true;
+            btnMenu.Click += btnMenu_Click;
+            // 
+            // pnlRecherche
+            // 
+            pnlRecherche.Anchor = AnchorStyles.None;
+            pnlRecherche.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            pnlRecherche.BorderStyle = BorderStyle.FixedSingle;
+            pnlRecherche.Controls.Add(rdoArrive);
+            pnlRecherche.Controls.Add(btnTrouver);
+            pnlRecherche.Controls.Add(rdoDepart);
+            pnlRecherche.Controls.Add(dtpHeure);
+            pnlRecherche.Controls.Add(chkHeure);
+            pnlRecherche.Controls.Add(lblDest);
+            pnlRecherche.Controls.Add(cmbDest);
+            pnlRecherche.Controls.Add(lblDepart);
+            pnlRecherche.Controls.Add(cmbDepart);
+            pnlRecherche.Controls.Add(lblTitre);
+            pnlRecherche.Location = new Point(30, 261);
+            pnlRecherche.Margin = new Padding(7, 6, 7, 6);
+            pnlRecherche.Name = "pnlRecherche";
+            pnlRecherche.Padding = new Padding(2);
+            pnlRecherche.Size = new Size(250, 200);
+            pnlRecherche.TabIndex = 0;
+            // 
+            // rdoArrive
+            // 
+            rdoArrive.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            rdoArrive.AutoSize = true;
+            rdoArrive.Location = new Point(150, 138);
+            rdoArrive.Margin = new Padding(2);
+            rdoArrive.Name = "rdoArrive";
+            rdoArrive.Size = new Size(105, 19);
+            rdoArrive.TabIndex = 2;
+            rdoArrive.Text = "Heure d'arrivée";
+            rdoArrive.UseVisualStyleBackColor = true;
+            rdoArrive.Visible = false;
+            // 
+            // btnTrouver
+            // 
+            btnTrouver.Anchor = AnchorStyles.Bottom;
+            btnTrouver.AutoSize = true;
+            btnTrouver.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnTrouver.Location = new Point(57, 159);
+            btnTrouver.Margin = new Padding(2);
+            btnTrouver.Name = "btnTrouver";
+            btnTrouver.Size = new Size(194, 35);
+            btnTrouver.TabIndex = 8;
+            btnTrouver.Text = "Trouver un itinéraire";
+            btnTrouver.UseVisualStyleBackColor = true;
+            btnTrouver.Click += btnTrouver_Click;
+            // 
+            // rdoDepart
+            // 
+            rdoDepart.Anchor = AnchorStyles.None;
+            rdoDepart.AutoSize = true;
+            rdoDepart.Checked = true;
+            rdoDepart.Location = new Point(10, 137);
+            rdoDepart.Margin = new Padding(2);
+            rdoDepart.Name = "rdoDepart";
+            rdoDepart.Size = new Size(110, 19);
+            rdoDepart.TabIndex = 1;
+            rdoDepart.TabStop = true;
+            rdoDepart.Text = "Heure de départ";
+            rdoDepart.UseVisualStyleBackColor = true;
+            rdoDepart.Visible = false;
+            // 
+            // dtpHeure
+            // 
+            dtpHeure.CustomFormat = "HH:mm";
+            dtpHeure.Format = DateTimePickerFormat.Custom;
+            dtpHeure.Location = new Point(10, 159);
+            dtpHeure.Margin = new Padding(2);
+            dtpHeure.Name = "dtpHeure";
+            dtpHeure.ShowUpDown = true;
+            dtpHeure.Size = new Size(73, 23);
+            dtpHeure.TabIndex = 5;
+            dtpHeure.Value = new DateTime(2025, 6, 1, 12, 0, 0, 0);
+            dtpHeure.Visible = false;
+            // 
+            // chkHeure
+            // 
+            chkHeure.AutoSize = true;
+            chkHeure.Checked = true;
+            chkHeure.CheckState = CheckState.Checked;
+            chkHeure.Location = new Point(10, 131);
+            chkHeure.Margin = new Padding(2);
+            chkHeure.Name = "chkHeure";
+            chkHeure.Size = new Size(126, 19);
+            chkHeure.TabIndex = 7;
+            chkHeure.Text = "Partir maintenant ?";
+            chkHeure.UseVisualStyleBackColor = true;
+            chkHeure.CheckedChanged += chkHeure_CheckedChanged;
+            // 
+            // lblDest
+            // 
+            lblDest.AutoSize = true;
+            lblDest.Location = new Point(12, 86);
+            lblDest.Margin = new Padding(2, 0, 2, 0);
+            lblDest.Name = "lblDest";
+            lblDest.Size = new Size(67, 15);
+            lblDest.TabIndex = 3;
+            lblDest.Text = "Destination";
+            // 
+            // cmbDest
+            // 
+            cmbDest.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbDest.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbDest.FormattingEnabled = true;
+            cmbDest.Items.AddRange(new object[] { "Ar1", "A2", "A3", "A4", "A5", "A6", "A7" });
+            cmbDest.Location = new Point(10, 103);
+            cmbDest.Margin = new Padding(2);
+            cmbDest.Name = "cmbDest";
+            cmbDest.Size = new Size(172, 23);
+            cmbDest.TabIndex = 2;
+            // 
+            // lblDepart
+            // 
+            lblDepart.AutoSize = true;
+            lblDepart.Location = new Point(12, 38);
+            lblDepart.Margin = new Padding(2, 0, 2, 0);
+            lblDepart.Name = "lblDepart";
+            lblDepart.Size = new Size(42, 15);
+            lblDepart.TabIndex = 2;
+            lblDepart.Text = "Départ";
+            // 
+            // cmbDepart
+            // 
+            cmbDepart.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbDepart.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbDepart.FormattingEnabled = true;
+            cmbDepart.Items.AddRange(new object[] { "Ar1", "A2", "A3", "A4", "A5", "A6", "A7" });
+            cmbDepart.Location = new Point(10, 55);
+            cmbDepart.Margin = new Padding(2);
+            cmbDepart.Name = "cmbDepart";
+            cmbDepart.Size = new Size(172, 23);
+            cmbDepart.TabIndex = 1;
+            // 
+            // lblTitre
+            // 
+            lblTitre.Anchor = AnchorStyles.Top;
+            lblTitre.AutoSize = true;
+            lblTitre.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTitre.Location = new Point(10, 2);
+            lblTitre.Margin = new Padding(2, 0, 2, 0);
+            lblTitre.Name = "lblTitre";
+            lblTitre.Size = new Size(224, 25);
+            lblTitre.TabIndex = 0;
+            lblTitre.Text = "Rechercher un itinéraire";
+            lblTitre.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // PageItineraire
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(1204, 707);
+            Controls.Add(pnlRecherche);
+            Controls.Add(btnMenu);
             Controls.Add(picProfil);
             Controls.Add(pnlItineraire2);
             Controls.Add(pnlItineraire1);
-            Controls.Add(pnlRecherche);
             Margin = new Padding(2);
             Name = "PageItineraire";
             Text = "Corolis";
             Load += PageItineraire_Load;
-            pnlRecherche.ResumeLayout(false);
-            pnlRecherche.PerformLayout();
             pnlItineraire1.ResumeLayout(false);
             pnlItineraire1.PerformLayout();
             pnlChgmtLigne1.ResumeLayout(false);
@@ -786,10 +810,10 @@
             ((System.ComponentModel.ISupportInitialize)picIconEdit6).EndInit();
             pnlHoraireDepart1.ResumeLayout(false);
             pnlHoraireDepart1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)picIconEdit9).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picIconTime2).EndInit();
             pnlTempsEstime1.ResumeLayout(false);
             pnlTempsEstime1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)picIconEdit8).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picIconTime).EndInit();
             pnlLigneAPrendre1.ResumeLayout(false);
             pnlLigneAPrendre1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)picIconEdit5).EndInit();
@@ -803,30 +827,21 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
             pnlHoraireDepart2.ResumeLayout(false);
             pnlHoraireDepart2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picIconTime4).EndInit();
             pnlTempsEstime2.ResumeLayout(false);
             pnlTempsEstime2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picIconTime3).EndInit();
             pnlLigneAPrendre2.ResumeLayout(false);
             pnlLigneAPrendre2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox6).EndInit();
             ((System.ComponentModel.ISupportInitialize)picProfil).EndInit();
+            pnlRecherche.ResumeLayout(false);
+            pnlRecherche.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
-
-        private Panel pnlRecherche;
-        private RadioButton rdoArrive;
-        private Button btnTrouver;
-        private RadioButton rdoDepart;
-        private DateTimePicker dtpHeure;
-        private CheckBox chkHeure;
-        private Label lblDest;
-        private ComboBox cmbDest;
-        private Label lblDepart;
-        private ComboBox cmbDepart;
-        private Label lblTitre;
         private Panel pnlItineraire1;
         private Panel pnlMenuAjoutArret;
         private PictureBox picIconEdit6;
@@ -834,7 +849,7 @@
         private Label lblArret1;
         private Panel pnlSep1;
         private Panel pnlHoraireDepart1;
-        private PictureBox picIconEdit9;
+        private PictureBox picIconTime2;
         private Label lblHoraireDepart1Head;
         private Label lblHoraireDepart1;
         private Panel pnlSep2;
@@ -848,7 +863,7 @@
         private Label lblMenuModifHoraire;
         private Label lblItineraire1Head;
         private Label lblItineraire1;
-        private PictureBox picIconEdit8;
+        private PictureBox picIconTime;
         private Panel pnlPremLigne1;
         private Panel pnlLigneAPrendre1;
         private Panel pnlChgmtLigne1;
@@ -866,12 +881,12 @@
         private Label lblArret2;
         private Panel pnlSep3;
         private Panel pnlHoraireDepart2;
-        private PictureBox pictureBox4;
+        private PictureBox picIconTime4;
         private Label lblHoraireDepart2Head;
         private Label lblHoraireDepart2;
         private Panel pnlSep4;
         private Panel pnlTempsEstime2;
-        private PictureBox pictureBox5;
+        private PictureBox picIconTime3;
         private Label lblTempsEstime2Head;
         private Label lblTempsEstime2;
         private Panel pnlLigneAPrendre2;
@@ -880,5 +895,17 @@
         private Label lblItineraire2Head;
         private Label lblItineraire2;
         private PictureBox picProfil;
+        private Button btnMenu;
+        private Panel pnlRecherche;
+        private RadioButton rdoArrive;
+        private Button btnTrouver;
+        private RadioButton rdoDepart;
+        private DateTimePicker dtpHeure;
+        private CheckBox chkHeure;
+        private Label lblDest;
+        private ComboBox cmbDest;
+        private Label lblDepart;
+        private ComboBox cmbDepart;
+        private Label lblTitre;
     }
 }

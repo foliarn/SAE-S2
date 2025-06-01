@@ -217,15 +217,56 @@ namespace BiblioBDD
         {
             try
             {
+                // Partie pour récupérer l'horaire de départ du nouvel arrêt
+                var arretsExistants = RecupDonnees.GetArretsParLigne(idLigne);
+
+                int tempsDepart = 0; // Valeur par défaut pour le premier arrêt
+
+                if (arretsExistants.Count > 0)
+                {
+                    if (ordre == 1)
+                    {
+                        // Si on insère en première position, temps = 0
+                        tempsDepart = 0;
+                    }
+                    else if (ordre > arretsExistants.Count)
+                    {
+                        // Si on ajoute à la fin, prendre le dernier temps + un délai
+                        var dernierArret = arretsExistants.OrderBy(a => a.Ordre).LastOrDefault();
+                        tempsDepart = dernierArret?.TempsDepart + new Random().Next(2, 5) ?? 0;
+                    }
+                    else
+                    {
+                        // Si on insère au milieu, prendre la moyenne des temps voisins
+                        var arretPrecedent = arretsExistants.Where(a => a.Ordre < ordre).OrderBy(a => a.Ordre).LastOrDefault();
+                        var arretSuivant = arretsExistants.Where(a => a.Ordre >= ordre).OrderBy(a => a.Ordre).FirstOrDefault();
+
+                        if (arretPrecedent != null && arretSuivant != null)
+                        {
+                            tempsDepart = (arretPrecedent.TempsDepart + arretSuivant.TempsDepart) / 2;
+                        }
+                        else if (arretPrecedent != null)
+                        {
+                            tempsDepart = arretPrecedent.TempsDepart + new Random().Next(2, 5);
+                        }
+                        else
+                        {
+                            tempsDepart = 0;
+                        }
+                    }
+                }
+
+
                 string requeteInsert = @"
                     INSERT INTO Lignes_Arrets (id_ligne, id_arret, ordre, temps_depart)
-                    VALUES (@idLigne, @idArret, @ordre, 99);";
+                    VALUES (@idLigne, @idArret, @ordre, @tempsDepart);";
 
                 int succes = ExecuterRequete(requeteInsert,
                     false,
                     new MySqlParameter("@idLigne", idLigne),
                     new MySqlParameter("@idArret", idArret),
-                    new MySqlParameter("@ordre", ordre));
+                    new MySqlParameter("@ordre", ordre),
+                    new MySqlParameter("@tempsDepart", tempsDepart));
 
                 if (succes == -1)
                 {
@@ -235,7 +276,7 @@ namespace BiblioBDD
 
                 // Méthodes pour réordonner les arrêts et mettre à jour les temps de départ
                 ReordonnerArretsLigne(idLigne);
-                MAJTempsDepart(idLigne, ordre, true);
+                MAJTempsDepart(idLigne, 1, true);
                 
                 return true;
             }

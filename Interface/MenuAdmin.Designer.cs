@@ -100,6 +100,8 @@
             panel6 = new Panel();
             lblChangeNomHead = new Label();
             pnlArretModifLigne = new Panel();
+            chkNePasAjouterUneLigne = new CheckBox();
+            chkNePasRetirerLigne = new CheckBox();
             cmbArretModifLigneChoixSuppr = new ComboBox();
             lblArretModifLigneSuppr = new Label();
             pnlSep13 = new Panel();
@@ -209,9 +211,9 @@
             // 
             pnlTitre.BackColor = Color.White;
             pnlTitre.Controls.Add(lblTitre);
-            pnlTitre.Location = new Point(384, 57);
+            pnlTitre.Location = new Point(390, 50);
             pnlTitre.Name = "pnlTitre";
-            pnlTitre.Size = new Size(508, 100);
+            pnlTitre.Size = new Size(500, 100);
             pnlTitre.TabIndex = 0;
             // 
             // lblTitre
@@ -219,7 +221,7 @@
             lblTitre.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             lblTitre.AutoSize = true;
             lblTitre.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTitre.Location = new Point(97, 33);
+            lblTitre.Location = new Point(93, 33);
             lblTitre.Name = "lblTitre";
             lblTitre.Size = new Size(317, 32);
             lblTitre.TabIndex = 0;
@@ -234,7 +236,7 @@
             pnlMenuCreation.Controls.Add(pnlCreerLigne);
             pnlMenuCreation.Controls.Add(lblTitreMenuCreer);
             pnlMenuCreation.Controls.Add(lblSSTitreMenuCreer);
-            pnlMenuCreation.Location = new Point(222, 233);
+            pnlMenuCreation.Location = new Point(240, 233);
             pnlMenuCreation.Name = "pnlMenuCreation";
             pnlMenuCreation.Size = new Size(302, 220);
             pnlMenuCreation.TabIndex = 1;
@@ -367,9 +369,9 @@
             pnlMenuModif.Controls.Add(pnlModifLigne);
             pnlMenuModif.Controls.Add(lblTitreMenuModif);
             pnlMenuModif.Controls.Add(lblSSTitreMenuModif);
-            pnlMenuModif.Location = new Point(742, 233);
+            pnlMenuModif.Location = new Point(740, 233);
             pnlMenuModif.Name = "pnlMenuModif";
-            pnlMenuModif.Size = new Size(302, 220);
+            pnlMenuModif.Size = new Size(300, 220);
             pnlMenuModif.TabIndex = 12;
             // 
             // pnlLigne2
@@ -574,7 +576,7 @@
             pnlModifChoix.Controls.Add(lblModif);
             pnlModifChoix.Controls.Add(pnlSep3);
             pnlModifChoix.Controls.Add(lblModifHead);
-            pnlModifChoix.Location = new Point(691, 162);
+            pnlModifChoix.Location = new Point(770, 162);
             pnlModifChoix.Name = "pnlModifChoix";
             pnlModifChoix.Size = new Size(240, 150);
             pnlModifChoix.TabIndex = 15;
@@ -642,7 +644,7 @@
             pnlModifArretChoisi.Controls.Add(pnlModifAppartenance);
             pnlModifArretChoisi.Controls.Add(lblTitreModifArretChoisi);
             pnlModifArretChoisi.Controls.Add(lblSSTitreModifArretChoisi);
-            pnlModifArretChoisi.Location = new Point(252, 484);
+            pnlModifArretChoisi.Location = new Point(240, 484);
             pnlModifArretChoisi.Name = "pnlModifArretChoisi";
             pnlModifArretChoisi.Size = new Size(302, 320);
             pnlModifArretChoisi.TabIndex = 16;
@@ -842,7 +844,7 @@
             pnlSupprVerif.Controls.Add(lblSupprConfirmer);
             pnlSupprVerif.Controls.Add(pnlSep7);
             pnlSupprVerif.Controls.Add(lblTitreSupprVerif);
-            pnlSupprVerif.Location = new Point(691, 7);
+            pnlSupprVerif.Location = new Point(770, 7);
             pnlSupprVerif.Name = "pnlSupprVerif";
             pnlSupprVerif.Size = new Size(240, 150);
             pnlSupprVerif.TabIndex = 15;
@@ -916,7 +918,7 @@
             pnlArretChangeNom.Controls.Add(lblChangeNom);
             pnlArretChangeNom.Controls.Add(panel6);
             pnlArretChangeNom.Controls.Add(lblChangeNomHead);
-            pnlArretChangeNom.Location = new Point(691, 592);
+            pnlArretChangeNom.Location = new Point(770, 592);
             pnlArretChangeNom.Name = "pnlArretChangeNom";
             pnlArretChangeNom.Size = new Size(240, 150);
             pnlArretChangeNom.TabIndex = 15;
@@ -973,6 +975,8 @@
             // 
             pnlArretModifLigne.BackColor = Color.White;
             pnlArretModifLigne.BorderStyle = BorderStyle.FixedSingle;
+            pnlArretModifLigne.Controls.Add(chkNePasAjouterUneLigne);
+            pnlArretModifLigne.Controls.Add(chkNePasRetirerLigne);
             pnlArretModifLigne.Controls.Add(cmbArretModifLigneChoixSuppr);
             pnlArretModifLigne.Controls.Add(lblArretModifLigneSuppr);
             pnlArretModifLigne.Controls.Add(pnlSep13);
@@ -981,11 +985,33 @@
             pnlArretModifLigne.Controls.Add(lblArretModifLigneAdd);
             pnlArretModifLigne.Controls.Add(pnlSep8);
             pnlArretModifLigne.Controls.Add(lblArretModifLigneHead);
-            pnlArretModifLigne.Location = new Point(691, 655);
+            pnlArretModifLigne.Location = new Point(1025, 32);
             pnlArretModifLigne.Name = "pnlArretModifLigne";
-            pnlArretModifLigne.Size = new Size(240, 200);
+            pnlArretModifLigne.Size = new Size(240, 270);
             pnlArretModifLigne.TabIndex = 16;
             pnlArretModifLigne.Visible = false;
+            // 
+            // chkNePasAjouterUneLigne
+            // 
+            chkNePasAjouterUneLigne.AutoSize = true;
+            chkNePasAjouterUneLigne.Location = new Point(21, 90);
+            chkNePasAjouterUneLigne.Name = "chkNePasAjouterUneLigne";
+            chkNePasAjouterUneLigne.Size = new Size(147, 19);
+            chkNePasAjouterUneLigne.TabIndex = 22;
+            chkNePasAjouterUneLigne.Text = "Ne pas ajouter de ligne";
+            chkNePasAjouterUneLigne.UseVisualStyleBackColor = true;
+            chkNePasAjouterUneLigne.CheckedChanged += chkNePasAjouterUneLigne_CheckedChanged;
+            // 
+            // chkNePasRetirerLigne
+            // 
+            chkNePasRetirerLigne.AutoSize = true;
+            chkNePasRetirerLigne.Location = new Point(20, 196);
+            chkNePasRetirerLigne.Name = "chkNePasRetirerLigne";
+            chkNePasRetirerLigne.Size = new Size(141, 19);
+            chkNePasRetirerLigne.TabIndex = 21;
+            chkNePasRetirerLigne.Text = "Ne pas retirer de ligne";
+            chkNePasRetirerLigne.UseVisualStyleBackColor = true;
+            chkNePasRetirerLigne.CheckedChanged += chkNePasRetirerLigne_CheckedChanged;
             // 
             // cmbArretModifLigneChoixSuppr
             // 
@@ -993,7 +1019,7 @@
             cmbArretModifLigneChoixSuppr.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbArretModifLigneChoixSuppr.FormattingEnabled = true;
             cmbArretModifLigneChoixSuppr.Items.AddRange(new object[] { "A1", "A2", "A3", "A4", "A5", "test" });
-            cmbArretModifLigneChoixSuppr.Location = new Point(21, 128);
+            cmbArretModifLigneChoixSuppr.Location = new Point(20, 166);
             cmbArretModifLigneChoixSuppr.Name = "cmbArretModifLigneChoixSuppr";
             cmbArretModifLigneChoixSuppr.Size = new Size(200, 23);
             cmbArretModifLigneChoixSuppr.TabIndex = 17;
@@ -1001,7 +1027,7 @@
             // lblArretModifLigneSuppr
             // 
             lblArretModifLigneSuppr.AutoSize = true;
-            lblArretModifLigneSuppr.Location = new Point(21, 110);
+            lblArretModifLigneSuppr.Location = new Point(20, 147);
             lblArretModifLigneSuppr.Name = "lblArretModifLigneSuppr";
             lblArretModifLigneSuppr.Size = new Size(197, 15);
             lblArretModifLigneSuppr.TabIndex = 16;
@@ -1010,20 +1036,21 @@
             // pnlSep13
             // 
             pnlSep13.BackColor = Color.DimGray;
-            pnlSep13.Location = new Point(21, 99);
+            pnlSep13.Location = new Point(20, 130);
             pnlSep13.Name = "pnlSep13";
-            pnlSep13.Size = new Size(165, 1);
+            pnlSep13.Size = new Size(200, 1);
             pnlSep13.TabIndex = 13;
             // 
             // btnArretModifLigneValider
             // 
             btnArretModifLigneValider.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            btnArretModifLigneValider.Location = new Point(65, 160);
+            btnArretModifLigneValider.Location = new Point(65, 230);
             btnArretModifLigneValider.Name = "btnArretModifLigneValider";
             btnArretModifLigneValider.Size = new Size(110, 25);
             btnArretModifLigneValider.TabIndex = 15;
             btnArretModifLigneValider.Text = "Valider";
             btnArretModifLigneValider.UseVisualStyleBackColor = true;
+            btnArretModifLigneValider.Click += btnArretModifLigneValider_Click;
             // 
             // cmbArretModifLigneChoixAdd
             // 
@@ -1031,7 +1058,7 @@
             cmbArretModifLigneChoixAdd.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbArretModifLigneChoixAdd.FormattingEnabled = true;
             cmbArretModifLigneChoixAdd.Items.AddRange(new object[] { "A1", "A2", "A3", "A4", "A5", "test" });
-            cmbArretModifLigneChoixAdd.Location = new Point(21, 61);
+            cmbArretModifLigneChoixAdd.Location = new Point(20, 60);
             cmbArretModifLigneChoixAdd.Name = "cmbArretModifLigneChoixAdd";
             cmbArretModifLigneChoixAdd.Size = new Size(200, 23);
             cmbArretModifLigneChoixAdd.TabIndex = 15;
@@ -1039,7 +1066,7 @@
             // lblArretModifLigneAdd
             // 
             lblArretModifLigneAdd.AutoSize = true;
-            lblArretModifLigneAdd.Location = new Point(21, 43);
+            lblArretModifLigneAdd.Location = new Point(20, 40);
             lblArretModifLigneAdd.Name = "lblArretModifLigneAdd";
             lblArretModifLigneAdd.Size = new Size(203, 15);
             lblArretModifLigneAdd.TabIndex = 12;
@@ -1079,7 +1106,7 @@
             pnlModifHoraire.Controls.Add(lblChangerDepart);
             pnlModifHoraire.Controls.Add(panel11);
             pnlModifHoraire.Controls.Add(lblModifHoraire);
-            pnlModifHoraire.Location = new Point(691, 590);
+            pnlModifHoraire.Location = new Point(770, 590);
             pnlModifHoraire.Name = "pnlModifHoraire";
             pnlModifHoraire.Size = new Size(240, 200);
             pnlModifHoraire.TabIndex = 18;
@@ -1193,7 +1220,7 @@
             pnlRetirerArret.Controls.Add(lblLigneRetraitArret);
             pnlRetirerArret.Controls.Add(pnlSep6);
             pnlRetirerArret.Controls.Add(lblLigneRetraitArretHead);
-            pnlRetirerArret.Location = new Point(691, 436);
+            pnlRetirerArret.Location = new Point(770, 436);
             pnlRetirerArret.Name = "pnlRetirerArret";
             pnlRetirerArret.Size = new Size(240, 150);
             pnlRetirerArret.TabIndex = 16;
@@ -1264,7 +1291,7 @@
             pnlLigneAjoutArret.Controls.Add(cmbLigneAjoutArret);
             pnlLigneAjoutArret.Controls.Add(lblLigneAjoutArret);
             pnlLigneAjoutArret.Controls.Add(lblLigneAjoutArretHead);
-            pnlLigneAjoutArret.Location = new Point(691, 168);
+            pnlLigneAjoutArret.Location = new Point(770, 168);
             pnlLigneAjoutArret.Name = "pnlLigneAjoutArret";
             pnlLigneAjoutArret.Size = new Size(240, 254);
             pnlLigneAjoutArret.TabIndex = 17;
@@ -1385,7 +1412,7 @@
             pnlModifLigneChoisie.Controls.Add(pnlMenuModifHoraire);
             pnlModifLigneChoisie.Controls.Add(lblTitreModifLigneChoisie);
             pnlModifLigneChoisie.Controls.Add(lblSSTitreModifLigneChoisie);
-            pnlModifLigneChoisie.Location = new Point(251, 467);
+            pnlModifLigneChoisie.Location = new Point(240, 467);
             pnlModifLigneChoisie.Name = "pnlModifLigneChoisie";
             pnlModifLigneChoisie.Size = new Size(302, 448);
             pnlModifLigneChoisie.TabIndex = 17;
@@ -1689,9 +1716,9 @@
             Controls.Add(pnlModifChoix);
             Controls.Add(pnlLigneAjoutArret);
             Controls.Add(pnlRetirerArret);
+            Controls.Add(pnlArretModifLigne);
             Controls.Add(pnlModifHoraire);
             Controls.Add(pnlSupprVerif);
-            Controls.Add(pnlArretModifLigne);
             Controls.Add(pnlArretChangeNom);
             Controls.Add(pnlModifArretChoisi);
             Controls.Add(btnMenu);
@@ -1906,5 +1933,7 @@
         private Label lblZero;
         private CheckBox chkNePasChanger;
         private Button btnDeconnecter;
+        private CheckBox chkNePasAjouterUneLigne;
+        private CheckBox chkNePasRetirerLigne;
     }
 }

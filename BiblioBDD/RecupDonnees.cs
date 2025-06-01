@@ -231,7 +231,6 @@ namespace BiblioBDD
             }
         }
 
-
         /// <summary>
         /// Récupère toutes les lignes avec leurs arrêts
         /// </summary>

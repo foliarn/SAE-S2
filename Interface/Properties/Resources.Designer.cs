@@ -63,6 +63,16 @@ namespace Interface.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap clock_256x256 {
+            get {
+                object obj = ResourceManager.GetObject("clock.256x256", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icon_login {
             get {
                 object obj = ResourceManager.GetObject("icon_login", resourceCulture);
@@ -116,6 +126,16 @@ namespace Interface.Properties {
         internal static System.Drawing.Bitmap plan_beauvais {
             get {
                 object obj = ResourceManager.GetObject("plan_beauvais", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap star_outline_256x244 {
+            get {
+                object obj = ResourceManager.GetObject("star-outline.256x244", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

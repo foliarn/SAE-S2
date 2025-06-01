@@ -100,5 +100,77 @@ namespace Interface.Classes
                 }
             }
         }
+        /// <summary>
+        /// Remplit une ComboBox avec les lignes selon qu'elles passent ou non par un arrêt (pour appartenance)
+        /// </summary>
+        /// <param name="comboBox">La ComboBox à remplir</param>
+        /// <param name="idArret">L'arrêt de référence</param>
+        /// <param name="inclureArret">True pour inclure les lignes avec cet arrêt, False pour les exclure</param>
+        /// <returns>Le nombre de lignes trouvées</returns>
+        public static void RemplirComboBoxLignesSelonArret(ComboBox comboBox, int idArret, bool inclureArret = true)
+        {
+            if (comboBox == null || idArret == 0)
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur : ComboBox ou idArret = 0");
+                return;
+            }
+
+            try
+            {
+                // Vérifier que les données sont chargées
+                if (Init.toutesLesLignes == null || Init.toutesLesLignes.Count == 0)
+                {
+                    Init.toutesLesLignes = RecupDonnees.GetToutesLesLignes();
+                }
+
+                List<Ligne> lignesFiltrees;
+
+                if (inclureArret)
+                {
+                    // Lignes qui passent par cet arrêt
+                    lignesFiltrees = Init.toutesLesLignes
+                        .Where(ligne => ligne.Arrets != null &&
+                                       ligne.Arrets.Any(arretLigne => arretLigne.Arret.IdArret == idArret))
+                        .ToList();
+                }
+                else
+                {
+                    // Lignes qui ne passent PAS par cet arrêt
+                    lignesFiltrees = Init.toutesLesLignes
+                        .Where(ligne => ligne.Arrets == null ||
+                                       !ligne.Arrets.Any(arretLigne => arretLigne.Arret.IdArret == idArret))
+                        .ToList();
+                }
+
+                // Utiliser la méthode existante pour remplir la ComboBox
+                RemplirComboBox(comboBox, lignesFiltrees, "NomLigne", "IdLigne");
+                return;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur lors du filtrage des lignes : {ex.Message}");
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Récupère uniquement les arrêts d'une ligne (sans ordre ni temps)
+        /// </summary>
+        /// <param name="idLigne">ID de la ligne</param>
+        /// <returns>Liste des Arret</returns>
+        public static List<Arret> GetArretsSeulsParLigne(int idLigne)
+        {
+            try
+            {
+                var arretsLigne = RecupDonnees.GetArretsParLigne(idLigne);
+                return arretsLigne.Select(al => al.Arret).ToList();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération des arrêts seuls : {ex.Message}");
+                return new List<Arret>();
+            }
+        }
+
     }
 }

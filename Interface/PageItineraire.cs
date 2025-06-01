@@ -48,28 +48,13 @@ namespace Interface
         {
             try
             {
-                // Charger les données
-                if (Init.tousLesArrets == null || Init.tousLesArrets.Count == 0)
-                {
-                    Init.tousLesArrets = RecupDonnees.GetTousLesArrets();
-                }
-
                 // Remplir les comboBox
                 Utils.RemplirComboBox(cmbDepart, Init.tousLesArrets, "NomArret", "IdArret");
                 Utils.RemplirComboBox(cmbDest, Init.tousLesArrets, "NomArret", "IdArret");
 
-                // AJOUTER L'ÉVÉNEMENT ICI
-                btnTrouver.Click += BtnTrouver_Click;
-
-                // Préremplir les champs si on a des données (TRANSFERT)
-                if (arretDepart != null)
-                {
-                    cmbDepart.SelectedValue = arretDepart.IdArret;
-                }
-                if (arretDestination != null)
-                {
-                    cmbDest.SelectedValue = arretDestination.IdArret;
-                }
+                // Préremplir les champs
+                cmbDepart.SelectedValue = arretDepart.IdArret;
+                cmbDest.SelectedValue = arretDestination.IdArret;
 
                 // Configurer les heures (TRANSFERT)
                 if (parametresRecherche != null)
@@ -78,7 +63,11 @@ namespace Interface
                 }
 
                 // Interface
+                // Centrer les éléments dans le panel de recherche
+                lblTitre.Left = (pnlRecherche.ClientSize.Width - lblTitre.Width) / 2;
+                btnTrouver.Left = (pnlRecherche.ClientSize.Width - btnTrouver.Width) / 2;
                 Utils.CentrerControle(pnlRecherche, false, true);
+
                 pnlItineraire1.Visible = false;
                 pnlItineraire2.Visible = false;
             }
@@ -114,7 +103,7 @@ namespace Interface
             }
         }
 
-        private void BtnTrouver_Click(object sender, EventArgs e)
+        private void btnTrouver_Click(object sender, EventArgs e)
         {
             try
             {
@@ -160,10 +149,12 @@ namespace Interface
 
                 if (chkHeure.Checked)
                 {
+                    pnlRecherche.Size = new Size(250, 200);
                     heureSouhaitee = TimeSpan.FromHours(DateTime.Now.Hour).Add(TimeSpan.FromMinutes(DateTime.Now.Minute));
                 }
                 else
                 {
+                    pnlRecherche.Size = new Size(250, 275);
                     heureSouhaitee = dtpHeure.Value.TimeOfDay;
                     estHeureDepart = rdoDepart.Checked;
                 }
@@ -363,7 +354,6 @@ namespace Interface
                 rdoArrive.Visible = false;
                 dtpHeure.Visible = false;
             }
-
             else
             {
                 pnlRecherche.Size = new Size(250, 350);
@@ -378,7 +368,6 @@ namespace Interface
                 rdoDepart.Visible = true;
                 rdoArrive.Visible = true;
                 dtpHeure.Visible = true;
-
             }
 
             Utils.CentrerControle(pnlRecherche, false, true);
@@ -399,6 +388,12 @@ namespace Interface
                 Login login = new Login(accueil);
                 login.ShowDialog();
             }
+        }
+
+        private void btnMenu_Click(object sender, EventArgs e)
+        {
+            accueil.Show();
+            this.Close();
         }
     }
 }

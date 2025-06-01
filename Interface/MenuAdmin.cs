@@ -7,7 +7,7 @@ using Services;
 
 namespace Interface
 {
-    
+
     public partial class MenuAdmin : Form
     {
         private Accueil accueil;
@@ -32,6 +32,7 @@ namespace Interface
             Utils.CentrerControle(pnlModifHoraire, false, true);
             Utils.CentrerControle(pnlMenuCreation, false, true);
             Utils.CentrerControle(pnlMenuModif, false, true);
+            Utils.CentrerControle(pnlTitre, true, false);
 
 
 
@@ -41,8 +42,6 @@ namespace Interface
             isLigne ? "NomLigne" : "NomArret",
             isLigne ? "IdLigne" : "IdArret");
 
-            Utils.RemplirComboBox(cmbLigneAjoutArret, Utils.ChargerTousLesArretsSaufLigne(idChoixMain), "NomArret", "IdArret");
-            Utils.RemplirComboBox(cmbLigneRetraitArret, RecupDonnees.GetArretsParLigne(idChoixMain), "Arret.NomArret", "Arret.IdArret");
             Utils.RemplirComboBox(cmbArretModifLigneChoixAdd, Init.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : Ajouter un élément "Aucun" pour éviter les erreurs si aucune ligne n'est sélectionnée
             Utils.RemplirComboBox(cmbArretModifLigneChoixSuppr, Init.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : idem
 
@@ -62,6 +61,7 @@ namespace Interface
         {
             isLigne = true;
             lblTitre.Text = "Création d'une ligne";
+            Utils.CentrerControle(lblTitre);
 
             // Afficher le formulaire de création de ligne
             Utils.AfficherUniquement(this, pnlCreation);
@@ -72,6 +72,7 @@ namespace Interface
         {
             isLigne = false; // Mise à jour au cas où l'utilisateur aurait créé une ligne juste avant
             lblTitre.Text = "Création d'un arrêt";
+            Utils.CentrerControle(lblTitre);
 
             Utils.AfficherUniquement(this, pnlCreation);
 
@@ -86,6 +87,8 @@ namespace Interface
             Utils.AfficherUniquement(this, pnlModifChoix);
 
             lblTitre.Text = "Modification d'une ligne";
+            Utils.CentrerControle(lblTitre);
+
             lblModifHead.Text = "Choisir une ligne";
             lblModif.Text = "Choisissez une ligne à modifier :";
 
@@ -98,6 +101,8 @@ namespace Interface
             Utils.AfficherUniquement(this, pnlModifChoix); ;
 
             lblTitre.Text = "Modification d'un arrêt";
+            Utils.CentrerControle(lblTitre);
+
             lblModifHead.Text = "Choisir un arrêt";
             lblModif.Text = "Choisissez un arrêt à modifier :";
 
@@ -111,6 +116,9 @@ namespace Interface
             if (!pnlMenuCreation.Visible)
             {
                 Utils.AfficherUniquement(this, pnlMenuCreation, pnlMenuModif);
+                lblTitre.Text = "Que souhaitez-vous faire ?";
+                Utils.CentrerControle(lblTitre);
+                pnlTitre.Visible = true;
             }
 
             else
@@ -150,6 +158,7 @@ namespace Interface
                     lblTitreModifLigneChoisie.Text = $"Ligne sélectionnée : {ligneChoisie.NomLigne}";
                 }
                 pnlModifLigneChoisie.Visible = true;
+
             }
             else
             {
@@ -161,12 +170,15 @@ namespace Interface
                 }
                 pnlModifArretChoisi.Visible = true;
             }
+            pnlTitre.Visible = false;
             //ActualiserComboBoxes(); // Mettre à jour les ComboBox avec les données actuelles
         }
 
         private void pnlModifAppartenance_Click(object sender, EventArgs e)
         {
             Utils.AfficherUniquement(this, pnlArretModifLigne, pnlModifArretChoisi);
+            Utils.RemplirComboBoxLignesSelonArret(cmbArretModifLigneChoixAdd, idChoixMain, false);
+            Utils.RemplirComboBoxLignesSelonArret(cmbArretModifLigneChoixSuppr, idChoixMain, true);
         }
 
         private void pnlChangerNom_Click(object sender, EventArgs e)
@@ -197,12 +209,14 @@ namespace Interface
 
         private void pnlMenuAjoutArret_Click(object sender, EventArgs e)
         {
+            Utils.RemplirComboBox(cmbLigneAjoutArret, Utils.ChargerTousLesArretsSaufLigne(idChoixMain), "NomArret", "IdArret");
             Utils.AfficherUniquement(this, pnlLigneAjoutArret, pnlModifLigneChoisie);
         }
 
         private void pnlMenuRetraitArret_Click(object sender, EventArgs e)
         {
             // Vérifier que la ligne ait au moins un arrêt
+            Utils.RemplirComboBox(cmbLigneRetraitArret, Utils.GetArretsSeulsParLigne(idChoixMain), "NomArret", "IdArret");
             if (cmbLigneRetraitArret.Items.Count == 0)
             {
                 MessageBox.Show("Cette ligne n'a pas d'arrêts à retirer.", "Aucun arrêt",
@@ -493,6 +507,76 @@ namespace Interface
             MessageBox.Show("Vous êtes déconnecté.", "Déconnexion",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
             this.Dispose();
+        }
+
+        private void chkNePasAjouterUneLigne_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkNePasAjouterUneLigne.Checked)
+            {
+                // Si la case est cochée, désactiver le ComboBox
+                cmbArretModifLigneChoixAdd.Enabled = false;
+            }
+            else
+            {
+                // Si la case n'est pas cochée, réactiver le ComboBox
+                cmbArretModifLigneChoixAdd.Enabled = true;
+            }
+        }
+
+        private void chkNePasRetirerLigne_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkNePasRetirerLigne.Checked)
+            {
+                // Si la case est cochée, désactiver le ComboBox
+                cmbArretModifLigneChoixSuppr.Enabled = false;
+            }
+            else
+            {
+                // Si la case n'est pas cochée, réactiver le ComboBox
+                cmbArretModifLigneChoixSuppr.Enabled = true;
+            }
+        }
+
+        private void btnArretModifLigneValider_Click(object sender, EventArgs e)
+        {
+            if (chkNePasAjouterUneLigne.Checked && chkNePasRetirerLigne.Checked)
+            {
+                MessageBox.Show("Veuillez sélectionner au moins une action à effectuer.", "Aucune action sélectionnée",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (cmbArretModifLigneChoixAdd.Enabled)
+            {
+                // Ajouter l'arrêt à la ligne sélectionnée
+                int idLigne = (int)cmbArretModifLigneChoixAdd.SelectedValue;
+                if (ModifBDD.AjouterArretALigne(idChoixMain, idLigne, 0)) // 0 pour ajouter à la fin
+                {
+                    MessageBox.Show("Arrêt ajouté à la ligne avec succès.", "Succès",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Erreur lors de l'ajout de l'arrêt à la ligne.", "Erreur",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+            if (cmbArretModifLigneChoixSuppr.Enabled)
+            {
+                // Retirer l'arrêt de la ligne sélectionnée
+                int idLigne = (int)cmbArretModifLigneChoixSuppr.SelectedValue;
+                if (ModifBDD.RetirerArretDeLigne(idChoixMain, idLigne, 0)) // 0 pour retirer de la fin
+                {
+                    MessageBox.Show("Arrêt retiré de la ligne avec succès.", "Succès",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Erreur lors du retrait de l'arrêt de la ligne.", "Erreur",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
     }
 }

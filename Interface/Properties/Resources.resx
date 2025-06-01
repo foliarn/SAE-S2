@@ -130,13 +130,16 @@
   <data name="Logo-corolis-mini" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Logo-corolis-mini.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="clock.256x256" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\clock.256x256.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="icon_retrecir" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_retrecir.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="plan_beauvais" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\plan_beauvais.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icon_plus2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_plus2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="star-outline.256x244" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\star-outline.256x244.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

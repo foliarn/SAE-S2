@@ -8,7 +8,7 @@ namespace Interface
     {
         private Accueil formAccueil; // Référence au formulaire d'accueil pour le retour au menu
         private int idLigne; // ID de la ligne à afficher
-        private Ligne ligneSelectionnee; 
+        private Ligne ligneSelectionnee;
         public ConsulterLigne(Accueil accueil)
         {
             InitializeComponent();
@@ -25,7 +25,7 @@ namespace Interface
                 cmbChoixLigne.SelectedIndex = 0; // Sélectionner le premier élément
                 ligneSelectionnee = cmbChoixLigne.SelectedItem as Ligne;
                 idLigne = (int)cmbChoixLigne.SelectedValue;
-                Affichage.AfficherLigneComplete(idLigne, dgvLigne);
+                Affichage.AfficherLigneSensNormal(idLigne, dgvLigne);
                 lblTitreDgv.Text = "Arrêts et horaires de la ligne " + ligneSelectionnee.NomLigne;
 
                 // Centrer le titre du DataGridView
@@ -43,8 +43,20 @@ namespace Interface
         {
             ligneSelectionnee = cmbChoixLigne.SelectedItem as Ligne;
             idLigne = (int)cmbChoixLigne.SelectedValue;
-            Affichage.AfficherLigneComplete(idLigne, dgvLigne);
+            Affichage.AfficherLigneSensNormal(idLigne, dgvLigne);
             lblTitreDgv.Text = "Arrêts et horaires de la ligne " + ligneSelectionnee.NomLigne;
+        }
+
+        private void chkSensInverse_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkSensInverse.Checked)
+            {
+                Affichage.AfficherLigneSensInverse(idLigne, dgvLigne);
+            }
+            else
+            {
+                Affichage.AfficherLigneSensNormal(idLigne, dgvLigne);
+            }
         }
     }
 }

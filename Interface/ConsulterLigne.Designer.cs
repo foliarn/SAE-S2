@@ -39,6 +39,7 @@
             class1BindingSource = new BindingSource(components);
             dgvLigne = new DataGridView();
             lblTitreDgv = new Label();
+            chkSensInverse = new CheckBox();
             pnlChoixLigne.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)class1BindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvLigne).BeginInit();
@@ -146,11 +147,23 @@
             lblTitreDgv.TabIndex = 19;
             lblTitreDgv.Text = "xxx";
             // 
+            // chkSensInverse
+            // 
+            chkSensInverse.AutoSize = true;
+            chkSensInverse.Location = new Point(34, 433);
+            chkSensInverse.Name = "chkSensInverse";
+            chkSensInverse.Size = new Size(225, 19);
+            chkSensInverse.TabIndex = 20;
+            chkSensInverse.Text = "Afficher la ligne dans son sens inverse";
+            chkSensInverse.UseVisualStyleBackColor = true;
+            chkSensInverse.CheckedChanged += chkSensInverse_CheckedChanged;
+            // 
             // ConsulterLigne
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 681);
+            Controls.Add(chkSensInverse);
             Controls.Add(lblTitreDgv);
             Controls.Add(dgvLigne);
             Controls.Add(btnMenu);
@@ -176,5 +189,6 @@
         private BindingSource class1BindingSource;
         private DataGridView dgvLigne;
         private Label lblTitreDgv;
+        private CheckBox chkSensInverse;
     }
 }

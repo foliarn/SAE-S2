@@ -984,7 +984,7 @@
             pnlArretModifLigne.Controls.Add(lblArretModifLigneAdd);
             pnlArretModifLigne.Controls.Add(pnlSep8);
             pnlArretModifLigne.Controls.Add(lblArretModifLigneHead);
-            pnlArretModifLigne.Location = new Point(1025, 32);
+            pnlArretModifLigne.Location = new Point(770, 578);
             pnlArretModifLigne.Name = "pnlArretModifLigne";
             pnlArretModifLigne.Size = new Size(240, 270);
             pnlArretModifLigne.TabIndex = 16;

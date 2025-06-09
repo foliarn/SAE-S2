@@ -18,20 +18,14 @@ namespace BiblioSysteme
         public TimeSpan PremierDepart { get; set; }
         public TimeSpan DernierDepart { get; set; }
         public int IntervalleMinutes { get; set; }
-        public List<TimeSpan> TempsDepuisDepart { get; set; }
 
         // Liste des arrêts de cette ligne dans l'ordre (relation Many-to-Many)
         public List<ArretLigne> Arrets { get; set; }
-
-        // Cache pour les horaires par arrêt
-        public Dictionary<Arret, List<TimeSpan>> HorairesCache { get; set; }
 
         // Constructeur par défaut
         public Ligne()
         {
             Arrets = new List<ArretLigne>();
-            TempsDepuisDepart = new List<TimeSpan>();
-            HorairesCache = new Dictionary<Arret, List<TimeSpan>>();
             NomLigne = string.Empty;
             Description = string.Empty;
         }

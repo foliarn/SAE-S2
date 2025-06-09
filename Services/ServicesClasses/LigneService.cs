@@ -22,6 +22,7 @@ public class LigneService
         }
 
         int idInsere = ModifBDD.AjouterLigne(ligne);
+        System.Diagnostics.Debug.WriteLine(idInsere);
 
         if (idInsere == -1)
         {
@@ -84,16 +85,6 @@ public class LigneService
             System.Diagnostics.Debug.WriteLine("Erreur : L'arrêt est déjà présent dans la ligne.");
             return false;
         }
-        // Ajouter l'arrêt à la ligne
-        ArretLigne arretLigne = new ArretLigne
-        {
-            Arret = arret,
-            TempsDepuisDebut = 0, // Initialiser à 0, sera mis à jour plus tard
-            TempsDepuisFin = 0
-        };
-
-        ligne.Arrets.Add(arretLigne);
-        arretLigne.Ordre = ordre;
 
         // Mettre à jour la base de données
         if (!ModifBDD.AjouterArretALigne(ligne.IdLigne, arret.IdArret, ordre))
@@ -101,8 +92,19 @@ public class LigneService
             System.Diagnostics.Debug.WriteLine("Erreur : Échec de l'ajout de l'arrêt en base de données.");
             return false;
         }
-        // Mettre à jour l'ordre de l'arrêt
-        
+
+        // Recharger la ligne depuis la base pour avoir les temps corrects
+        var ligneReloadee = RecupDonnees.GetLigneParId(ligne.IdLigne);
+        if (ligneReloadee != null)
+        {
+            ligne.Arrets = ligneReloadee.Arrets;
+            ligne.PremierDepart = ligneReloadee.PremierDepart;
+            ligne.DernierDepart = ligneReloadee.DernierDepart;
+            ligne.IntervalleMinutes = ligneReloadee.IntervalleMinutes;
+            ligne.Description = ligneReloadee.Description;
+        }
+        Init.toutesLesLignes = RecupDonnees.GetToutesLesLignes();
+
         return true;
     }
 
@@ -170,39 +172,19 @@ public class LigneService
         return toutesLesLignes.Where(ligne => ContientArret(ligne, arret)).ToList();
     }
 
-    /// <summary>
-    /// Vérifie qu'une ligne est valide pour la recherche d'itinéraire
-    /// </summary>
-    /// <param name="ligne">La ligne à valider</param>
-    /// <returns>True si la ligne est utilisable</returns>
     public static bool EstLigneValide(Ligne ligne)
     {
         if (ligne == null) return false;
         if (ligne.Arrets == null || ligne.Arrets.Count < 2) return false;
-        if (ligne.IntervalleMinutes <= 0) return false;
-        if (ligne.PremierDepart >= ligne.DernierDepart) return false;
+
+        if (ligne.IntervalleMinutes < 0) return false; // Accepter 0
+
+        // Vérifier les horaires seulement s'ils sont définis
+        if (ligne.PremierDepart != TimeSpan.Zero && ligne.DernierDepart != TimeSpan.Zero)
+        {
+            if (ligne.PremierDepart >= ligne.DernierDepart) return false;
+        }
 
         return true;
-    }
-
-    /// <summary>
-    /// Obtient le temps total de parcours d'une ligne dans un sens
-    /// </summary>
-    /// <param name="ligne">La ligne</param>
-    /// <param name="sensNormal">Sens de circulation</param>
-    /// <returns>Temps total en minutes</returns>
-    public static int ObtenirTempsTotalParcours(Ligne ligne, bool sensNormal)
-    {
-        if (ligne?.Arrets == null || ligne.Arrets.Count == 0)
-            return 0;
-
-        if (sensNormal)
-        {
-            return ligne.Arrets.Max(a => a.TempsDepuisDebut);
-        }
-        else
-        {
-            return ligne.Arrets.Max(a => a.TempsDepuisFin);
-        }
     }
 }

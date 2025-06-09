@@ -92,7 +92,34 @@ namespace BiblioBDD
                 new MySqlParameter("@desc", ligne.Description ?? "") // Utilisation d'une chaîne vide si la description est null
             };
 
-            return ExecuterRequete("INSERT INTO Lignes (nom_ligne, description) VALUES (@nom, @desc);", true, parametres);
+            int idLigne = ExecuterRequete("INSERT INTO Lignes (nom_ligne, description) VALUES (@nom, @desc);", true, parametres);
+
+            // Créer l'entrée dans Horaires_Lignes
+            var parametres_horaires = new MySqlParameter[]
+        {
+            new MySqlParameter("@id_ligne", idLigne),
+            new MySqlParameter("@premier_depart", TimeSpan.FromHours(6)),      // 06:00
+            new MySqlParameter("@dernier_depart", TimeSpan.FromHours(22)),     // 22:00
+            new MySqlParameter("@intervalle_minutes", 15)                      // 15 minutes
+        };
+
+            string requete_horaires = @"
+                INSERT INTO Horaires_Lignes (id_ligne, premier_depart, dernier_depart, intervalle_minutes)
+                VALUES (@id_ligne, @premier_depart, @dernier_depart, @intervalle_minutes);";
+
+            int resultat_horaires = ExecuterRequete(requete_horaires, false, parametres_horaires);
+
+            if (resultat_horaires == -1)
+            {
+                System.Diagnostics.Debug.WriteLine("⚠️ Erreur lors de la création des horaires, mais ligne créée.");
+                // Ne pas échouer complètement, la ligne existe
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"✅ Horaires créés pour la ligne {idLigne}");
+            }
+
+            return idLigne;
         }
 
         /// <summary>
@@ -208,66 +235,71 @@ namespace BiblioBDD
         /// <param name="idLigne">L'ID de la ligne</param>
         /// <param name="ordre">L'index de l'arrêt dans la ligne</param>
         /// <returns>True si l'opération a réussi, False sinon</returns> 
-        public static bool AjouterArretALigne(int idArret, int idLigne, int ordre)
+        public static bool AjouterArretALigne(int idLigne, int idArret, int ordre)
         {
             try
             {
-                // Récupérer les arrêts existants de la ligne
-                var arretsExistants = RecupDonnees.GetArretsParLigne(idLigne);
+                // Récupérer les arrêts existants DANS L'ORDRE
+                var arretsExistants = RecupDonnees.GetArretsParLigne(idLigne)
+                                                 .OrderBy(a => a.Ordre)
+                                                 .ToList();
 
                 int tempsDepuisDebut = 0;
                 int tempsDepuisFin = 0;
 
-                if (arretsExistants.Count > 0)
+                // LOGIQUE CORRIGÉE pour les temps bidirectionnels
+                if (arretsExistants.Count == 0)
                 {
-                    // Si on insère en première position
-                    if (ordre == 1)
+                    // Premier arrêt de la ligne
+                    tempsDepuisDebut = 0;
+                    tempsDepuisFin = 0;
+                }
+                else if (ordre == 1)
+                {
+                    // Insertion en première position
+                    tempsDepuisDebut = 0;
+                    // Décaler tous les autres arrêts
+                    var ancienPremier = arretsExistants.FirstOrDefault();
+                    if (ancienPremier != null)
                     {
-                        tempsDepuisDebut = 0;
-                        // Calculer le temps depuis la fin = temps max + délai
-                        var tempsMaxDebut = arretsExistants.Max(a => a.TempsDepuisDebut);
-                        tempsDepuisFin = tempsMaxDebut + new Random().Next(2, 5);
+                        tempsDepuisFin = ancienPremier.TempsDepuisFin + new Random().Next(2, 5);
                     }
-                    // Si on ajoute à la fin
-                    else if (ordre > arretsExistants.Count)
+                }
+                else if (ordre > arretsExistants.Count)
+                {
+                    // Ajout à la fin
+                    var dernierArret = arretsExistants.LastOrDefault();
+                    if (dernierArret != null)
                     {
-                        var dernierArret = arretsExistants.OrderBy(a => a.Ordre).LastOrDefault();
                         tempsDepuisDebut = dernierArret.TempsDepuisDebut + new Random().Next(2, 5);
                         tempsDepuisFin = 0;
                     }
-                    // Si on insère au milieu
-                    else
-                    {
-                        // On prend la moyenne des temps voisins
-                        var arretPrecedent = arretsExistants.Where(a => a.Ordre < ordre).OrderBy(a => a.Ordre).LastOrDefault();
-                        var arretSuivant = arretsExistants.Where(a => a.Ordre >= ordre).OrderBy(a => a.Ordre).FirstOrDefault();
+                }
+                else
+                {
+                    // Insertion au milieu - calculer par interpolation
+                    var arretPrecedent = arretsExistants.Where(a => a.Ordre < ordre).LastOrDefault();
+                    var arretSuivant = arretsExistants.Where(a => a.Ordre >= ordre).FirstOrDefault();
 
-                        if (arretPrecedent != null && arretSuivant != null)
-                        {
-                            // Moyenne pour temps depuis début
-                            tempsDepuisDebut = (arretPrecedent.TempsDepuisDebut + arretSuivant.TempsDepuisDebut) / 2;
-                            // Moyenne pour temps depuis fin
-                            tempsDepuisFin = (arretPrecedent.TempsDepuisFin + arretSuivant.TempsDepuisFin) / 2;
-                        }
-                        else if (arretPrecedent != null)
-                        {
-                            tempsDepuisDebut = arretPrecedent.TempsDepuisDebut + new Random().Next(2, 5);
-                            tempsDepuisFin = Math.Max(0, arretPrecedent.TempsDepuisFin - new Random().Next(2, 5));
-                        }
-                        else
-                        {
-                            tempsDepuisDebut = 0;
-                            var tempsMaxDebut = arretsExistants.Max(a => a.TempsDepuisDebut);
-                            tempsDepuisFin = tempsMaxDebut + new Random().Next(2, 5);
-                        }
+                    if (arretPrecedent != null && arretSuivant != null)
+                    {
+                        // Interpolation linéaire
+                        tempsDepuisDebut = (arretPrecedent.TempsDepuisDebut + arretSuivant.TempsDepuisDebut) / 2;
+                        tempsDepuisFin = (arretPrecedent.TempsDepuisFin + arretSuivant.TempsDepuisFin) / 2;
+                    }
+                    else if (arretPrecedent != null)
+                    {
+                        tempsDepuisDebut = arretPrecedent.TempsDepuisDebut + new Random().Next(2, 5);
+                        tempsDepuisFin = Math.Max(0, arretPrecedent.TempsDepuisFin - new Random().Next(2, 5));
                     }
                 }
+
+                // Insérer le nouvel arrêt
                 string requeteInsert = @"
                     INSERT INTO Lignes_Arrets (id_ligne, id_arret, ordre, temps_depuis_debut, temps_depuis_fin)
                     VALUES (@idLigne, @idArret, @ordre, @tempsDepuisDebut, @tempsDepuisFin);";
 
-                int succes = ExecuterRequete(requeteInsert,
-                    false,
+                int succes = ExecuterRequete(requeteInsert, false,
                     new MySqlParameter("@idLigne", idLigne),
                     new MySqlParameter("@idArret", idArret),
                     new MySqlParameter("@ordre", ordre),
@@ -280,13 +312,13 @@ namespace BiblioBDD
                     return false;
                 }
 
-                // Réordonner les arrêts et recalculer les temps bidirectionnels
+                // IMPORTANT : Réordonner et recalculer APRÈS insertion
                 ReordonnerArretsLigne(idLigne);
                 RecalculerTempsBidirectionnels(idLigne);
 
                 return true;
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Erreur SQL : " + ex.Message);
                 return false;
@@ -438,61 +470,64 @@ namespace BiblioBDD
         {
             try
             {
-                var arretsLigne = RecupDonnees.GetArretsParLigne(idLigne);
+                // Récupérer tous les arrêts de la ligne DANS L'ORDRE
+                var arretsLigne = RecupDonnees.GetArretsParLigne(idLigne)
+                                             .OrderBy(a => a.Ordre)
+                                             .ToList();
+
                 if (arretsLigne.Count == 0) return true;
 
                 var random = new Random();
-                int tempsAccumuleDebut = 0;
-                int tempsAccumuleFin = 0;
 
-                // Calculer temps depuis début (ordre croissant)
+                // ======= SENS NORMAL (temps_depuis_debut) =======
+                int tempsAccumule = 0;
                 for (int i = 0; i < arretsLigne.Count; i++)
                 {
                     var arret = arretsLigne[i];
 
-                    // Premier arrêt = 0, autres = temps précédent + delta
                     if (i == 0)
                     {
-                        tempsAccumuleDebut = 0;
+                        tempsAccumule = 0; // Premier arrêt
                     }
                     else
                     {
-                        tempsAccumuleDebut += random.Next(1, 4); // 1-3 minutes entre arrêts -- non fixe car plus simple
+                        tempsAccumule += random.Next(2, 6); // 2-5 minutes entre arrêts
                     }
 
-                    // Mettre à jour temps_depuis_debut
+                    // Mise à jour en base
                     ExecuterRequete(
                         "UPDATE Lignes_Arrets SET temps_depuis_debut = @temps WHERE id_ligne = @idLigne AND id_arret = @idArret",
                         false,
-                        new MySqlParameter("@temps", tempsAccumuleDebut),
+                        new MySqlParameter("@temps", tempsAccumule),
                         new MySqlParameter("@idLigne", idLigne),
                         new MySqlParameter("@idArret", arret.Arret.IdArret));
                 }
 
-                // Calculer temps depuis fin (ordre décroissant)
+                // ======= SENS INVERSE (temps_depuis_fin) =======
+                tempsAccumule = 0;
                 for (int i = arretsLigne.Count - 1; i >= 0; i--)
                 {
                     var arret = arretsLigne[i];
 
-                    // Dernier arrêt = 0, autres = temps précédent + delta
                     if (i == arretsLigne.Count - 1)
                     {
-                        tempsAccumuleFin = 0;
+                        tempsAccumule = 0; // Dernier arrêt
                     }
                     else
                     {
-                        tempsAccumuleFin += random.Next(1, 4);
+                        tempsAccumule += random.Next(2, 6); // 2-5 minutes entre arrêts
                     }
 
-                    // Mettre à jour temps_depuis_fin
+                    // Mise à jour en base
                     ExecuterRequete(
                         "UPDATE Lignes_Arrets SET temps_depuis_fin = @temps WHERE id_ligne = @idLigne AND id_arret = @idArret",
                         false,
-                        new MySqlParameter("@temps", tempsAccumuleFin),
+                        new MySqlParameter("@temps", tempsAccumule),
                         new MySqlParameter("@idLigne", idLigne),
                         new MySqlParameter("@idArret", arret.Arret.IdArret));
                 }
 
+                System.Diagnostics.Debug.WriteLine($"Temps bidirectionnels recalculés pour ligne {idLigne}");
                 return true;
             }
             catch (Exception ex)
@@ -501,6 +536,5 @@ namespace BiblioBDD
                 return false;
             }
         }
-
     }
 }

@@ -20,6 +20,7 @@ namespace Services.ServicesClasses
             }
 
             int idInsere = ModifBDD.AjouterArret(arret);
+            System.Diagnostics.Debug.WriteLine(idInsere);
 
             if (idInsere == -1)
             {
@@ -133,6 +134,26 @@ namespace Services.ServicesClasses
             if (ligne?.Arrets == null)
                 return horaires;
 
+            //Vérifier les données de base
+            if (ligne.IntervalleMinutes <= 0)
+            {
+                System.Diagnostics.Debug.WriteLine($"⚠️ Ligne {ligne.NomLigne} : intervalle invalide ({ligne.IntervalleMinutes})");
+                return horaires; // Retourner liste vide au lieu de freezer
+            }
+
+            if (ligne.PremierDepart == TimeSpan.Zero && ligne.DernierDepart == TimeSpan.Zero)
+            {
+                System.Diagnostics.Debug.WriteLine($"⚠️ Ligne {ligne.NomLigne} : horaires non configurés");
+                return horaires; // Retourner liste vide
+            }
+
+            if (ligne.PremierDepart >= ligne.DernierDepart)
+            {
+                System.Diagnostics.Debug.WriteLine($"⚠️ Ligne {ligne.NomLigne} : horaires incohérents");
+                return horaires; // Retourner liste vide
+            }
+
+
             // Trouver l'arrêt dans la ligne
             var arretLigne = ligne.Arrets.FirstOrDefault(a => a.Arret.IdArret == arret.IdArret);
             if (arretLigne == null)
@@ -145,10 +166,13 @@ namespace Services.ServicesClasses
             TimeSpan horaireActuel = ligne.PremierDepart.Add(TimeSpan.FromMinutes(tempsDepuisDebut));
             TimeSpan horaireLimite = ligne.DernierDepart.Add(TimeSpan.FromMinutes(tempsDepuisDebut));
 
-            while (horaireActuel <= horaireLimite)
+            int i = 0;
+
+            while (horaireActuel <= horaireLimite && i < 1000)
             {
                 horaires.Add(horaireActuel);
                 horaireActuel = horaireActuel.Add(TimeSpan.FromMinutes(ligne.IntervalleMinutes));
+                i++;
             }
 
             return horaires;

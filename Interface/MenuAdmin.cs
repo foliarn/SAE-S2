@@ -19,6 +19,15 @@ namespace Interface
         public MenuAdmin(Accueil formAccueil)
         {
             InitializeComponent();
+            // Initialiser le formulaire de profil
+            this.accueil = formAccueil;
+            accueil.profilForm = new ProfilForm();
+            accueil.profilForm.SeDeconnecter += (s, e) => this.Close();
+        }
+
+        public MenuAdmin()
+        {
+            InitializeComponent();
 
             // Centrer les panels dans le formulaire
             Utils.CentrerControle(pnlCreation);
@@ -43,16 +52,6 @@ namespace Interface
 
             Utils.RemplirComboBox(cmbArretModifLigneChoixAdd, Init.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : Ajouter un élément "Aucun" pour éviter les erreurs si aucune ligne n'est sélectionnée
             Utils.RemplirComboBox(cmbArretModifLigneChoixSuppr, Init.toutesLesLignes, "NomLigne", "IdLigne"); //TODO : idem
-
-            // Initialiser le formulaire de profil
-            this.accueil = formAccueil;
-            accueil.profilForm = new ProfilForm();
-            accueil.profilForm.SeDeconnecter += (s, e) => this.Close();
-        }
-
-        public MenuAdmin()
-        {
-            InitializeComponent();
         }
 
         // Bouton pour revenir en arrière ou fermer le menu
@@ -352,12 +351,14 @@ namespace Interface
                     return;
                 }
 
-                // Récupérer l'ID de la ligne sélectionnée et l'ordre de l'arrêt
+                // Récupérer la ligne r
                 int idArret = (int)cmbLigneAjoutArret.SelectedValue;
-                int ordreArret = (int)nudChoixPlace.Value;
+                var arretChoisi = Init.tousLesArrets.FirstOrDefault(a => a.IdArret == idArret);
+                var ligneChoisie = Init.toutesLesLignes.FirstOrDefault(a => a.IdLigne == idChoixMain);
+                int ordreChoisi = (int)nudChoixPlace.Value;
 
                 // Ajouter l'arrêt à la ligne
-                if (ModifBDD.AjouterArretALigne(idArret, idChoixMain, ordreArret))
+                if (LigneService.AjouterArretALigne(ligneChoisie, arretChoisi, ordreChoisi))
                 {
                     MessageBox.Show("Arrêt ajouté avec succès à la ligne.", "Succès",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);

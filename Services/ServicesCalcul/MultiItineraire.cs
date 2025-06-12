@@ -5,7 +5,7 @@ using Services.ServicesCalcul;
 namespace Services.CalculClasses
 {
     /// <summary>
-    /// Recherche multi-itinéraires - Trouve deux alternatives complémentaires
+    /// Recherche multi-itinéraires - Trouve deux alternatives co   mplémentaires
     /// </summary>
     public static class RechercheMultiItineraires
     {

@@ -172,6 +172,76 @@ public class LigneService
         return toutesLesLignes.Where(ligne => ContientArret(ligne, arret)).ToList();
     }
 
+    /// <summary>
+    /// Change le nom d'une ligne en base de données et met à jour l'objet en mémoire
+    /// </summary>
+    /// <param name="idLigne">ID de la ligne à modifier</param>
+    /// <param name="nouveauNom">Nouveau nom de la ligne</param>
+    /// <returns>True si la modification a réussi, False sinon</returns>
+    public static bool ChangerNom(int idLigne, string nouveauNom)
+    {
+        try
+        {
+            // Validation des paramètres
+            if (idLigne <= 0)
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur : ID de ligne invalide");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(nouveauNom))
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur : Le nouveau nom ne peut pas être vide");
+                return false;
+            }
+
+            nouveauNom = nouveauNom.Trim().ToUpper(); // Appliquer la logique métier (majuscules)
+
+            // Vérifier que la ligne existe en mémoire
+            var ligne = Init.toutesLesLignes.FirstOrDefault(l => l.IdLigne == idLigne);
+            if (ligne == null)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur : Ligne avec ID {idLigne} non trouvée en mémoire");
+                return false;
+            }
+
+            // Vérifier qu'aucune autre ligne n'a déjà ce nom
+            if (Init.toutesLesLignes.Any(l => l.IdLigne != idLigne &&
+                l.NomLigne.Equals(nouveauNom, StringComparison.OrdinalIgnoreCase)))
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur : Une ligne avec ce nom existe déjà");
+                return false;
+            }
+
+            // Sauvegarder l'ancien nom pour rollback éventuel
+            string ancienNom = ligne.NomLigne;
+
+            // 1. Modifier en base de données
+            if (!ModifBDD.ChangerNom(idLigne, nouveauNom, true))
+            {
+                System.Diagnostics.Debug.WriteLine("Erreur lors de la modification en base de données");
+                return false;
+            }
+
+            // 2. Modifier en mémoire
+            ligne.NomLigne = nouveauNom;
+
+            // 3. Optionnel : Mettre à jour aussi la description si elle suit un pattern
+            if (ligne.Description.StartsWith("Ligne ", StringComparison.OrdinalIgnoreCase))
+            {
+                ligne.Description = $"Ligne {nouveauNom}";
+            }
+
+            System.Diagnostics.Debug.WriteLine($"Nom de la ligne ID {idLigne} changé de '{ancienNom}' vers '{nouveauNom}'");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Erreur lors du changement de nom de la ligne : {ex.Message}");
+            return false;
+        }
+    }
+
     public static bool EstLigneValide(Ligne ligne)
     {
         if (ligne == null) return false;

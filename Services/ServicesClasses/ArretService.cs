@@ -194,6 +194,74 @@ namespace Services.ServicesClasses
         }
 
         /// <summary>
+        /// Change le nom d'un arrêt en base de données et met à jour l'objet en mémoire
+        /// </summary>
+        /// <param name="idArret">ID de l'arrêt à modifier</param>
+        /// <param name="nouveauNom">Nouveau nom de l'arrêt</param>
+        /// <returns>True si la modification a réussi, False sinon</returns>
+        public static bool ChangerNom(int idArret, string nouveauNom)
+        {
+            try
+            {
+                // Validation des paramètres
+                if (idArret <= 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("Erreur : ID d'arrêt invalide");
+                    return false;
+                }
+
+                if (string.IsNullOrWhiteSpace(nouveauNom))
+                {
+                    System.Diagnostics.Debug.WriteLine("Erreur : Le nouveau nom ne peut pas être vide");
+                    return false;
+                }
+
+                nouveauNom = nouveauNom.Trim();
+
+                // Vérifier que l'arrêt existe en mémoire
+                var arret = Init.tousLesArrets.FirstOrDefault(a => a.IdArret == idArret);
+
+                // Vérifier qu'aucun autre arrêt n'a déjà ce nom
+                if (Init.tousLesArrets.Any(a => a.IdArret != idArret &&
+                    a.NomArret.Equals(nouveauNom, StringComparison.OrdinalIgnoreCase)))
+                {
+                    System.Diagnostics.Debug.WriteLine("Erreur : Un arrêt avec ce nom existe déjà");
+                    return false;
+                }
+
+                // 1. Modifier en base de données
+                if (!ModifBDD.ChangerNom(idArret, nouveauNom, false))
+                {
+                    System.Diagnostics.Debug.WriteLine("Erreur lors de la modification en base de données");
+                    return false;
+                }
+
+                // 2. Modifier en mémoire
+                arret.NomArret = nouveauNom;
+
+                // 3. Mettre à jour également dans toutes les lignes qui contiennent cet arrêt
+                foreach (var ligne in Init.toutesLesLignes)
+                {
+                    if (ligne.Arrets != null)
+                    {
+                        var arretLigne = ligne.Arrets.FirstOrDefault(al => al.Arret.IdArret == idArret);
+                        if (arretLigne != null)
+                        {
+                            arretLigne.Arret.NomArret = nouveauNom;
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur lors du changement de nom de l'arrêt : {ex.Message}");
+                return false;
+            }
+        }
+
+
+        /// <summary>
         /// Valide les données de l'arrêt
         /// </summary>
         /// <returns>True si valide, False sinon</returns>

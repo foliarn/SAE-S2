@@ -48,7 +48,6 @@ namespace Interface
             btnLigne = new Button();
             lblPlan = new Label();
             picLogo = new PictureBox();
-            button1 = new Button();
             pnlRecherche.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picPlan).BeginInit();
             ((System.ComponentModel.ISupportInitialize)picRetrecir).BeginInit();
@@ -289,21 +288,11 @@ namespace Interface
             picLogo.TabIndex = 7;
             picLogo.TabStop = false;
             // 
-            // button1
-            // 
-            button1.Location = new Point(138, 550);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 8;
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
-            // 
             // Accueil
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 681);
-            Controls.Add(button1);
             Controls.Add(picLogo);
             Controls.Add(lblPlan);
             Controls.Add(btnLigne);
@@ -344,6 +333,5 @@ namespace Interface
         private Button btnLigne;
         private Label lblPlan;
         private PictureBox picLogo;
-        private Button button1;
     }
 }

@@ -455,7 +455,18 @@ namespace Interface
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                ModifBDD.ChangerNom(idChoixMain, txtChangeNom.Text, isLigne);
+
+                if (isLigne)
+                {
+                    LigneService.ChangerNom(idChoixMain, txtChangeNom.Text);
+                    lblTitreModifLigneChoisie.Text = $"Ligne sélectionnée : {txtChangeNom.Text}";
+                }
+                else
+                {
+                    ArretService.ChangerNom(idChoixMain, txtChangeNom.Text);
+                    lblTitreModifArretChoisi.Text = $"Arrêt sélectionné : {txtChangeNom.Text}";
+                }
+                
             }
             catch (Exception ex)
             {
